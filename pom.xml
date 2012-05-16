@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+  http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  
+  <name>TmCurator parent</name>
+
+  <groupId>ca.on.mshri</groupId>
+  <artifactId>tmcurator-parent</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+
+  <packaging>pom</packaging>
+  
+  <modules>
+      <module>tmcurator</module>
+      <module>tmcurator-host</module>
+      <module>tmcurator-populator</module>
+  </modules>
+  
+  
+  <properties>
+      <netbeans.hint.license>lgpl30</netbeans.hint.license>
+  </properties>
+  
+    <developers>
+      <developer>
+          <id>jweile</id>
+          <name>Jochen Weile</name>
+          <email>jochenweile@gmail.com</email>
+          <organization>Department of Molecular Genetics, University of Toronto</organization>
+          <organizationUrl>http://www.utoronto.ca</organizationUrl>
+          <url>http://dalai.mshri.on.ca/~jweile</url>
+      </developer>
+    </developers>
+
+    <organization>
+      <name>Department of Molecular Genetics, University of Toronto</name>
+      <url>http://www.utoronto.ca</url>
+    </organization>
+
+    <licenses>
+    <license>
+      <name>Lesser GNU Public License, Version 3.0</name>
+      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+    </license>
+    </licenses>
+  
+</project>

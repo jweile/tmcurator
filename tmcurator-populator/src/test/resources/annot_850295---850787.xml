@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="ASCII"?>
+<pair g1Id="850295" g1Sym="cha1" g2Id="850787" g2Sym="cha4">
+   <article arid="11309243" issue="20" journal="The EMBO journal." page="6028" pmid="9774346" procSetId="GW60" pubdate="10/15/1998" volume="17">
+      <title>Nucleosome structure of the yeast CHA1 promoter: analysis of activation-dependent chromatin remodeling of an RNA-polymerase-II-transcribed gene in TBP and RNA pol II mutants defective in vivo in response to acidic activators.</title>
+      
+      <actionMention actionType="activate" amid="11309301" close="0" downstreamTermMentionStr="cha1" effect="1" negative="true" plo="L" prec="0.93966" score="0.553" sign="-1" typeFirst="unknown" typeSecond="unknown" upstreamTermMentionStr="cha4p">
+        <S snt_id="snt89">
+    <MARKEDUP_TEXT>Northern analysis of total RNA showed that induced  <phr p="1.0" sem="mrna" t="CHA1" tp="1">CHA1 mRNA</phr> levels were drastically reduced in all mutants (Figure  4A, +<phr p="1.0" sem="gp" t="Ser" tp="1">Ser</phr>), suggesting that <phr p="0.75" sem="gp" t="">Cha4p</phr> cannot activate transcription of  <phr p="1.0" sem="gp" t="CHA1" tp="1">CHA1</phr> in these mutants. </MARKEDUP_TEXT>
+    <GENIE_FRAMES>
+      <FRAME>
+        <FRAME_TEXT>[geneorprotein,term_number_1,[state,mutated],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="2">
+           [geneorprotein, Ser, 
+                           [state, mutated], 
+                           [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+        </ACTIONS>
+      </FRAME>
+      <FRAME>
+        <FRAME_TEXT>[action,activate,[geneorprotein,term_number_2],[action,transcribe,[geneorprotein,term_number_3]],[certainty,no],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="3">
+           [action, activate, 
+                    [geneorprotein, Cha4p], 
+                    [action, transcribe, 
+                             [geneorprotein, CHA1]
+                    ], 
+                    [certainty, no], 
+                    [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="activate" negative="true">
+            <phr p="0.75" sem="gp" t="" tn="2">Cha4p</phr>
+            <phr p="1.0" sem="gp" t="CHA1" tn="3" tp="1">CHA1</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+    </GENIE_FRAMES>
+  </S>
+      </actionMention>
+   </article>
+   <article arid="11945742" issue="10" journal="The EMBO journal." page="2836" pmid="10329629" procSetId="GW60" pubdate="05/17/1999" volume="18">
+      <title>Transcriptional repression of the yeast CHA1 gene requires the chromatin-remodeling complex RSC.</title>
+      
+      <actionMention actionType="mediate" amid="11945819" close="0" downstreamTermMentionStr="cha1" effect="0" negative="false" plo="L" prec="0.94547" score="0.619" sign="0" typeFirst="unknown" typeSecond="unknown" upstreamTermMentionStr="cha4p">
+        <S snt_id="snt143">
+    <MARKEDUP_TEXT><phr p="0.75" sem="gp" t="">Cha4p</phr>-mediated regulation of  <phr p="1.0" sem="gp" t="CHA1" tp="1">CHA1</phr> transcription is therefore provided by a modulation of the activation potential of the <phr p="0.5833333" sem="gp" t="">DNA-bound Cha4p</phr>. </MARKEDUP_TEXT>
+    <GENIE_FRAMES>
+      <FRAME>
+        <FRAME_TEXT>[action,mediate,[geneorprotein,term_number_0],[action,regulate,[unknown],[action,transcribe,[geneorprotein,term_number_1]]],[parsemode,mode4_3]]</FRAME_TEXT>
+        <FRAME_DUMP depth="4">
+           [action, mediate, 
+                    [geneorprotein, Cha4p], 
+                    [action, regulate, 
+                             [unknown], 
+                             [action, transcribe, 
+                                      [geneorprotein, CHA1]
+                             ]
+                    ], 
+                    [parsemode, mode4_3]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="mediate">
+            <phr p="0.75" sem="gp" t="" tn="0">Cha4p</phr>
+            <phr p="1.0" sem="gp" t="CHA1" tn="1" tp="1">CHA1</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+      <FRAME>
+        <FRAME_TEXT>[action,modulate,[unknown],[action,activate,[unknown],[geneorprotein,term_number_2]],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="3">
+           [action, modulate, 
+                    [unknown], 
+                    [action, activate, 
+                             [unknown], 
+                             [geneorprotein, DNA-bound Cha4p]
+                    ], 
+                    [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+        </ACTIONS>
+      </FRAME>
+    </GENIE_FRAMES>
+  </S>
+      </actionMention>
+   </article>
+   <article arid="5805960" issue="7" journal="Proceedings of the National Academy of Sciences of the United States of America" page="4084" pmid="12649325" procSetId="GW60" pubdate="04/01/2003" volume="100">
+      <title>Global and specific transcriptional repression by the histone H3 amino terminus in yeast.</title>
+      
+      <actionMention actionType="bind" amid="5806038" close="1" downstreamTermMentionStr="cha1" effect="0" negative="false" plo="P" prec="0.93331" score="0.477" sign="0" typeFirst="unknown" typeSecond="unknown" upstreamTermMentionStr="cha4p">
+        <S snt_id="snt126">
+    <MARKEDUP_TEXT>To test whether <phr p="0.75" sem="gp" t="">Cha4p</phr> binds constitutively to the  <phr p="1.0" sem="gp" t="CHA1" tp="1">CHA1</phr> promoter in cells expressing WT histones, as has been reported ( 18), we performed ChIP experiments. </MARKEDUP_TEXT>
+    <GENIE_FRAMES>
+      <FRAME>
+        <FRAME_TEXT>[action,bind,[geneorprotein,term_number_0],[geneorprotein,term_number_1],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="2">
+           [action, bind, 
+                    [geneorprotein, Cha4p], 
+                    [geneorprotein, CHA1], 
+                    [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="bind">
+            <phr p="0.75" sem="gp" t="" tn="0">Cha4p</phr>
+            <phr p="1.0" sem="gp" t="CHA1" tn="1" tp="1">CHA1</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+    </GENIE_FRAMES>
+  </S>
+      </actionMention>
+      <actionMention actionType="bind" amid="5806042" close="1" downstreamTermMentionStr="cha1" effect="0" negative="false" plo="P" prec="0.91316" score="0.186" sign="0" typeFirst="unknown" typeSecond="unknown" upstreamTermMentionStr="cha4p">
+        <S snt_id="snt132">
+    <MARKEDUP_TEXT>These results indicate that <phr p="0.75" sem="gp" t="">Cha4p</phr> is indeed constitutively bound to the  <phr p="1.0" sem="gp" t="CHA1" tp="1">CHA1</phr> promoter. </MARKEDUP_TEXT>
+    <GENIE_FRAMES>
+      <FRAME>
+        <FRAME_TEXT>[action,bind,[geneorprotein,term_number_0],[geneorprotein,term_number_1],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="2">
+           [action, bind, 
+                    [geneorprotein, Cha4p], 
+                    [geneorprotein, CHA1], 
+                    [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="bind">
+            <phr p="0.75" sem="gp" t="" tn="0">Cha4p</phr>
+            <phr p="1.0" sem="gp" t="CHA1" tn="1" tp="1">CHA1</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+    </GENIE_FRAMES>
+  </S>
+      </actionMention>
+      <actionMention actionType="bind" amid="5806045" close="1" downstreamTermMentionStr="cha1" effect="0" negative="false" plo="P" prec="0.94202" score="0.593" sign="0" typeFirst="unknown" typeSecond="unknown" upstreamTermMentionStr="cha4p">
+        <S snt_id="snt135">
+    <MARKEDUP_TEXT>  ChIP analysis of <phr p="0.75" sem="gp" t="">Cha4p</phr> binding to the  <phr p="1.0" sem="gp" t="CHA1" tp="1">CHA1</phr> promoter. </MARKEDUP_TEXT>
+    <GENIE_FRAMES>
+      <FRAME>
+        <FRAME_TEXT>[action,bind,[geneorprotein,term_number_0],[geneorprotein,term_number_1],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="2">
+           [action, bind, 
+                    [geneorprotein, Cha4p], 
+                    [geneorprotein, CHA1], 
+                    [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="bind">
+            <phr p="0.75" sem="gp" t="" tn="0">Cha4p</phr>
+            <phr p="1.0" sem="gp" t="CHA1" tn="1" tp="1">CHA1</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+    </GENIE_FRAMES>
+  </S>
+      </actionMention>
+   </article>
+   <article arid="26059433" issue="22" journal="Genes &amp; development" page="2695" pmid="16291644" procSetId="GW70" pubdate="11/15/2005" volume="19">
+      <title>Regulation of an intergenic transcript controls adjacent gene transcription in Saccharomyces cerevisiae.</title>
+      
+      <actionMention actionType="activate" amid="27647119" close="0" downstreamTermMentionStr="cha1 gene" effect="1" negative="false" plo="L" prec="0.94331" score="0.611" sign="-1" typeFirst="unknown" typeSecond="unknown" upstreamTermMentionStr="cha4">
+        <S snt_id="snt182">
+    <MARKEDUP_TEXT>When cells are exposed to high levels of <phr p="1.0" sem="smallmolecule" t="serine" tp="1">serine</phr>, <phr p="1.0" sem="gp" t="Cha4" tp="1">Cha4</phr> directly activates the  <phr p="1.0" sem="gene" t="CHA1" tp="1">CHA1 gene</phr>, required for <phr p="1.0" sem="smallmolecule" t="serine" tp="1">serine</phr> catabolism, and indirectly represses the  <phr p="1.0" sem="gene" t="SER3" tp="1">SER3 gene</phr> via activation of  <phr p="1.0" sem="gp" t="SRG1" tp="1">SRG1</phr> ( Fig. 7, top panel). </MARKEDUP_TEXT>
+    <GENIE_FRAMES>
+      <FRAME>
+        <FRAME_TEXT>[action,activate,[relation,comma,[smallmolecule,term_number_0],[geneorprotein,term_number_1]],[gene,term_number_2],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="3">
+           [action, activate, 
+                    [relation, comma, 
+                               [smallmolecule, serine], 
+                               [geneorprotein, Cha4]
+                    ], 
+                    [gene, CHA1 gene], 
+                    [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="activate">
+            <phr p="1.0" sem="smallmolecule" t="serine" tn="0" tp="1">serine</phr>
+            <phr p="1.0" sem="gene" t="CHA1" tn="2" tp="1">CHA1 gene</phr>
+          </ACTION>
+          <ACTION actiontype="activate">
+            <phr p="1.0" sem="gp" t="Cha4" tn="1" tp="1">Cha4</phr>
+            <phr p="1.0" sem="gene" t="CHA1" tn="2" tp="1">CHA1 gene</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+      <FRAME>
+        <FRAME_TEXT>[relation,with,[action,repress,[smallmolecule,term_number_3],[gene,term_number_4]],[action,activate,[unknown],[geneorprotein,term_number_5]],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="3">
+           [relation, with, 
+                      [action, repress, 
+                               [smallmolecule, serine], 
+                               [gene, SER3 gene]
+                      ], 
+                      [action, activate, 
+                               [unknown], 
+                               [geneorprotein, SRG1]
+                      ], 
+                      [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="repress">
+            <phr p="1.0" sem="smallmolecule" t="serine" tn="3" tp="1">serine</phr>
+            <phr p="1.0" sem="gene" t="SER3" tn="4" tp="1">SER3 gene</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+    </GENIE_FRAMES>
+  </S>
+      </actionMention>
+   </article>
+   <article arid="26054023" issue="3" journal="Microbiology and Molecular Biology Reviews" page="583" pmid="16959962" procSetId="GW70" pubdate="09/01/2006" volume="70">
+      <title>A fungal family of transcriptional regulators: the zinc cluster proteins.</title>
+      
+      <actionMention actionType="depend on" amid="27573287" close="0" downstreamTermMentionStr="cha4p" effect="0" negative="false" plo="L" prec="0.95657" score="0.734" sign="-1" typeFirst="unknown" typeSecond="unknown" upstreamTermMentionStr="cha1">
+        <S snt_id="snt332">
+    <MARKEDUP_TEXT>For example, the <phr p="0.75" sem="gp" t="">Cha4p</phr>-dependent expression of  <phr p="1.0" sem="gp" t="CHA1" tp="1">CHA1</phr> (encoding an <phr p="0.5" sem="gp" t="">L-serine-threonine deaminase</phr>) is induced in the presence of <phr p="1.0" sem="smallmolecule" t="serine" tp="1">serine</phr> or <phr p="1.0" sem="smallmolecule" t="threonine" tp="1">threonine</phr> for utilization as nitrogen sources. </MARKEDUP_TEXT>
+    <GENIE_FRAMES>
+      <FRAME>
+        <FRAME_TEXT>[relfunc,depend on,[action,express,[relfunc,encode,[unknown],[geneorprotein,term_number_1]]],[geneorprotein,term_number_0],[parsemode,mode4_3]]</FRAME_TEXT>
+        <FRAME_DUMP depth="4">
+           [relfunc, depend on, 
+                     [action, express, 
+                              [relfunc, encode, 
+                                        [unknown], 
+                                        [geneorprotein, CHA1]
+                              ]
+                     ], 
+                     [geneorprotein, Cha4p], 
+                     [parsemode, mode4_3]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+          <ACTION actiontype="depend on">
+            <phr p="1.0" sem="gp" t="CHA1" tn="1" tp="1">CHA1</phr>
+            <phr p="0.75" sem="gp" t="" tn="0">Cha4p</phr>
+          </ACTION>
+        </ACTIONS>
+      </FRAME>
+      <FRAME>
+        <FRAME_TEXT>[relation,in,[action,induce,[unknown],[geneorprotein,term_number_2]],[relation,or,[smallmolecule,term_number_3],[smallmolecule,term_number_4]],[parsemode,mode5]]</FRAME_TEXT>
+        <FRAME_DUMP depth="3">
+           [relation, in, 
+                      [action, induce, 
+                               [unknown], 
+                               [geneorprotein, L-serine-threonine deaminase]
+                      ], 
+                      [relation, or, 
+                                 [smallmolecule, serine], 
+                                 [smallmolecule, threonine]
+                      ], 
+                      [parsemode, mode5]
+           ]
+        </FRAME_DUMP>
+        <ACTIONS>
+        </ACTIONS>
+      </FRAME>
+    </GENIE_FRAMES>
+  </S>
+      </actionMention>
+   </article>
+</pair>

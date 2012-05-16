@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='TmCurator'>
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User' />
+  <inherits name="com.google.gwt.resources.Resources" />
+
+
+  <!-- Other module inherits                                      -->
+  <inherits name='com.sencha.gxt.ui.GXT'/>
+
+  <!-- Specify the app entry point class.                         -->
+  <entry-point class='ca.on.mshri.tmcurator.client.TmCurator' />
+
+  <!-- Specify the paths for translatable code                    -->
+  <source path='client' />
+  <source path='shared' />
+
+</module>

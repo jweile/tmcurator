@@ -1,0 +1,480 @@
+Action Type	PLO classification	Action Type Ontology Parents	probably not between genes/proteins	order (1= upstream; -1 = downstream	effect (1=activation; -1=repression)	act in the same process	closely connected
+induce	L	activate		1	1	1	
+bind	P	physicalactiontype				1	1
+inhibit	L	inactivate		1	-1	1	
+associate	.	bind				1	1
+contain	.	consistof				1	1
+activate	L	logicalactiontype		1	1	1	
+mediate	L	regulate				1	
+regulate	L	logicalactiontype		1		1	
+interact	L	regulate				1	1
+express	.	biochemicalactiontype		1	1	1	
+encode	.	substancerelationtype		1	1	1	1
+stimulate	L	activate		1	1	1	
+increase	L	activate		1	1	1	
+produce	.	biochemicalactiontype		1	1	1	
+cause	L	activate		1	1	1	
+result in	.	causedby		1	1	1	
+depend on	L	regulate		-1		1	
+phosphorylate	P	createbond		1		1	1
+homolog	.	substancerelationtype				0	
+affect	L	regulate		1		1	
+require	.	regulate		-1	1	1	
+required for	.	regulate		1	1	1	
+enhance	L	activate		1	1	1	
+block	L	inactivate		1	-1	1	
+lead to	L	lead	1	1	1	1	
+include	.	consistof				1	
+form	.	produce	1			1	1
+promote	L	activate	1	1	1	1	
+suppress	L	inactivate		1	-1	1	
+due to	.	regulate	1	-1		1	
+respond	.	regulate		-1		1	
+reduce	.	covalentlymodify	1	1	-1	1	
+determine	L	regulate		1		1	
+add	.	bind	1			1	
+control	L	regulate		1		1	
+modulate	L	regulate		1		1	
+carry	.	transport	1	1		1	1
+generate	L	activate	1	1	1	1	
+alter	.	covalentlymodify		1		1	1
+link	.	createbond	1			1	1
+replace	.	bind				1	1
+synthesize	.	createbond	1	1		1	1
+signal	L	regulate		1		1	
+couple	.	bind	1			1	1
+combine	.	bind				1	1
+react	L	covalentlymodify; regulate	1	-1		1	1
+cleave	P	breakbond	1	1		1	1
+influence	L	regulate		1		1	
+modify	.	biochemicalactiontype		1		1	
+recruit	.	bind				1	
+release	.	physicalactiontype		1		1	
+recognize	.	bind				1	1
+catalyze	P	activate	1	1		1	1
+conjugate	.	physicalactiontype				1	1
+inactivate	L	logicalactiontype		1	-1	1	
+repress	L	inactivate		1	-1	1	
+overexpress	.	express	1	1		1	
+immunoprecipitate	P	bind	1			1	
+substitute	.	biochemicalactiontype; physicalactiontype	1			1	
+digest	P	breakbond		1	-1	1	1
+abolish	L	inactivate		1	-1	1	
+attenuate	L	inactivate		1	-1	1	
+prevent	.	inactivate	1	1	-1	1	
+degrade	P	breakbond		1	-1	1	1
+result from	.	causedby		-1		1	
+colocalize	P	physicalactiontype				1	
+trigger	L	activate		1		1	
+based on	.	regulate	1	-1		1	
+separate	.	physicalactiontype	1			1	
+up-regulate	L	activate		1	1	1	
+elevate	L	activate		1	1	1	
+independence	.	independentof				0	
+respond to	.	respond		-1		1	
+disrupt	L	inactivate		1		1	
+secrete	.	release	1			1	
+elicit	L	activate		1		1	
+fuse	.	createbond				1	1
+antagonize	L	inactivate		1	-1	1	
+analog	.	substancerelationtype				1	
+effect	.	regulate		1		1	
+down-regulate	L	inactivate		1		1	
+initiate	L	activate		1		1	
+remove	.	transport		1		1	
+coexpress	.	biochemicalactiontype				0	
+ortholog	.	homolog				0	
+because of	L	activate		-1		1	
+pair	.	bind				1	1
+attach	P	bind				1	1
+assemble	.	bind				1	1
+transfer	.	physicalactiontype; transport		1		1	
+limit	L	inactivate	1	1	-1	1	
+form a complex	P	bind				1	
+precede	.	before	1			1	
+exhibit	.	physicalactiontype	1			0	
+deplete	.	inactivate	1	1	-1	1	
+account for	.	causal		1		1	
+direct	.	regulate		1		1	
+coimmunoprecipitate	P	bind				1	
+restrict	.	inactivate		1	-1	1	
+abrogate	L	inactivate		1	-1	1	
+accelerate	L	activate		1	1	1	
+make	.	activate		1	1	1	
+loose	.	unloose		1		1	
+sensitize	L	activate	1	1		1	
+dephosphorylate	P	breakbond		1		1	1
+facilitate	.	activate		1	1	1	
+connect	.	bind				1	
+as a result of	.	causedby	1	-1		1	
+transport	.	biochemicalactiontype; physicalactiontype		1		1	
+synergize	P	bind; regulate				1	
+free	.	release		1		1	
+bond	.	bind; biochemicalactiontype				1	1
+adhere	.	bind				1	
+upregulate	L	up-regulate		1	1	1	
+dissociate	.	release				1	1
+coprecipitate	P	bind				0	
+methylate	P	createbond		1		1	1
+raise	.	activate	1	1	1	1	
+transactivate	L	activate		1	1	1	
+drive	.	regulate		1		1	
+distribute	.	transport		1		1	
+evoke	.	activate	1	1	1	1	
+oxidate	.	createbond		1		1	1
+splice	.	biochemicalactiontype		1		1	1
+comprise	.	consistof				1	
+compose	.	consistof				1	
+acetylate	.	createbond		1		1	1
+constitute	.	consistof				1	
+stabilize	.	biochemicalactiontype; physicalactiontype		1		1	
+retain	.	bind				1	
+transmit	.	regulate; transport		1		1	
+interfere	.	biochemicalactiontype; physicalactiontype		1	-1	1	
+contact	.	physicalactiontype				1	1
+precipitate	.	bind				0	
+coat	.	bind; biochemicalactiontype	1			1	1
+code	.	encode		1		1	
+neutralize	.	inactivate		1	-1	1	
+delay	.	inactivate		1	-1	1	
+channel	.	transport		1		1	
+downregulate	L	down-regulate		1	-1	1	
+arrest	L	inactivate	1	1	-1	1	
+aggregate	.	bind				1	
+rescue from	.	rescue	1	1	1	1	
+deliver	.	transport		1		1	
+cross-link	.	cross-react		1		1	1
+harbor	.	bind				1	
+activity	.	property	1			1	
+enable	.	activate		1	1	1	
+translocate	.	transport		1		1	
+cross-react	.	physicalactiontype; react				1	
+dissociate from	.	release				1	1
+co-express	.	express				0	
+compete	.	biochemicalactiontype; physicalactiontype				1	
+hydrolyze	.	breakbond		1		1	1
+hybridize	.	bind				1	1
+cooperate	L	co-operate				1	
+copurify	.	physicalactiontype				0	
+metabolize	.	covalentlymodify		1		1	1
+depress	.	inactivate		1	-1	1	
+fold	.	biochemicalactiontype; physicalactiontype				1	
+cut	.	breakbond		1		1	1
+ubiquitinate	P	createbond		1		1	1
+moderate	.	regulate		1		1	
+truncate	P	breakbond		1		1	1
+anchor	.	bind; biochemicalactiontype				1	1
+join	.	bind				1	1
+transcribe	.	biochemicalactiontype		1		1	1
+may be responsible for	.	causal	1	1		1	
+needed for	.	regulate	1	1		1	
+polymerize	.	createbond				1	1
+divide	.	breakbond		1		1	1
+impact	.	regulate	1	1		1	
+provoke	.	activate	1	1	1	1	
+attributable to	.	property	1	-1		1	
+silence	.	inactivate		1	-1	1	
+engage	.	regulate				1	
+mutate	.	covalentlymodify	1	1		1	
+solubilize	.	biochemicalactiontype; physicalactiontype	1	1		1	
+sequester	.	bind; biochemicalactiontype		1		1	1
+deposit	.	physicalactiontype	1			1	
+locate	.	relocate	1			1	
+co-transfect	.	biochemicalactiontype; physicalactiontype	1			0	
+start	.	initiate	1	1		1	
+fix	.	bind				1	
+switch	.	regulate	1	1		1	
+destroy	.	breakbond		1	-1	1	1
+integrate	.	bind				1	
+prompt	L	activate		1	1	1	
+ablate	.	activate		1	1	1	
+fractionate	.	physicalactiontype	1			1	
+lead	.	regulate	1	1		1	
+capture	.	bind	1			1	1
+order	.	regulate	1	1		1	
+export	.	transport		1		1	
+hydroxylate	.	createbond		1		1	1
+hyperphosphorylate	P	phosphorylate		1		1	1
+immobilize	.	bind; biochemicalactiontype				1	
+excise	.	breakbond		1		1	
+interrupt	.	inactivate	1	1	-1	1	
+denature	.	biochemicalactiontype; physicalactiontype				1	1
+force	.	activate		1		1	
+liberate	.	release		1	1	1	
+sort	.	transport		1		1	1
+deacetylate	P	breakbond		1		1	1
+attributed to	.	property	1	-1		1	
+destabilize	.	inactivate		1	-1	1	
+govern	.	regulate	1	1		1	
+redistribute	.	distribute	1	1		1	
+synergistic interaction	P	synergize				1	
+overproduce	.	produce	1	1		0	
+hydrolyse	P	breakbond		1		1	1
+dimerize	.	polymerize				1	1
+synergy	P	synergize				1	
+charge	.	bind; createbond		1		1	1
+part	.	release	1	1		1	
+hinder	L	inactivate		1	-1	1	
+bridge	.	createbond				1	1
+break	.	breakbond		1		1	1
+depolymerize	P	breakbond				1	1
+discharge	.	release		1		1	1
+deactivate	L	inactivate		1	-1	1	
+dock	.	bind				1	
+glycosylate	.	createbond		1		1	1
+synergistic action	L	synergize				1	
+cap	.	createbond		1		1	1
+bring about	.	activate	1	1		1	
+harbour	.	harbor	1			1	
+mask	.	inactivate		1	-1	1	
+disassemble	P	breakbond				1	
+shape	.	regulate	1	1		1	
+excite	.	activate	1	1	1	1	
+boost	.	activate		1	1	1	
+split	P	breakbond				1	1
+stop	.	inactivate		1	-1	1	
+pump	.	transport	1	1		1	1
+unfold	.	biochemicalactiontype; physicalactiontype				1	1
+biotinylate	.	createbond	1	1		1	1
+alkylate	.	createbond		1		1	1
+restrain	L	inactivate		1	-1	1	
+sever	P	breakbond		1		1	
+constrain	L	inactivate		1	-1	1	
+bring	.	transport	 			1	1
+deaminate	P	breakbond		1		1	1
+demethylate	P	breakbond		1		1	1
+acylate	.	createbond		1		1	1
+paralog	.	homolog	 			0	
+act synergistically	P	bind				1	
+sulphate	.	createbond		1		1	1
+iodinate	P	createbond		1		1	1
+mutagenize	.	mutate	1			0	1
+hold	.	bind				1	1
+suppress activity of	L	inactivate		1	-1	1	
+endow	.	physicalactiontype		1		1	
+issue	.	release	1	1		1	
+clamp	.	createbond				1	1
+translate	.	biochemicalactiontype		1		1	
+fire	.	activate	1	1	1	1	
+die	.	inactivate	1	1	-1	1	
+refold	.	fold; physicalactiontype				1	
+hypermethylate	P	createbond		1		1	1
+send	.	transport	1	1		1	
+ubiquitylate	.	ubiquitinate		1	-1	1	1
+myristoylate	P	createbond		1		1	1
+unwind	.	biochemicalactiontype; physicalactiontype		1		1	1
+carboxylate	.	createbond		1		1	1
+hyperacetylate	P	acetylate		1		1	1
+shuttle	.	biochemicalactiontype; physicalactiontype				1	1
+pump in	.	pump	1			1	1
+deglycosylate	.	breakbond		1		1	1
+cross react	.	cross-react				0	
+disable	.	inactivate		1	-1	1	
+hypophosphorylate	P	phosphorylate		1		1	1
+prenylate	P	createbond		1			1
+proteolyze	P	breakbond		1		1	1
+relocalize	.	relocate				1	
+kindle	.	enkindle	1	1	1	1	
+cop	.	inactivate		1	-1	1	
+import	.	transport		1		1	
+expel	.	release		1		1	
+act upon	.	regulate		1		1	
+glycate	.	createbond		1		1	1
+tie	.	bind				1	1
+function as a negative regulator of	.	inactivate		1	-1	1	
+nucleotide exchange	.	createbond				1	1
+wind	.	biochemicalactiontype; physicalactiontype				1	1
+relocate	.	transport		1		1	
+heterodimerize	.	polymerize				1	1
+hasten	L	activate	1	1	1	1	
+heighten	.	activate	1	1	1	1	
+structural analog	.	analog	 			0	
+halt	.	inactivate		1	-1	1	
+incite	L	activate		1	1	1	
+synergistic cooperation	P	synergize				1	
+palmitoylate	.	createbond		1		1	1
+co-operate	.	bind; regulate				1	
+unpair	.	release				1	1
+polyubiquitinate	.	ubiquitinate		1	-1	1	1
+instigate	L	activate		1	1	1	
+steer	.	regulate	1	1		1	
+co-regulate	.	regulate				1	
+eject	.	release		1		1	
+cue	.	activate		1	1	1	
+catch	.	bind				1	1
+co-transcribe	.	transcribe				1	
+deamidate	.	breakbond		1		1	1
+bear on	.	bear upon	1			1	
+lift	.	activate	1	1	1	1	
+shut	.	inactivate		1	-1	1	
+nail	.	inactivate		1	-1	1	
+multimerize	.	polymerize				1	1
+touch	.	bear upon				1	1
+diphosphorylate	P	phosphorylate		1		1	1
+co-transfer	.	transfer				1	
+add up	.	bind				1	
+death	.	die	1			0	
+mannosylate	P	createbond		1		1	1
+settle	.	relocate	1			1	
+rout	.	transport		1		1	
+shut down	.	inactivate		1	-1	1	
+pick up	.	bind				1	1
+expedite	.	activate	1	1	1	1	
+secure	.	bind	1	1		1	
+speed up	.	activate	1	1	1	1	
+functional analog	.	analog				1	
+n-acetylate	P	createbond		1		1	1
+formylate	.	createbond		1		1	1
+arylate	.	createbond		1		1	1
+stick	.	bind				1	1
+urge	L	activate	1	1	1	1	
+carbamylate	P	createbond		1		1	1
+polyubiquitylate	.	ubiquitinate		1		1	1
+electrotransfer	.	physicalactiontype; transfer				1	1
+further	.	regulate	1	1		1	
+cross link	.	cross-link				1	1
+work synergistically	P	synergize				1	
+hypoacetylate	.	acetylate		1		1	1
+n-glycosylate	P	createbond		1		1	1
+disengage	.	release				1	1
+spark	.	activate	1	1	1	1	
+curb	.	regulate		1	-1	1	
+cross reacting	.	cross-react				0	
+homodimerize	.	bind				1	1
+function synergistically	P	synergize				1	
+have an active role in	.	activate	1	1	1	1	
+co-produce	.	produce	1			1	
+synergistic association	P	synergize				1	
+trigger off	.	trigger		1	-1	1	
+vie	.	compete				1	
+unblock	.	release	1	1	1	1	
+geranylgeranylate	.	createbond		1		1	1
+regularize	.	regulate	1	1		1	
+n-acylate	P	createbond		1		1	1
+pump out	.	pump	1	1		1	1
+stick to	.	stick				1	1
+underexpress	.	express	1			0	
+actuate	.	activate		1	1	1	
+DNA-wind	.	wind				1	1
+grab	.	bind				1	1
+DNA-unwind	.	unwind				1	
+bandage	.	bind				1	1
+co-translate	.	translate	1			0	
+recharge	.	charge		1		1	1
+rush	.	activate	1	1	1	1	
+ubiquitinize	P	ubiquitinate		1	-1	1	1
+co-translocate	.	translocate				0	
+effectuate	.	effect	1	1		1	
+fasten	.	bind; biochemicalactiontype				1	
+set off	.	activate		1	1	1	
+underproduce	.	produce	1	1		0	
+get rid of	.	inactivate; transport		1	-1	1	
+co-deliver	.	deliver	1			1	
+amidinate	.	createbond				1	1
+photoreactivate	L	activate		1		1	1
+inflect	.	regulate		1		1	
+mediate a signal	L	mediate		1		1	
+o-glycosylate	P	createbond		1		1	
+touch on	.	bear upon				1	
+xenolog	.	homolog				0	
+baffle	.	regulate	1	1		1	
+co-transmit	.	transmit		1		1	
+contend	.	compete				1	
+cysteinylate	.	createbond		1		1	1
+guanidinate	.	createbond		1		1	1
+hew	.	breakbond				1	1
+set free	.	release		1	1	1	
+bear upon	.	regulate		1		1	
+charge up	.	charge		1		1	1
+polyubiquitinylate	.	createbond		1	-1	1	1
+surcharge	.	charge		1		1	1
+synergistic integration	L	synergize				1	
+truss	.	bind				1	1
+actiontype	.		1			0	
+after	.	temporal	1			0	
+apprehend	.	inactivate		1	-1	1	
+before	.	temporal	1			0	
+biochemicalactiontype	.	actiontype				0	
+break-cys-cys-bond	.	breakbond		1		1	1
+breakbond	.	covalentlymodify				1	1
+callforth	.	activate		1	1	1	
+carboxyl-methylate	.	methylate		1		1	1
+causal	.	processrelationtype	1			1	
+causedby	.	causal	1	-1		1	
+channelize	.	channel				1	
+cisactivate	.	activate		1	1	1	1
+co-fractionate	.	physicalactiontype				0	
+co-immunoprecipitate	.	bind				1	
+co-localize	.	physicalactiontype				1	
+co-migrate	.	physicalactiontype				1	
+co-precipitate	.	bind				1	
+co-purify	.	physicalactiontype				1	
+complement	.	physicalactiontype				1	
+componentof	.	substancerelationtype				1	
+concurrent	.	temporal	1			0	
+consistof	.	substancerelationtype				1	
+convey a signal	.	regulate		1		1	
+covalentlymodify	.	biochemicalactiontype		1		1	1
+createbond	.	covalentlymodify				1	1
+dehydrolyze	.	breakbond		1		1	1
+enkindle	.	activate		1	1	1	
+farnesylate	.	createbond				1	1
+formdisulphidebond	.	createbond		1		1	1
+generalsimilarity	.	relationtype	1			0	
+getholdof	.	bind				1	
+giveup	.	release				1	
+gluthathionylate	.	createbond		1		1	1
+hassameimpact	.	relativeimpact	1			0	
+hasstrongerimpact	.	relativeimpact	1			0	
+hasweakerimpact	.	relativeimpact	1			0	
+heteropolymerize	.	bind				1	
+holdfast	.	bind				1	
+homopolymerize	.	bind				1	
+in response to	.	activate	1	-1	1	1	
+independentof	.	causal	1			0	
+isasreliableas	.	reliability	1			0	
+kickup	.	activate		1	1	1	
+letgo	.	release		1	1	1	
+letgoof	.	letgo		1	1	1	
+logicalactiontype	.	actiontype	1			0	
+make-cys-cys-bond	.	formdisulphidebond		1		1	1
+modifies	.	biochemicalactiontype		1		1	
+mono(adpribosy)late	.	createbond		1		1	1
+morelikelytobetrue	.	reliability	1			0	
+notsimilar	.	generalsimilarity				0	
+nucleotidylate	.	createbond		1		1	1
+o-phosphorylate	.	phosphorylate		1		1	1
+overcharge	.	charge		1		1	1
+physicalactiontype	.	actiontype				0	
+poly(adpribosy)late	.	createbond		1		1	1
+polyubiquitinize	.	ubiquitinate		1		1	1
+processrelationtype	.	relationtype	1			0	
+prolyl-4-hydroxylate	.	createbond		1		1	1
+property	.	relationtype	1			0	
+putout	.	release		1	1	1	
+raceup	.	activate		1	1	1	
+ravish	.	transport		1		1	
+relationtype	.		1			0	
+relativeimpact	.	processrelationtype	1			0	
+reliability	.	processrelationtype	1			0	
+remove-n-signal	.	breakbond		1		1	1
+rescue	.	inactivate		1	1	1	
+resequester	.	bind				1	1
+rna-unwind	.	unwind				1	1
+rna-wind	.	wind				1	1
+sensibilize	.	sensitize	1			1	
+sensify	.	sensitize	1			1	
+similar	.	generalsimilarity				0	
+stearoylate	.	createbond		1		1	1
+strongly	.	similar	1			0	
+substancerelationtype	.	relationtype				0	
+superactivate	.	activate		1	1	1	
+supercharge	.	charge		1		1	
+switch on the activity of	.	activate		1	1	1	
+temporal	.	processrelationtype	1			0	
+touchoff	.	activate		1	1	1	
+undercharge	.	charge	1	1		1	
+unfreeze	.	release	1	1	1	1	
+unloose	.	release	1	1	1	1	
+verbcomplex	.	form a complex				0	
+weakly	.	similar	1			0	

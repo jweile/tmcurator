@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='ca.on.mshri.tmcurator.TmCurator' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/TmCurator/data" class="ca.on.mshri.tmcurator.server.DataProviderServiceImpl" />
+
+</module>
