@@ -147,6 +147,7 @@ public class CurationPanel extends BorderLayoutContainer {
         container.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         container.setPack(BoxLayoutPack.CENTER);
         
+        //TODO: implement saving of progress
         container.add(new TextButton("< Previous", new SelectHandler() {
 
             @Override
@@ -180,8 +181,7 @@ public class CurationPanel extends BorderLayoutContainer {
 
             @Override
             public void onSelect(SelectEvent event) {
-                //TODO: Load greeting page on button click
-//                loadGreetingPage();
+                TmCurator.getInstance().loadGreetingPanel();
             }
             
         }), BoxConfig.MARGIN);

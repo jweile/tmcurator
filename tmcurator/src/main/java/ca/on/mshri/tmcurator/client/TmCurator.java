@@ -62,9 +62,10 @@ public class TmCurator implements EntryPoint {
         placeMainPanel();
         placeLoginButton();
         
+//        checkLogin();
+        
         loadGreetingPanel();
         
-//        showLoginDialog();
         
     }
     
@@ -108,22 +109,17 @@ public class TmCurator implements EntryPoint {
             public void onSuccess(Double result) {
                 TmCurator.LOAD_DIALOG.hide();
                 
-                placeGreetingPanel(result);
+                GreetingPanel gp = GreetingPanel.getInstance();
+                gp.setProgress(result);
+
+                mainPanel.clear();
+                mainPanel.add(gp);
+                mainPanel.forceLayout();
             }
 
         });
         
         
-    }
-    
-    
-    private void placeGreetingPanel(double progress) {
-        
-        GreetingPanel gp = GreetingPanel.getInstance();
-        gp.setProgress(progress);
-        
-        mainPanel.add(gp);
-        mainPanel.forceLayout();
     }
     
     
@@ -158,7 +154,7 @@ public class TmCurator implements EntryPoint {
     }
 
     
-    private void showLoginDialog() {
+    private void checkLogin() {
         
         LoginDialog ld = new LoginDialog();
         ld.show();

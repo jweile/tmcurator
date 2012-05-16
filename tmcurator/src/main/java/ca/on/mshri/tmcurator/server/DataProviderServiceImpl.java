@@ -38,6 +38,9 @@ import java.util.logging.Logger;
 public class DataProviderServiceImpl extends RemoteServiceServlet 
                                         implements DataProviderService {
 
+    //FIXME: Find a way to configure DB location.
+    private static final String DBFILE="/Users/jweile/tmp/tmcurator.db";
+    
     @Override
     public PairDataSheet nextPairSheet(String user) {
         return queryPairData(user,Inc.NEXT);
@@ -67,8 +70,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         
         try {
             
-            //TODO: Find a way to configure DB location.
-            db = DriverManager.getConnection("jdbc:sqlite:/Users/jweile/tmp/tmcurator.db");
+            db = DriverManager.getConnection("jdbc:sqlite:"+DBFILE);
             
             int curr = getProgress(db, user, Inc.CURR);
             int tot = getTotalPairNum(db);
@@ -122,8 +124,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         
         try {
             
-            //TODO: Find a way to configure DB location.
-            db = DriverManager.getConnection("jdbc:sqlite:/Users/jweile/tmp/tmcurator.db");
+            db = DriverManager.getConnection("jdbc:sqlite:"+DBFILE);
             
             
             int pairNum = getProgress(db,user,inc);
