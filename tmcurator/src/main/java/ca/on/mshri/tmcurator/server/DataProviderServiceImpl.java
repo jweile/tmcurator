@@ -40,34 +40,57 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
 
     @Override
     public PairDataSheet nextPairSheet(String user) {
-
-        return queryPairData(user);
-//        return fakeData();
+        return queryPairData(user,Inc.NEXT);
+    }
     
+    
+    @Override
+    public PairDataSheet currPairSheet(String user) {
+        return queryPairData(user,Inc.CURR);
     }
 
-//    private PairDataSheet fakeData() {
-//       
-//        PairDataSheet s =  new PairDataSheet();
-//        
-//        s.setG1Sym("ADR1");
-//        s.setG2Sym("ADH2");
-//        
-//        s.setPairNumber(1);
-//        s.setTotalPairNumber(1);
-//        
-//        List<Map<String,String>> mentions = new ArrayList<Map<String, String>>();
-//        
-//        Map<String,String> testMention = new HashMap<String, String>();
-//        testMention.put("pmid","12724405");
-//        testMention.put("sentence","Hyperacetylation of chromatin at the <span class=\"sym2\">ADH2</span> promoter allows <span class=\"sym1\">Adr1</span> to bind in repressed conditions.");
-//        
-//        mentions.add(testMention);
-//        s.setMentions(mentions);
-//        
-//        return s;
-//    }
+    @Override
+    public PairDataSheet prevPairSheet(String user) {
+        return queryPairData(user,Inc.PREV);
+    }
+
+    @Override
+    public double currProgress(String user) {
+        
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Cannot load SQLite JDBC driver.",ex);
+        }
+        
+        Connection db = null;
+        
+        try {
+            
+            //TODO: Find a way to configure DB location.
+            db = DriverManager.getConnection("jdbc:sqlite:/Users/jweile/tmp/tmcurator.db");
+            
+            int curr = getProgress(db, user, Inc.CURR);
+            int tot = getTotalPairNum(db);
+            
+            double progress = (double)curr / (double)tot;
+            
+            return progress;
+            
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Cannot connect to database!",ex);
+        } finally {
+            try {
+                db.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DataProviderServiceImpl.class.getName()).log(Level.SEVERE, 
+                        "Unable to close database connection", ex);
+            }
+        }
+    }
     
+
     private int totalPairNum = -1;
     
     private int getTotalPairNum(Connection db) {
@@ -87,7 +110,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     }
     
     
-    private PairDataSheet queryPairData(String user) {
+    private PairDataSheet queryPairData(String user, Inc inc) {
         
         try {
             Class.forName("org.sqlite.JDBC");
@@ -103,7 +126,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             db = DriverManager.getConnection("jdbc:sqlite:/Users/jweile/tmp/tmcurator.db");
             
             
-            int pairNum = getProgress(db,user,true);
+            int pairNum = getProgress(db,user,inc);
             int totPairNum = getTotalPairNum(db);
             
             if (pairNum <= totPairNum) {
@@ -177,13 +200,16 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         }
     }
 
-    private int getProgress(Connection db, String user, boolean increment) {
+    private int getProgress(Connection db, String user, Inc inc) {
         
         try {
             Statement qry = db.createStatement();
             
-            if (increment) {
-                qry.executeUpdate("UPDATE users SET current=current+1 WHERE name='user';");
+            if (inc != Inc.CURR) {
+                qry.executeUpdate(String.format(
+                        "UPDATE users SET current=current%s WHERE name='%s';",
+                        inc.mod(),
+                        user));
             }
             
             ResultSet result = qry.executeQuery(
@@ -195,6 +221,17 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot query database.",ex);
+        }
+    }
+
+    private enum Inc {
+        NEXT("+1"),CURR(""),PREV("-1");
+        private String modifier;
+        private Inc(String s) {
+            modifier = s;
+        }
+        public String mod(){
+            return modifier;
         }
     }
     

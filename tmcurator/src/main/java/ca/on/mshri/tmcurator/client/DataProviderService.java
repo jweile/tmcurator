@@ -29,4 +29,10 @@ public interface DataProviderService extends RemoteService {
     
     PairDataSheet nextPairSheet(String user);
     
+    PairDataSheet currPairSheet(String user);
+    
+    PairDataSheet prevPairSheet(String user);
+    
+    double currProgress(String user);
+    
 }

@@ -19,19 +19,11 @@ package ca.on.mshri.tmcurator.client;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
-import com.sencha.gxt.widget.core.client.ProgressBar;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
-import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
-import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
-import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
@@ -40,8 +32,15 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
  */
 public class TmCurator implements EntryPoint {
     
-    private ContentPanel mainPanel;
+    private static TmCurator instance = null;
     
+    private ContentPanel mainPanel;
+
+    public TmCurator() {
+        //unfortunately can't make constructor private as GWT has to call it from the outside.
+        instance = this;
+    }
+
     public static final AutoProgressMessageBox LOAD_DIALOG = 
                         new AutoProgressMessageBox("Please wait.", 
                                 "Loading. please wait."){{
@@ -51,16 +50,30 @@ public class TmCurator implements EntryPoint {
     
     //TODO: Implement real login functionality.
     public static final String MOCK_USER="user";
+
+    public static TmCurator getInstance() {
+        return instance;
+    }
+    
     
     @Override
     public void onModuleLoad() {
         
+        placeMainPanel();
         placeLoginButton();
         
-        placeGreetingPanel();
+        loadGreetingPanel();
         
-        showLoginDialog();
+//        showLoginDialog();
         
+    }
+    
+    private void placeMainPanel() {
+        mainPanel = new ContentPanel();
+        mainPanel.setHeaderVisible(false);
+        mainPanel.setHeight(600);
+        
+        RootPanel.get("main").add(mainPanel);
     }
     
     private void placeLoginButton() {
@@ -77,63 +90,50 @@ public class TmCurator implements EntryPoint {
         RootPanel.get("login").add(login);
     }
     
-    private void placeGreetingPanel() {
-        
-        VBoxLayoutContainer greet = new VBoxLayoutContainer();
-//        greet.setHeight(600);
-        greet.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.CENTER);
-        greet.setPack(BoxLayoutPack.CENTER);
-        
-        BoxLayoutData layout = new BoxLayoutData(new Margins(0,0,10,0));
-        
-        greet.add(new HTML("Welcome back!"),layout);
-        
-        ProgressBar progressbar = new ProgressBar();
-        progressbar.updateProgress(.2, "Curation progress: 20%");
-        greet.add(progressbar, layout);
-        
-        TextButton continueButton = new TextButton("Continue");
-        continueButton.addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                loadCurationPanel();
-            }
-
-        });
-        greet.add(continueButton, layout);
-        
-        mainPanel = new ContentPanel();
-        mainPanel.setHeaderVisible(false);
-        mainPanel.setHeight(600);
-        
-        mainPanel.add(greet);
-        mainPanel.forceLayout();
-        
-        RootPanel.get("main").add(mainPanel);
-    }
-    
-    
-    public void loadCurationPanel() {
-        
-//        CenterLayoutContainer panel = new CenterLayoutContainer();
-//        panel.setHeight(600);
-//        
-//        AutoProgressBar pb = new AutoProgressBar();
-//        pb.updateText("Loading...");
-//        panel.add(pb);
-//        
-//        mainPanel.clear();
-//        mainPanel.add(panel);
-//        mainPanel.forceLayout();
-//        
-//        pb.auto();
+    public void loadGreetingPanel() {
         
         LOAD_DIALOG.show();
         
         DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
-        dataService.nextPairSheet(MOCK_USER, new AsyncCallback<PairDataSheet>() {
+        dataService.currProgress(MOCK_USER, new AsyncCallback<Double>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
+                displayError(caught);
+            }
+
+            @Override
+            public void onSuccess(Double result) {
+                TmCurator.LOAD_DIALOG.hide();
+                
+                placeGreetingPanel(result);
+            }
+
+        });
+        
+        
+    }
+    
+    
+    private void placeGreetingPanel(double progress) {
+        
+        GreetingPanel gp = GreetingPanel.getInstance();
+        gp.setProgress(progress);
+        
+        mainPanel.add(gp);
+        mainPanel.forceLayout();
+    }
+    
+    
+    public void loadCurationPanel() {
+                
+        LOAD_DIALOG.show();
+        
+        DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+        
+        dataService.currPairSheet(MOCK_USER, new AsyncCallback<PairDataSheet>() {
 
             @Override
             public void onFailure(Throwable caught) {

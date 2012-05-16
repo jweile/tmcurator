@@ -147,8 +147,45 @@ public class CurationPanel extends BorderLayoutContainer {
         container.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         container.setPack(BoxLayoutPack.CENTER);
         
-        container.add(new TextButton("< Previous"), BoxConfig.MARGIN);
-        container.add(new TextButton("Home"), BoxConfig.MARGIN);
+        container.add(new TextButton("< Previous", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                
+                TmCurator.LOAD_DIALOG.show();
+        
+                DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+                dataService.prevPairSheet(TmCurator.MOCK_USER, new AsyncCallback<PairDataSheet>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        TmCurator.LOAD_DIALOG.hide();
+                        displayError(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(PairDataSheet result) {
+
+                        TmCurator.LOAD_DIALOG.hide();
+                        CurationPanel.this.updatePairData(result);
+
+                    }
+
+                });
+            }
+            
+        }), BoxConfig.MARGIN);
+        
+        container.add(new TextButton("Home", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                //TODO: Load greeting page on button click
+//                loadGreetingPage();
+            }
+            
+        }), BoxConfig.MARGIN);
+        
         container.add(new TextButton("Next >", new SelectHandler() {
 
             @Override
