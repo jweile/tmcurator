@@ -86,8 +86,6 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         }
     }
     
-    //TODO: Implement user row counter.
-    private static final int MOCK_ROW=201;
     
     private PairDataSheet queryPairData(String user) {
         
@@ -101,20 +99,28 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         
         try {
             
+            //TODO: Find a way to configure DB location.
             db = DriverManager.getConnection("jdbc:sqlite:/Users/jweile/tmp/tmcurator.db");
             
-            int pairNum = MOCK_ROW;
             
-            PairDataSheet s = new PairDataSheet();
+            int pairNum = getProgress(db,user,true);
+            int totPairNum = getTotalPairNum(db);
             
-            s.setPairNumber(pairNum);
-            s.setTotalPairNumber(getTotalPairNum(db));
-            
-            obtainPairInfo(pairNum, s,db);
-            
-            s.setMentions(obtainMentions(pairNum, db));
-            
-            return s;
+            if (pairNum <= totPairNum) {
+                PairDataSheet s = new PairDataSheet();
+
+                s.setPairNumber(pairNum);
+                s.setTotalPairNumber(totPairNum);
+
+                obtainPairInfo(pairNum, s,db);
+
+                s.setMentions(obtainMentions(pairNum, db));
+
+                return s;
+            } else {
+                //FIXME: make sure frontend accounts for EOL case
+                return null;
+            }
             
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot connect to database!",ex);
@@ -165,6 +171,27 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             }
             
             return list;
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Cannot query database.",ex);
+        }
+    }
+
+    private int getProgress(Connection db, String user, boolean increment) {
+        
+        try {
+            Statement qry = db.createStatement();
+            
+            if (increment) {
+                qry.executeUpdate("UPDATE users SET current=current+1 WHERE name='user';");
+            }
+            
+            ResultSet result = qry.executeQuery(
+                    String.format("SELECT current FROM users WHERE name='%s';",
+                    user));
+            
+            result.next();
+            return result.getInt("current");
             
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot query database.",ex);

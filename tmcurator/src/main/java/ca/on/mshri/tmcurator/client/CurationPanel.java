@@ -17,16 +17,21 @@
 package ca.on.mshri.tmcurator.client;
 
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
 import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import java.util.Map;
 
 /**
@@ -144,9 +149,44 @@ public class CurationPanel extends BorderLayoutContainer {
         
         container.add(new TextButton("< Previous"), BoxConfig.MARGIN);
         container.add(new TextButton("Home"), BoxConfig.MARGIN);
-        container.add(new TextButton("Next >"), BoxConfig.MARGIN);
+        container.add(new TextButton("Next >", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                
+                TmCurator.LOAD_DIALOG.show();
+        
+                DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+                dataService.nextPairSheet(TmCurator.MOCK_USER, new AsyncCallback<PairDataSheet>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        TmCurator.LOAD_DIALOG.hide();
+                        displayError(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(PairDataSheet result) {
+
+                        TmCurator.LOAD_DIALOG.hide();
+                        CurationPanel.this.updatePairData(result);
+
+                    }
+
+                });
+            }
+            
+        }), BoxConfig.MARGIN);
         
         return container;
+    }
+    
+    
+    private void displayError(Throwable caught) {
+        
+        AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
+        RootPanel.get().add(b);
+        b.show();
     }
     
     

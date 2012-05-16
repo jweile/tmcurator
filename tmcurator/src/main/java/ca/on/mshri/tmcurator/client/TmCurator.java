@@ -22,14 +22,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sencha.gxt.core.client.util.Margins;
-import com.sencha.gxt.widget.core.client.AutoProgressBar;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.ProgressBar;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
+import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
-import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
@@ -42,6 +41,16 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 public class TmCurator implements EntryPoint {
     
     private ContentPanel mainPanel;
+    
+    public static final AutoProgressMessageBox LOAD_DIALOG = 
+                        new AutoProgressMessageBox("Please wait.", 
+                                "Loading. please wait."){{
+                                    setModal(true);
+                                    auto();
+                                }};
+    
+    //TODO: Implement real login functionality.
+    public static final String MOCK_USER="user";
     
     @Override
     public void onModuleLoad() {
@@ -104,23 +113,23 @@ public class TmCurator implements EntryPoint {
         RootPanel.get("main").add(mainPanel);
     }
     
-    //TODO: Implement real login functionality.
-    private static final String MOCK_USER="user";
     
-    private void loadCurationPanel() {
+    public void loadCurationPanel() {
         
-        CenterLayoutContainer panel = new CenterLayoutContainer();
-        panel.setHeight(600);
+//        CenterLayoutContainer panel = new CenterLayoutContainer();
+//        panel.setHeight(600);
+//        
+//        AutoProgressBar pb = new AutoProgressBar();
+//        pb.updateText("Loading...");
+//        panel.add(pb);
+//        
+//        mainPanel.clear();
+//        mainPanel.add(panel);
+//        mainPanel.forceLayout();
+//        
+//        pb.auto();
         
-        AutoProgressBar pb = new AutoProgressBar();
-        pb.updateText("Loading...");
-        panel.add(pb);
-        
-        mainPanel.clear();
-        mainPanel.add(panel);
-        mainPanel.forceLayout();
-        
-        pb.auto();
+        LOAD_DIALOG.show();
         
         DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
@@ -128,14 +137,16 @@ public class TmCurator implements EntryPoint {
 
             @Override
             public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
                 displayError(caught);
             }
 
             @Override
             public void onSuccess(PairDataSheet result) {
                 
+                TmCurator.LOAD_DIALOG.hide();
+                
                 CurationPanel p = CurationPanel.getInstance();
-
                 p.updatePairData(result);
                 
                 mainPanel.clear();
