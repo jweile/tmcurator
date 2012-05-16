@@ -18,11 +18,14 @@ package ca.on.mshri.tmcurator.client;
 
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
+import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
+import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import java.util.Map;
 
@@ -38,11 +41,8 @@ public class CurationPanel extends BorderLayoutContainer {
     
     private VBoxLayoutContainer interpretationPanel;
     
-    private static final BoxLayoutData margin = new BoxLayoutData(new Margins(5,5,5,5));
+    private VerdictControls verdictControls;
     
-    private static final BoxLayoutData flexMargin = new BoxLayoutData(new Margins(5,5,5,5)){{
-        setFlex(1);
-    }};
     
     private CurationPanel() {
         
@@ -60,7 +60,7 @@ public class CurationPanel extends BorderLayoutContainer {
         docPanel.setHeight(1000);
         docPanel.setStyleName("forcewhite", true);
         
-        docPanel.add(new HTML("<b>Sentence interpretations</b>"),margin);
+        docPanel.add(new HTML("<b>Sentence interpretations</b>"),BoxConfig.MARGIN);
         
         ContentPanel interpretationFrame = new ContentPanel();
         interpretationFrame.setHeaderVisible(false);
@@ -69,7 +69,17 @@ public class CurationPanel extends BorderLayoutContainer {
         interpretationPanel.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
         
         interpretationFrame.add(interpretationPanel);
-        docPanel.add(interpretationFrame, margin);
+        docPanel.add(interpretationFrame, BoxConfig.MARGIN);
+        
+        docPanel.add(new HTML("<br/><b>Verdict</b>"),BoxConfig.MARGIN);
+        
+        verdictControls = new VerdictControls();
+        ContentPanel verdictControlBox = new ContentPanel();
+        verdictControlBox.setHeight(100);
+        verdictControlBox.add(verdictControls);
+        docPanel.add(verdictControlBox, BoxConfig.MARGIN);
+        
+        docPanel.add(makeButtonPanel(), BoxConfig.MARGIN);
         
         scrollPanel.add(docPanel);
         setCenterWidget(scrollPanel);
@@ -108,7 +118,7 @@ public class CurationPanel extends BorderLayoutContainer {
         for (Map<String,String> mention : pData.getMentions()) {
             
             MentionContainer mentionContainer = new MentionContainer(mention);
-            interpretationPanel.add(mentionContainer, margin);
+            interpretationPanel.add(mentionContainer, BoxConfig.MARGIN);
             
         }
         
@@ -123,6 +133,20 @@ public class CurationPanel extends BorderLayoutContainer {
         docPanel.setHeight(height+300);
         
         forceLayout();
+    }
+
+
+    private IsWidget makeButtonPanel() {
+        HBoxLayoutContainer container = new HBoxLayoutContainer();
+        container.setHeight(50);
+        container.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
+        container.setPack(BoxLayoutPack.CENTER);
+        
+        container.add(new TextButton("< Previous"), BoxConfig.MARGIN);
+        container.add(new TextButton("Home"), BoxConfig.MARGIN);
+        container.add(new TextButton("Next >"), BoxConfig.MARGIN);
+        
+        return container;
     }
     
     

@@ -18,15 +18,10 @@ package ca.on.mshri.tmcurator.client;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.cell.core.client.ButtonCell.IconAlign;
-import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
-import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
-import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
@@ -38,11 +33,6 @@ import java.util.Map;
  */
 public class MentionContainer extends ContentPanel {
     
-    private static final BoxLayoutData margin = new BoxLayoutData(new Margins(5,5,5,5));
-    
-    private static final BoxLayoutData flexMargin = new BoxLayoutData(new Margins(5,5,5,5)){{
-        setFlex(1);
-    }};
     
     public MentionContainer(Map<String,String> mention) {
             setCollapsible(true);
@@ -69,7 +59,7 @@ public class MentionContainer extends ContentPanel {
             
             VBoxLayoutContainer pmButtonContainer = new VBoxLayoutContainer();
             pmButtonContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
-            pmButtonContainer.add(pmButton,margin);
+            pmButtonContainer.add(pmButton, BoxConfig.MARGIN);
             
             borderLayout.setWestWidget(pmButtonContainer);
             
@@ -80,37 +70,15 @@ public class MentionContainer extends ContentPanel {
             textBox.setHeaderVisible(false);
             textBox.add(new HTML(mention.get("sentence")));
             
-            innerContainer.add(textBox, flexMargin);
+            innerContainer.add(textBox, BoxConfig.FLEX_MARGIN);
             
-            innerContainer.add(makeCurationControls(),flexMargin);
+            innerContainer.add(new VerdictControls(), BoxConfig.FLEX_MARGIN);
             
             borderLayout.setCenterWidget(innerContainer);
             
             add(borderLayout);
     }
     
-    private IsWidget makeCurationControls() {
-        BorderLayoutContainer controls = new BorderLayoutContainer();
-        BorderLayoutData borderData = new BorderLayoutData(300);
-        
-        HBoxLayoutContainer buttonPanel = new HBoxLayoutContainer();
-        buttonPanel.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
-        buttonPanel.add(new TextButton("Switch"),flexMargin);
-        buttonPanel.add(new TextButton("Negate"),flexMargin);
-        buttonPanel.add(new TextButton("Action"),flexMargin);
-        
-        controls.setEastWidget(buttonPanel, borderData);
-        
-        ContentPanel imageBox = new ContentPanel();
-        imageBox.setHeaderVisible(false);
-        
-        HTML image = new HTML("Image here");
-        
-        imageBox.add(image);
-        
-        controls.setCenterWidget(imageBox);
-        
-        return controls;
-    }
+    
     
 }
