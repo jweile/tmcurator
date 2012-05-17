@@ -22,6 +22,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -173,23 +174,31 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         }
     }
 
+    private static final String mentionQuery = new StringBuilder()
+            .append("SELECT pmid, sentence, citation, type1, type2, upstream, ")
+            .append("downstream, actionType, updown, effect, close_connection ")
+            .append("FROM pairs,mentions,articles,actiontypes ")
+            .append("WHERE mentions.pair_id=pairs.id ")
+            .append("AND mentions.actionType=actiontypes.name ")
+            .append("AND mentions.article_id=articles.id ")
+            .append("AND pairs.ROWID='%s';")
+            .toString();
+    
     private List<Map<String, String>> obtainMentions(int pairNum, Connection db) {
         List<Map<String,String>> list = new ArrayList<Map<String, String>>();
         try {
             Statement qry = db.createStatement();
-            ResultSet result = qry.executeQuery(
-                    String.format("SELECT pmid,sentence "
-                    + "FROM pairs,mentions,articles "
-                    + "WHERE mentions.pair_id=pairs.id "
-                    + "AND mentions.article_id=articles.id "
-                    + "AND pairs.ROWID='%s';",
-                    pairNum));
+            ResultSet result = qry.executeQuery(String.format(mentionQuery,pairNum));
+            
+            ResultSetMetaData rsmd = result.getMetaData();
             
             while (result.next()) {
                 Map<String,String> map = new HashMap<String, String>();
                 
-                map.put("pmid",result.getString("pmid"));
-                map.put("sentence", result.getString("sentence"));
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                    String cname = rsmd.getColumnName(i);
+                    map.put(cname, result.getString(cname));
+                }
                 
                 list.add(map);
             }

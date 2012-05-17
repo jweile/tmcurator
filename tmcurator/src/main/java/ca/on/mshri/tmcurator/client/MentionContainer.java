@@ -18,6 +18,7 @@ package ca.on.mshri.tmcurator.client;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sencha.gxt.cell.core.client.ButtonCell.IconAlign;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -34,7 +35,7 @@ import java.util.Map;
 public class MentionContainer extends ContentPanel {
     
     
-    public MentionContainer(Map<String,String> mention) {
+    public MentionContainer(Map<String,String> mention, String g1sym) {
             setCollapsible(true);
             setHeight(200);
             
@@ -68,11 +69,14 @@ public class MentionContainer extends ContentPanel {
             
             ContentPanel textBox = new ContentPanel();
             textBox.setHeaderVisible(false);
-            textBox.add(new HTML(mention.get("sentence")));
+            textBox.add(new ScrollPanel(new HTML(mention.get("sentence"))));
             
             innerContainer.add(textBox, BoxConfig.FLEX_MARGIN);
             
-            innerContainer.add(new VerdictControls(), BoxConfig.FLEX_MARGIN);
+            VerdictControls verdictControls = new VerdictControls();
+            verdictControls.configureImage(mention,g1sym);
+            
+            innerContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
             
             borderLayout.setCenterWidget(innerContainer);
             

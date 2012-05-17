@@ -71,6 +71,6 @@ public class DataProviderServiceImplTest extends TestCase {
                 .append(map.get("sentence"))
                 .append("\n\n");
         }
-        System.err.println(b.toString());
+        System.out.println(b.toString());
     }
 }

@@ -35,4 +35,65 @@ public interface Resources extends ClientBundle {
     @Source("ca/on/mshri/tmcurator/client/document.png")
     ImageResource document();
     
+    
+    @Source("ca/on/mshri/tmcurator/client/gene.jpg")
+    ImageResource gene();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/protein.jpg")
+    ImageResource protein();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/unknown.jpg")
+    ImageResource unknown();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_-1_-1_0.jpg")
+    ImageResource arrowNegNegNull();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_-1_-1_1.jpg")
+    ImageResource arrowNegNegPos();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_-1_0_0.jpg")
+    ImageResource arrowNegNullNull();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_-1_0_1.jpg")
+    ImageResource arrowNegNullPos();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_-1_1_0.jpg")
+    ImageResource arrowNegPosNull();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_0_0_0.jpg")
+    ImageResource arrowNullNullNull();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_0_0_1.jpg")
+    ImageResource arrowNullNullPos();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_1_-1_0.jpg")
+    ImageResource arrowPosNegNull();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_1_0_0.jpg")
+    ImageResource arrowPosNullNull();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_1_0_1.jpg")
+    ImageResource arrowPosNullPos();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_1_1_0.jpg")
+    ImageResource arrowPosPosNull();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/arrow_1_1_1.jpg")
+    ImageResource arrowPosPosPos();
+    
+    
 }

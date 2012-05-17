@@ -122,7 +122,7 @@ public class CurationPanel extends BorderLayoutContainer {
         
         for (Map<String,String> mention : pData.getMentions()) {
             
-            MentionContainer mentionContainer = new MentionContainer(mention);
+            MentionContainer mentionContainer = new MentionContainer(mention,pData.getG1Sym());
             interpretationPanel.add(mentionContainer, BoxConfig.MARGIN);
             
         }
