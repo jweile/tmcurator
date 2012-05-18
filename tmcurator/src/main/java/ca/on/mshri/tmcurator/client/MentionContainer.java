@@ -35,7 +35,7 @@ import java.util.Map;
 public class MentionContainer extends ContentPanel {
     
     
-    public MentionContainer(Map<String,String> mention, String g1sym) {
+    public MentionContainer(Map<String,String> mention, String g1sym, String g2sym) {
             setCollapsible(true);
             setHeight(200);
             
@@ -74,7 +74,7 @@ public class MentionContainer extends ContentPanel {
             innerContainer.add(textBox, BoxConfig.FLEX_MARGIN);
             
             VerdictControls verdictControls = new VerdictControls();
-            verdictControls.configureImage(mention,g1sym);
+            verdictControls.configureImage(mention,g1sym,g2sym);
             
             innerContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
             

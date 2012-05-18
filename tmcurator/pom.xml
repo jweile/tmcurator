@@ -106,6 +106,7 @@
           <runTarget>TmCurator.html</runTarget>
           <hostedWebapp>${webappDirectory}</hostedWebapp>
 <!--          <i18nMessagesBundle>de.weile.client.Messages</i18nMessagesBundle>-->
+          <extraJvmArgs>-Dca.on.mshri.tmcurator.db=${basedir}/src/test/resources/tmcurator.db</extraJvmArgs>
         </configuration>
       </plugin>
 

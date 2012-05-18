@@ -66,11 +66,10 @@ public class VerdictControls extends BorderLayoutContainer{
     }
     
     
-    public void configureImage(Map<String,String> data, String g1sym) {
+    public void configureImage(Map<String,String> data, String g1sym, String g2sym) {
         
         ImageResource left = getTypeImage(data.get("type1"));
         ImageResource right = getTypeImage(data.get("type2"));
-        String legendText = makeLegend(data.get("updown"), data.get("downstream"), data.get("upstream"), data.get("actionType"));
         
         int orderInt, effectInt, closeInt;
         try {
@@ -84,6 +83,8 @@ public class VerdictControls extends BorderLayoutContainer{
         if (!data.get("upstream").equalsIgnoreCase(g1sym)) {
             orderInt *= -1;
         }
+        
+        String legendText = g1sym + " -- \"" + data.get("actionType") + "\" -- " + g2sym;
         
         IsWidget canvas = drawImage(left, right, orderInt, effectInt, closeInt, legendText);
         imageBoxCenter.add(canvas);
@@ -101,16 +102,6 @@ public class VerdictControls extends BorderLayoutContainer{
         }
     }
 
-    private String makeLegend(String order, String a, String b, String type) {
-        boolean reverse = order.equals("-1");
-        return new StringBuilder()
-                .append(reverse ? b : a)
-                .append(" ")
-                .append(type)
-                .append(" ")
-                .append(reverse ? a : b)
-                .toString();
-    }
     
     private IsWidget drawImage(ImageResource lImage, ImageResource rImage, 
             int order, int effect, int close, String legend) {
