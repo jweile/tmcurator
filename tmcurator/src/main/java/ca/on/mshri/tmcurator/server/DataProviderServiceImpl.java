@@ -40,7 +40,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                                         implements DataProviderService {
 
     //FIXME: Find a way to configure DB location.
-    private static final String DBFILE="/Users/jweile/tmp/tmcurator.db";
+    private static final String DBFILE = 
+            System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
     
     @Override
     public PairDataSheet nextPairSheet(String user) {

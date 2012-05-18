@@ -27,8 +27,14 @@ import static org.junit.Assert.*;
  * @author jweile
  */
 public class DataProviderServiceImplTest extends TestCase {
-    
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        System.setProperty("ca.on.mshri.tmcurator.db","src/test/resources/tmcurator.db");
+    }
+    
+    
     /**
      * Test of nextPairSheet method, of class DataProviderServiceImpl.
      */

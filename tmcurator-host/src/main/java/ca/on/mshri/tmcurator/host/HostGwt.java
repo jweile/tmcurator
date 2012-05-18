@@ -43,7 +43,9 @@ public class HostGwt {
         try {
             
             setupLogging();
-
+           
+            checkDatabase();
+            
             new HostGwt().run();
         
         } catch (Throwable t) {
@@ -108,6 +110,16 @@ public class HostGwt {
         }
 
         Logger.getLogger(HostGwt.class.getName()).log(Level.SEVERE, b.toString());
+    }
+
+    private static void checkDatabase() {
+        
+        String dbpath = System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
+        File dbfile = new File(dbpath);
+        if (!(dbfile.exists() && dbfile.canRead())) {
+            throw new RuntimeException("Unable to read database at location "+dbpath+
+                    "\nSet system property ca.on.mshri.tmcurator.dbca.on.mshri.tmcurator.db");
+        }
     }
 
     private void run() throws Exception {
