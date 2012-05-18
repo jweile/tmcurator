@@ -51,6 +51,7 @@ public class DBInit {
                     + "article_id INTEGER, actionType TEXT, upstream TEXT, downstream TEXT, type1 TEXT, type2 TEXT, sentence TEXT );");
             statement.executeUpdate("CREATE TABLE actiontypes (name TEXT PRIMARY KEY , pl TEXT, parent TEXT, nbgp INTEGER,"
                     + "updown INTEGER, effect INTEGER, same_process INTEGER, close_connection INTEGER);");
+            statement.executeUpdate("CREATE TABLE users (name TEXT PRIMARY KEY, token TEXT, current INTEGER);");
             
             db.commit();
             
