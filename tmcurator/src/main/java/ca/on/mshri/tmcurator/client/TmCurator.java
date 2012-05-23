@@ -165,7 +165,7 @@ public class TmCurator implements EntryPoint {
     private void displayError(Throwable caught) {
         
         AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
-        RootPanel.get().add(b);
+//        RootPanel.get().add(b);
         b.show();
     }
     
