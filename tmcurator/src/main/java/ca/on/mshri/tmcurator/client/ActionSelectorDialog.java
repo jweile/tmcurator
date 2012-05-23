@@ -114,6 +114,10 @@ public class ActionSelectorDialog extends Dialog {
                 
                 setWidget(cp);
                 ActionSelectorDialog.this.forceLayout();
+                
+                if (caller != null) {
+                    select(caller.getAction());
+                }
             }
 
         });
@@ -132,11 +136,17 @@ public class ActionSelectorDialog extends Dialog {
 
     public void show(VerdictControls caller) {
         this.caller = caller;
-        String actionType = caller.getAction();
-        if (actionType != null) {
+        if (tree != null) {
+            select(caller.getAction());
+        }
+        show();
+    }
+    
+    private void select(String name) {
+        if (name != null) {
             Action action = null;
             for (Action a : tree.getStore().getAll()) {
-                if (a.getName().equals(actionType)) {
+                if (a.getName().equals(name)) {
                     action = a;
                     break;
                 }
@@ -147,8 +157,16 @@ public class ActionSelectorDialog extends Dialog {
                 expandPath(tree,action);
             }
         }
-        show();
     }
+    
+    
+    private void expandPath(Tree<Action, String> tree, Action action) {
+        for (Action p : action.getParents()) {
+            expandPath(tree, p);
+            tree.setExpanded(p, true);
+        }
+    }
+    
     
     
     private void fillTreeStore(Map<String, String> action2parents, TreeStore<Action> treeStore) {
@@ -206,11 +224,4 @@ public class ActionSelectorDialog extends Dialog {
         }
     }
 
-    private void expandPath(Tree<Action, String> tree, Action action) {
-        for (Action p : action.getParents()) {
-            expandPath(tree, p);
-            tree.setExpanded(action, true);
-        }
-    }
-    
 }
