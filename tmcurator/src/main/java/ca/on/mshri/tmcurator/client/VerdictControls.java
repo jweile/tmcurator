@@ -60,6 +60,7 @@ public class VerdictControls extends BorderLayoutContainer{
 
             @Override
             public void onSelect(SelectEvent event) {
+                //FIXME: direction switching doesn't work.
                 order.flip();
                 updateImage();
             }
@@ -94,7 +95,7 @@ public class VerdictControls extends BorderLayoutContainer{
         ImageResource rImage = getTypeImage(g2Type);
         String legend = g1Sym + " - \"" + action + "\" - " + g2Sym;
         
-        IsWidget canvas = drawImage(lImage, rImage, order, effect, close, legend);
+        IsWidget canvas = drawImage(lImage, rImage, legend);
         imageBoxCenter.setWidget(canvas);
         imageBoxCenter.forceLayout();
     }
@@ -108,7 +109,8 @@ public class VerdictControls extends BorderLayoutContainer{
         this.action = data.get("actionType");
                 
         try {
-            order = Order.fromInt(Integer.parseInt(data.get("updown")));
+            int orderInt = Integer.parseInt(data.get("updown"));
+            order = Order.fromInt(orderInt);
             effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
             close = Integer.parseInt(data.get("close_connection")) == 1;
         } catch (NumberFormatException e) {
@@ -132,9 +134,9 @@ public class VerdictControls extends BorderLayoutContainer{
         }
     }
 
-    
+    //FIXME: Try to keep the canvas and instead only redraw its surface?
     private IsWidget drawImage(ImageResource lImage, ImageResource rImage, 
-            Order order, Effect effect, boolean close, String legend) {
+            String legend) {
         int imageW = 40;
         int imageH = 30;
         int arrowW = 70;
@@ -220,7 +222,7 @@ public class VerdictControls extends BorderLayoutContainer{
         private int mod;
         
         private Order(int mod) {
-            mod = mod;
+            this.mod = mod;
         }
         
         static Order fromInt(int i) {
