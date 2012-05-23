@@ -74,7 +74,7 @@ public class MentionContainer extends ContentPanel {
             innerContainer.add(textBox, BoxConfig.FLEX_MARGIN);
             
             VerdictControls verdictControls = new VerdictControls();
-            verdictControls.configureImage(mention,g1sym,g2sym);
+            verdictControls.configure(mention,g1sym,g2sym);
             
             innerContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
             

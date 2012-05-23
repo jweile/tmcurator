@@ -42,7 +42,11 @@ public class VerdictControls extends BorderLayoutContainer{
     
     private CenterLayoutContainer imageBoxCenter;
     
-    private String action;
+    private String action, g1Sym, g2Sym, g1Type, g2Type;
+    
+    private Order order;
+    private Effect effect;
+    private boolean close;
     
     public VerdictControls() {
         
@@ -52,8 +56,17 @@ public class VerdictControls extends BorderLayoutContainer{
         buttonPanel.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         
         //TODO: implement verdict control functionality
-        buttonPanel.add(new TextButton("Switch"), BoxConfig.FLEX_MARGIN);
+        buttonPanel.add(new TextButton("Switch", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                order.flip();
+                updateImage();
+            }
+        }), BoxConfig.FLEX_MARGIN);
+        
         buttonPanel.add(new TextButton("Negate"), BoxConfig.FLEX_MARGIN);
+        
         buttonPanel.add(new TextButton("Action", new SelectHandler() {
 
             @Override
@@ -76,33 +89,37 @@ public class VerdictControls extends BorderLayoutContainer{
         
     }
     
+    public void updateImage() {
+        ImageResource lImage = getTypeImage(g1Type);
+        ImageResource rImage = getTypeImage(g2Type);
+        String legend = g1Sym + " - \"" + action + "\" - " + g2Sym;
+        
+        IsWidget canvas = drawImage(lImage, rImage, order, effect, close, legend);
+        imageBoxCenter.setWidget(canvas);
+        imageBoxCenter.forceLayout();
+    }
     
-    public void configureImage(Map<String,String> data, String g1sym, String g2sym) {
+    public void configure(Map<String,String> data, String g1sym, String g2sym) {
         
-        //TODO save config in object first.
-        
-        ImageResource left = getTypeImage(data.get("type1"));
-        ImageResource right = getTypeImage(data.get("type2"));
-        
-        int orderInt, effectInt, closeInt;
+        this.g1Sym = g1sym;
+        this.g2Sym = g2sym;
+        this.g1Type = data.get("type1");
+        this.g2Type = data.get("type2");
+        this.action = data.get("actionType");
+                
         try {
-            orderInt = Integer.parseInt(data.get("updown"));
-            effectInt = Integer.parseInt(data.get("effect"));
-            closeInt = Integer.parseInt(data.get("close_connection"));
+            order = Order.fromInt(Integer.parseInt(data.get("updown")));
+            effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
+            close = Integer.parseInt(data.get("close_connection")) == 1;
         } catch (NumberFormatException e) {
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }
         
         if (!data.get("upstream").equalsIgnoreCase(g1sym)) {
-            orderInt *= -1;
+            order = order.flip();
         }
-        
-        String legendText = g1sym + " -- \"" + data.get("actionType") + "\" -- " + g2sym;
-        
-        IsWidget canvas = drawImage(left, right, orderInt, effectInt, closeInt, legendText);
-        imageBoxCenter.add(canvas);
-        imageBoxCenter.forceLayout();
-        
+                
+        updateImage();
     }
 
     private ImageResource getTypeImage(String type) {
@@ -117,7 +134,7 @@ public class VerdictControls extends BorderLayoutContainer{
 
     
     private IsWidget drawImage(ImageResource lImage, ImageResource rImage, 
-            int order, int effect, int close, String legend) {
+            Order order, Effect effect, boolean close, String legend) {
         int imageW = 40;
         int imageH = 30;
         int arrowW = 70;
@@ -154,8 +171,8 @@ public class VerdictControls extends BorderLayoutContainer{
         
         x = imageW + arrowW / 2;
         y = imageW / 2;
-        int lw = close == 1 ? 20 : 30;
-        if (effect != 0) {
+        int lw = close ? 20 : 30;
+        if (effect != Effect.ACTIVATE) {
             g2.setStrokeStyle("red");
             g2.setFillStyle("red");
         }
@@ -165,9 +182,9 @@ public class VerdictControls extends BorderLayoutContainer{
         g2.closePath();
         g2.stroke();
         
-        if (order != 0) {
-            x = imageW + arrowW / 2 + order * lw;
-            if (effect == -1) {
+        if (order != Order.NONE) {
+            x = imageW + arrowW / 2 + order.mod() * lw;
+            if (effect == Effect.INHIBIT) {
                 g2.beginPath();
                 g2.arc(x,y, 4, 0, Math.PI * 2.0, true);
                 g2.closePath();
@@ -175,8 +192,8 @@ public class VerdictControls extends BorderLayoutContainer{
             } else {
                 g2.moveTo(x,y);
                 g2.beginPath();
-                g2.lineTo(x - order * 7, y-4);
-                g2.lineTo(x - order * 7, y+4);
+                g2.lineTo(x - order.mod() * 7, y-4);
+                g2.lineTo(x - order.mod() * 7, y+4);
                 g2.lineTo(x,y);
                 g2.closePath();
                 g2.fill();
@@ -187,15 +204,58 @@ public class VerdictControls extends BorderLayoutContainer{
     }
 
     void setAction(String a) {
+        //TODO: Actions should also determine 'close' and 'effect' values
         action = a;
-        
-        //TODO: redraw image after action selection.
+        updateImage();
     }
 
     String getAction() {
         return action;
     }
     
+    private static enum Order {
+        
+        FWD(1),BCK(-1),NONE(0);
+        
+        private int mod;
+        
+        private Order(int mod) {
+            mod = mod;
+        }
+        
+        static Order fromInt(int i) {
+            if (i > 0) {
+                return FWD;
+            } else if (i < 0) {
+                return BCK;
+            } else {
+                return NONE;
+            }
+        }
+        
+        Order flip() {
+            return fromInt(mod()*-1);
+        }
+        
+        int mod() {
+            return mod;
+        }
+    }
+    
+    private static enum Effect {
+        
+        INHIBIT,ACTIVATE,ENHANCE;
+        
+        static Effect fromInt(int i) {
+            if (i > 0) {
+                return ENHANCE;
+            } else if (i < 0) {
+                return INHIBIT;
+            } else {
+                return ACTIVATE;
+            }
+        }
+    }
     
     
 }
