@@ -19,11 +19,13 @@ package ca.on.mshri.tmcurator.client;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import java.util.Map;
 
 /**
  *
  * @author jweile
  */
+//FIXME: This path doesn't work with the async-autogeneration.
 @RemoteServiceRelativePath("data")
 public interface DataProviderService extends RemoteService {
     
@@ -34,5 +36,7 @@ public interface DataProviderService extends RemoteService {
     PairDataSheet prevPairSheet(String user);
     
     double currProgress(String user);
+    
+    Map<String,String> getActions();
     
 }

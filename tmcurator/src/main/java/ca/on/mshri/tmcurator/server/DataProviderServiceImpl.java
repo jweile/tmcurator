@@ -17,6 +17,7 @@
 package ca.on.mshri.tmcurator.server;
 
 import ca.on.mshri.tmcurator.client.DataProviderService;
+import ca.on.mshri.tmcurator.client.Action;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.sql.Connection;
@@ -39,7 +40,6 @@ import java.util.logging.Logger;
 public class DataProviderServiceImpl extends RemoteServiceServlet 
                                         implements DataProviderService {
 
-    //FIXME: Find a way to configure DB location.
     private static final String DBFILE = 
             System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
     
@@ -233,6 +233,60 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot query database.",ex);
         }
+    }
+
+    @Override
+    public Map<String,String> getActions() {
+        
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Cannot load SQLite JDBC driver.",ex);
+        }
+        
+        Connection db = null;
+        
+        try {
+            
+            db = DriverManager.getConnection("jdbc:sqlite:"+DBFILE);
+            
+            return _makeHierarchy(db);
+            
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Cannot connect to database!",ex);
+        } finally {
+            try {
+                db.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DataProviderServiceImpl.class.getName()).log(Level.SEVERE, 
+                        "Unable to close database connection", ex);
+            }
+        }
+        
+    }
+
+    
+    private Map<String,String> _makeHierarchy(Connection db) {
+        try {
+            
+            Map<String,String> map = new HashMap<String, String>();
+            
+            Statement qry = db.createStatement();
+            ResultSet r = qry.executeQuery("SELECT name, parent FROM actiontypes;");
+            
+            while(r.next()) {
+                String name = r.getString("name");
+                String parent = r.getString("parent");
+                map.put(name, parent);
+            }
+            
+            return map;
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Database query failed.", ex);
+        }
+        
     }
 
     private enum Inc {

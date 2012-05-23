@@ -28,6 +28,8 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import java.util.Map;
 
 /**
@@ -40,6 +42,8 @@ public class VerdictControls extends BorderLayoutContainer{
     
     private CenterLayoutContainer imageBoxCenter;
     
+    private String action;
+    
     public VerdictControls() {
         
         BorderLayoutData borderData = new BorderLayoutData(300);
@@ -50,7 +54,14 @@ public class VerdictControls extends BorderLayoutContainer{
         //TODO: implement verdict control functionality
         buttonPanel.add(new TextButton("Switch"), BoxConfig.FLEX_MARGIN);
         buttonPanel.add(new TextButton("Negate"), BoxConfig.FLEX_MARGIN);
-        buttonPanel.add(new TextButton("Action"), BoxConfig.FLEX_MARGIN);
+        buttonPanel.add(new TextButton("Action", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                ActionSelectorDialog.getInstance().show(VerdictControls.this);
+            }
+            
+        }), BoxConfig.FLEX_MARGIN);
         
         setEastWidget(buttonPanel, borderData);
         
@@ -67,6 +78,8 @@ public class VerdictControls extends BorderLayoutContainer{
     
     
     public void configureImage(Map<String,String> data, String g1sym, String g2sym) {
+        
+        //TODO save config in object first.
         
         ImageResource left = getTypeImage(data.get("type1"));
         ImageResource right = getTypeImage(data.get("type2"));
@@ -171,6 +184,16 @@ public class VerdictControls extends BorderLayoutContainer{
         }
         
         return canvas;
+    }
+
+    void setAction(String a) {
+        action = a;
+        
+        //TODO: redraw image after action selection.
+    }
+
+    String getAction() {
+        return action;
     }
     
     
