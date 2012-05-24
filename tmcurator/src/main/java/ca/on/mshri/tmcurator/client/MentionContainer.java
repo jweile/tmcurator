@@ -37,7 +37,7 @@ public class MentionContainer extends ContentPanel {
     
     public MentionContainer(Map<String,String> mention, String g1sym, String g2sym) {
             setCollapsible(true);
-            setHeight(200);
+            setHeight("200px");
             
             BorderLayoutContainer borderLayout = new BorderLayoutContainer();
             
@@ -64,21 +64,26 @@ public class MentionContainer extends ContentPanel {
             
             borderLayout.setWestWidget(pmButtonContainer);
             
-            VBoxLayoutContainer innerContainer = new VBoxLayoutContainer();
-            innerContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
+            VBoxLayoutContainer sentenceAndVerdictContainer = new VBoxLayoutContainer();
+            sentenceAndVerdictContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
             
             ContentPanel textBox = new ContentPanel();
             textBox.setHeaderVisible(false);
-            textBox.add(new ScrollPanel(new HTML(mention.get("sentence"))));
+            textBox.setWidget(
+                    new ScrollPanel(
+                            new HTML(mention.get("sentence"))
+                            )
+                    );
+            textBox.setHeight("2px");//don't ask me. it fixes the bug. no idea why.
             
-            innerContainer.add(textBox, BoxConfig.FLEX_MARGIN);
+            sentenceAndVerdictContainer.add(textBox, BoxConfig.FLEX_MARGIN);
             
             VerdictControls verdictControls = new VerdictControls();
             verdictControls.configure(mention,g1sym,g2sym);
             
-            innerContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
+            sentenceAndVerdictContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
             
-            borderLayout.setCenterWidget(innerContainer);
+            borderLayout.setCenterWidget(sentenceAndVerdictContainer);
             
             add(borderLayout);
     }
