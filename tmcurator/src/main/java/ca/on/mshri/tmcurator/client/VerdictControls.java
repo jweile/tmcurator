@@ -189,9 +189,10 @@ public class VerdictControls extends BorderLayoutContainer{
             x = imageW + arrowW / 2 + order.mod() * lw;
             if (effect == Effect.INHIBIT) {
                 g2.beginPath();
-                g2.arc(x,y, 4, 0, Math.PI * 2.0, true);
+                g2.moveTo(x, y-4);
+                g2.lineTo(x, y+4);
                 g2.closePath();
-                g2.fill();
+                g2.stroke();
             } else {
                 g2.moveTo(x,y);
                 g2.beginPath();
