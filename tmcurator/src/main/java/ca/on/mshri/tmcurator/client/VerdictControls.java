@@ -22,7 +22,6 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
@@ -40,16 +39,19 @@ public class VerdictControls extends BorderLayoutContainer{
 
     private static final BorderLayoutData scaffoldLayout = new BorderLayoutData(40);
     
-    private CenterLayoutContainer imageBoxCenter;
+    private Canvas canvas;
     
-    private String action, g1Sym, g2Sym, g1Type, g2Type;
+    private String action = "actiontype"; 
+    private String g1Sym = "", g2Sym = "";
     
-    private Order order;
-    private Effect effect;
-    private boolean close;
+    private Type g1Type = Type.UNKNOWN, g2Type = Type.UNKNOWN;
+    
+    private Order order = Order.NONE;
+    private Effect effect = Effect.ACTIVATE;
+    private boolean close = false;
     
     public VerdictControls() {
-        
+                
         BorderLayoutData borderData = new BorderLayoutData(300);
         
         HBoxLayoutContainer buttonPanel = new HBoxLayoutContainer();
@@ -60,9 +62,8 @@ public class VerdictControls extends BorderLayoutContainer{
 
             @Override
             public void onSelect(SelectEvent event) {
-                //FIXME: direction switching doesn't work.
-                order.flip();
-                updateImage();
+                order = order.flip();
+                repaint();
             }
         }), BoxConfig.FLEX_MARGIN);
         
@@ -81,31 +82,34 @@ public class VerdictControls extends BorderLayoutContainer{
         
         ContentPanel imageBox = new ContentPanel();
         imageBox.setHeaderVisible(false);
+        CenterLayoutContainer imageBoxCenter = new CenterLayoutContainer();
         
-        imageBoxCenter = new CenterLayoutContainer();
-        
+        canvas = Canvas.createIfSupported();
+        if (canvas != null) {
+            canvas.setSize("150px", "70px");
+            imageBoxCenter.setWidget(canvas);
+        } else {
+            imageBoxCenter.setWidget(new HTML("Browser does not support HTML5 Canvas!"));
+        }
+                
         imageBox.add(imageBoxCenter);
-        
         setCenterWidget(imageBox);
+        
         
     }
     
-    public void updateImage() {
-        ImageResource lImage = getTypeImage(g1Type);
-        ImageResource rImage = getTypeImage(g2Type);
-        String legend = g1Sym + " - \"" + action + "\" - " + g2Sym;
-        
-        IsWidget canvas = drawImage(lImage, rImage, legend);
-        imageBoxCenter.setWidget(canvas);
-        imageBoxCenter.forceLayout();
+    public void setGenePair(String g1sym, String g2sym) {
+        this.g1Sym = g1sym;
+        this.g2Sym = g2sym;
+        repaint();
     }
     
     public void configure(Map<String,String> data, String g1sym, String g2sym) {
         
         this.g1Sym = g1sym;
         this.g2Sym = g2sym;
-        this.g1Type = data.get("type1");
-        this.g2Type = data.get("type2");
+        this.g1Type = Type.fromString(data.get("type1"));
+        this.g2Type = Type.fromString(data.get("type2"));
         this.action = data.get("actionType");
                 
         try {
@@ -117,26 +121,20 @@ public class VerdictControls extends BorderLayoutContainer{
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }
         
-        if (!data.get("upstream").equalsIgnoreCase(g1sym)) {
+        if (!data.get("upstream").equalsIgnoreCase(g1Sym)) {
             order = order.flip();
         }
                 
-        updateImage();
+        repaint();
     }
 
-    private ImageResource getTypeImage(String type) {
-        if (type.equalsIgnoreCase("protein")) {
-            return Resources.INSTANCE.protein();
-        } else if (type.equalsIgnoreCase("gene")) {
-            return Resources.INSTANCE.gene();
-        } else {
-            return Resources.INSTANCE.unknown();
+
+    private void repaint() {
+        
+        if (canvas == null) {
+            return;
         }
-    }
-
-    //FIXME: Try to keep the canvas and instead only redraw its surface?
-    private IsWidget drawImage(ImageResource lImage, ImageResource rImage, 
-            String legend) {
+        
         int imageW = 40;
         int imageH = 30;
         int arrowW = 70;
@@ -144,16 +142,19 @@ public class VerdictControls extends BorderLayoutContainer{
         int totW = imageW * 2 + arrowW;
         int totH = imageH + txtH;
         
-        Canvas canvas = Canvas.createIfSupported();
-        if (canvas == null) {
-            return new HTML("Browser does not support HTML5 Canvas!");
-        }
-        
-        canvas.setSize(totW+"px", totH+"px");
         canvas.setCoordinateSpaceWidth(totW);
         canvas.setCoordinateSpaceHeight(totH);
         
         Context2d g2 = canvas.getContext2d();
+        
+        g2.setFillStyle("white");
+        g2.fillRect(0, 0, totW, totH);
+        
+        g2.setFillStyle("black");
+        g2.setLineWidth(.5);
+        
+        ImageResource lImage = g1Type.getImage();
+        ImageResource rImage = g2Type.getImage();
         
         int x = (imageW - lImage.getWidth())/2;
         int y = (imageH - lImage.getHeight())/2;
@@ -165,7 +166,7 @@ public class VerdictControls extends BorderLayoutContainer{
         ie = ImageElement.as((new Image(lImage.getSafeUri())).getElement());
         g2.drawImage(ie, imageW + arrowW + x, y);
         
-        g2.setLineWidth(.5);
+        String legend = g1Sym + " - \"" + action + "\" - " + g2Sym;
         
         g2.setTextAlign(Context2d.TextAlign.CENTER);
         g2.setTextBaseline(Context2d.TextBaseline.MIDDLE);
@@ -201,14 +202,12 @@ public class VerdictControls extends BorderLayoutContainer{
                 g2.fill();
             }
         }
-        
-        return canvas;
     }
 
     void setAction(String a) {
         //TODO: Actions should also determine 'close' and 'effect' values
         action = a;
-        updateImage();
+        repaint();
     }
 
     String getAction() {
@@ -256,6 +255,26 @@ public class VerdictControls extends BorderLayoutContainer{
             } else {
                 return ACTIVATE;
             }
+        }
+    }
+    
+    private static enum Type {
+        PROTEIN(Resources.INSTANCE.protein()), GENE(Resources.INSTANCE.gene()), UNKNOWN(Resources.INSTANCE.unknown());
+        private ImageResource r;
+        private Type(ImageResource r) {
+            this.r = r;
+        }
+        static Type fromString(String s) {
+            if (s.equalsIgnoreCase("protein")) {
+                return PROTEIN;
+            } else if (s.equalsIgnoreCase("gene")) {
+                return GENE;
+            } else {
+                return UNKNOWN;
+            }
+        }
+        private ImageResource getImage() {
+            return r;
         }
     }
     

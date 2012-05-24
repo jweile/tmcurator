@@ -138,6 +138,8 @@ public class CurationPanel extends BorderLayoutContainer {
         VBoxLayoutContainer docPanel = (VBoxLayoutContainer)interpretationFrame.getParent();
         docPanel.setHeight(height+300);
         
+        verdictControls.setGenePair(pData.getG1Sym(), pData.getG2Sym());
+        
         forceLayout();
     }
 
