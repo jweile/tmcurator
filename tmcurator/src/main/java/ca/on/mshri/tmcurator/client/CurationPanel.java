@@ -107,12 +107,12 @@ public class CurationPanel extends BorderLayoutContainer {
                 .append(":</span><br/><span class=\"sym1\">")
                 .append("<a href=\"http://www.yeastgenome.org/cgi-bin/search/luceneQS.fpl?query=")
                 .append(pData.getG1Sym())
-                .append("\">")
+                .append("\" target=\"_blank\">")
                 .append(pData.getG1Sym())
                 .append("</a></span> & <span class=\"sym2\">")
                 .append("<a href=\"http://www.yeastgenome.org/cgi-bin/search/luceneQS.fpl?query=")
                 .append(pData.getG2Sym())
-                .append("\">")
+                .append("\" target=\"_blank\">")
                 .append(pData.getG2Sym())
                 .append("</a></span>");
         
