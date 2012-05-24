@@ -17,7 +17,8 @@
 package ca.on.mshri.tmcurator.server;
 
 import ca.on.mshri.tmcurator.client.DataProviderService;
-import ca.on.mshri.tmcurator.client.Action;
+import ca.on.mshri.tmcurator.shared.Action;
+import ca.on.mshri.tmcurator.shared.Effect;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.sql.Connection;
@@ -236,7 +237,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     }
 
     @Override
-    public Map<String,String> getActions() {
+    public List<Action> getActions() {
         
         try {
             Class.forName("org.sqlite.JDBC");
@@ -250,7 +251,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             
             db = DriverManager.getConnection("jdbc:sqlite:"+DBFILE);
             
-            return _makeHierarchy(db);
+            return makeActionList(db);
             
             
         } catch (SQLException ex) {
@@ -267,21 +268,24 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     }
 
     
-    private Map<String,String> _makeHierarchy(Connection db) {
+    private List<Action> makeActionList(Connection db) {
         try {
             
-            Map<String,String> map = new HashMap<String, String>();
+            List<Action> list = new ArrayList<Action>();
             
             Statement qry = db.createStatement();
-            ResultSet r = qry.executeQuery("SELECT name, parent FROM actiontypes;");
+            ResultSet r = qry.executeQuery(
+                    "SELECT name, parent, effect, close_connection FROM actiontypes;");
             
             while(r.next()) {
                 String name = r.getString("name");
                 String parent = r.getString("parent");
-                map.put(name, parent);
+                int effect = r.getInt("effect");
+                int close = r.getInt("close_connection");
+                list.add(new Action(name,parent,Effect.fromInt(effect), close==1));
             }
             
-            return map;
+            return list;
             
         } catch (SQLException ex) {
             throw new RuntimeException("Database query failed.", ex);

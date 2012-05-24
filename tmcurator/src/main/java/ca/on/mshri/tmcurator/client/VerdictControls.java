@@ -16,6 +16,8 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import ca.on.mshri.tmcurator.shared.Action;
+import ca.on.mshri.tmcurator.shared.Effect;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -41,14 +43,12 @@ public class VerdictControls extends BorderLayoutContainer{
     
     private Canvas canvas;
     
-    private String action = "actiontype"; 
+    private Action action = null; 
     private String g1Sym = "", g2Sym = "";
     
-    private Type g1Type = Type.UNKNOWN, g2Type = Type.UNKNOWN;
+    private EntityType g1Type = EntityType.UNKNOWN, g2Type = EntityType.UNKNOWN;
     
     private Order order = Order.NONE;
-    private Effect effect = Effect.ACTIVATE;
-    private boolean close = false;
     
     public VerdictControls() {
                 
@@ -57,7 +57,6 @@ public class VerdictControls extends BorderLayoutContainer{
         HBoxLayoutContainer buttonPanel = new HBoxLayoutContainer();
         buttonPanel.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         
-        //TODO: implement verdict control functionality
         buttonPanel.add(new TextButton("Switch", new SelectHandler() {
 
             @Override
@@ -67,7 +66,14 @@ public class VerdictControls extends BorderLayoutContainer{
             }
         }), BoxConfig.FLEX_MARGIN);
         
-        buttonPanel.add(new TextButton("Negate"), BoxConfig.FLEX_MARGIN);
+        buttonPanel.add(new TextButton("Entities", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                EntitySelectorDialog.getInstance().show(VerdictControls.this);
+            }
+            
+        }), BoxConfig.FLEX_MARGIN);
         
         buttonPanel.add(new TextButton("Action", new SelectHandler() {
 
@@ -103,20 +109,36 @@ public class VerdictControls extends BorderLayoutContainer{
         this.g2Sym = g2sym;
         repaint();
     }
+
+    public EntityType getG1Type() {
+        return g1Type;
+    }
+
+    public EntityType getG2Type() {
+        return g2Type;
+    }
+
+    public void setEntityTypes(EntityType t1, EntityType t2) {
+        this.g1Type = t1;
+        this.g2Type = t2;
+        repaint();
+    }
+    
+    
     
     public void configure(Map<String,String> data, String g1sym, String g2sym) {
         
         this.g1Sym = g1sym;
         this.g2Sym = g2sym;
-        this.g1Type = Type.fromString(data.get("type1"));
-        this.g2Type = Type.fromString(data.get("type2"));
-        this.action = data.get("actionType");
+        this.g1Type = EntityType.fromString(data.get("type1"));
+        this.g2Type = EntityType.fromString(data.get("type2"));
                 
         try {
             int orderInt = Integer.parseInt(data.get("updown"));
             order = Order.fromInt(orderInt);
-            effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
-            close = Integer.parseInt(data.get("close_connection")) == 1;
+            Effect effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
+            boolean close = Integer.parseInt(data.get("close_connection")) == 1;
+            this.action = new Action(data.get("actionType"), "DECOY", effect, close);
         } catch (NumberFormatException e) {
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }
@@ -163,120 +185,59 @@ public class VerdictControls extends BorderLayoutContainer{
         
         x = (imageW - rImage.getWidth())/2;
         y = (imageH - rImage.getHeight())/2;
-        ie = ImageElement.as((new Image(lImage.getSafeUri())).getElement());
+        ie = ImageElement.as((new Image(rImage.getSafeUri())).getElement());
         g2.drawImage(ie, imageW + arrowW + x, y);
         
-        String legend = g1Sym + " - \"" + action + "\" - " + g2Sym;
+        String legend = g1Sym + " - \"" + 
+                (action != null ? action.getName() : "?") + 
+                "\" - " + g2Sym;
         
         g2.setTextAlign(Context2d.TextAlign.CENTER);
         g2.setTextBaseline(Context2d.TextBaseline.MIDDLE);
         g2.fillText(legend, totW/2, imageH + txtH / 2);
         
-        x = imageW + arrowW / 2;
-        y = imageW / 2;
-        int lw = close ? 20 : 30;
-        if (effect != Effect.ACTIVATE) {
-            g2.setStrokeStyle("red");
-            g2.setFillStyle("red");
-        }
-        g2.beginPath();
-        g2.moveTo(x-lw, y);
-        g2.lineTo(x+lw, y);
-        g2.closePath();
-        g2.stroke();
-        
-        if (order != Order.NONE) {
-            x = imageW + arrowW / 2 + order.mod() * lw;
-            if (effect == Effect.INHIBIT) {
-                g2.beginPath();
-                g2.moveTo(x, y-4);
-                g2.lineTo(x, y+4);
-                g2.closePath();
-                g2.stroke();
-            } else {
-                g2.moveTo(x,y);
-                g2.beginPath();
-                g2.lineTo(x - order.mod() * 7, y-4);
-                g2.lineTo(x - order.mod() * 7, y+4);
-                g2.lineTo(x,y);
-                g2.closePath();
-                g2.fill();
+        if (action != null) {
+            x = imageW + arrowW / 2;
+            y = imageW / 2;
+            int lw = action.isClose() ? 20 : 30;
+            if (action.getEffect() != Effect.ACTIVATE) {
+                g2.setStrokeStyle("red");
+                g2.setFillStyle("red");
+            }
+            g2.beginPath();
+            g2.moveTo(x-lw, y);
+            g2.lineTo(x+lw, y);
+            g2.closePath();
+            g2.stroke();
+
+            if (order != Order.NONE) {
+                x = imageW + arrowW / 2 + order.mod() * lw;
+                if (action.getEffect() == Effect.INHIBIT) {
+                    g2.beginPath();
+                    g2.moveTo(x, y-4);
+                    g2.lineTo(x, y+4);
+                    g2.closePath();
+                    g2.stroke();
+                } else {
+                    g2.moveTo(x,y);
+                    g2.beginPath();
+                    g2.lineTo(x - order.mod() * 7, y-4);
+                    g2.lineTo(x - order.mod() * 7, y+4);
+                    g2.lineTo(x,y);
+                    g2.closePath();
+                    g2.fill();
+                }
             }
         }
     }
 
-    void setAction(String a) {
-        //TODO: Actions should also determine 'close' and 'effect' values
+    void setAction(Action a) {
         action = a;
         repaint();
     }
 
-    String getAction() {
+    Action getAction() {
         return action;
-    }
-    
-    private static enum Order {
-        
-        FWD(1),BCK(-1),NONE(0);
-        
-        private int mod;
-        
-        private Order(int mod) {
-            this.mod = mod;
-        }
-        
-        static Order fromInt(int i) {
-            if (i > 0) {
-                return FWD;
-            } else if (i < 0) {
-                return BCK;
-            } else {
-                return NONE;
-            }
-        }
-        
-        Order flip() {
-            return fromInt(mod()*-1);
-        }
-        
-        int mod() {
-            return mod;
-        }
-    }
-    
-    private static enum Effect {
-        
-        INHIBIT,ACTIVATE,ENHANCE;
-        
-        static Effect fromInt(int i) {
-            if (i > 0) {
-                return ENHANCE;
-            } else if (i < 0) {
-                return INHIBIT;
-            } else {
-                return ACTIVATE;
-            }
-        }
-    }
-    
-    private static enum Type {
-        PROTEIN(Resources.INSTANCE.protein()), GENE(Resources.INSTANCE.gene()), UNKNOWN(Resources.INSTANCE.unknown());
-        private ImageResource r;
-        private Type(ImageResource r) {
-            this.r = r;
-        }
-        static Type fromString(String s) {
-            if (s.equalsIgnoreCase("protein")) {
-                return PROTEIN;
-            } else if (s.equalsIgnoreCase("gene")) {
-                return GENE;
-            } else {
-                return UNKNOWN;
-            }
-        }
-        private ImageResource getImage() {
-            return r;
-        }
     }
     
     

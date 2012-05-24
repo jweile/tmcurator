@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.on.mshri.tmcurator.client;
+package ca.on.mshri.tmcurator.shared;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,29 +25,59 @@ import java.util.List;
  *
  * @author jweile
  */
-public class Action {
-    
-    private static final KeyGen KG = new KeyGen();
+public class Action implements IsSerializable {
     
     private List<Action> parents;
     
     private String name;
     
-    private int _id;
+    private String _id;
 
     private List<Action> children;
     
-    public Action(String name) {
+    private boolean close;
+    
+    private Effect effect;
+    
+    private String parentStr;
+    
+    private Action() {
+        //for serialization
+    }
+    
+    public Action(String name, String parentStr, Effect effect, boolean close) {
         this.name = name;
-        this._id = KG.nextId();
+        this.parentStr = parentStr;
+        this.effect = effect;
+        this.close = close;
+        this._id = name;
+    }
+    
+    private Action(String name, Effect effect, boolean close, String cloneIdSuffix) {
+        this.name = name;
+        this.effect = effect;
+        this.close = close;
+        this._id = name+cloneIdSuffix;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getId() {
+    public String getId() {
         return _id;
+    }
+
+    public Effect getEffect() {
+        return effect;
+    }
+
+    public boolean isClose() {
+        return close;
+    }
+
+    public String getParentStr() {
+        return parentStr;
     }
     
     public List<Action> getParents() {
@@ -68,16 +99,7 @@ public class Action {
     public List<Action> getChildren() {
         return children == null ? Collections.EMPTY_LIST : children;
     }
-    
-//    public void purgeParents() {
-//        parent = null;
-//        if (children != null) {
-//            for (Action c : children) {
-//                c.purgeParents();
-//            }
-//        }
-//    }
-    
+       
     
     /**
      * Call only on fully formed tree. 
@@ -87,7 +109,7 @@ public class Action {
             for (int i = 1; i < getParents().size(); i++) {
                 Action parent = getParents().get(i);
                 parent.children.remove(this);
-                Action clone = duplicateSubTree();
+                Action clone = duplicateSubTree(this._id + i);
                 clone.addParent(parent);
             }
             Action newParent = getParents().get(0);
@@ -96,22 +118,15 @@ public class Action {
         }
     }
 
-    private Action duplicateSubTree() {
-        Action a2 = new Action(this.name);
+    private Action duplicateSubTree(String cloneIdSuffix) {
+        Action a2 = new Action(this.name, this.effect, this.close, cloneIdSuffix);
         
         for (Action c : getChildren()) {
-            Action c2 = c.duplicateSubTree();
+            Action c2 = c.duplicateSubTree(cloneIdSuffix);
             c2.addParent(a2);
         }
         
         return a2;
-    }
-    
-    public static class KeyGen {
-        int lastId = 0;
-        public int nextId() {
-            return ++lastId;
-        }
     }
     
     

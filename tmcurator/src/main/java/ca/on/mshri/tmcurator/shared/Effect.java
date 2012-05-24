@@ -14,30 +14,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.on.mshri.tmcurator.client;
-
-import ca.on.mshri.tmcurator.shared.Action;
-import ca.on.mshri.tmcurator.shared.PairDataSheet;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import java.util.List;
+package ca.on.mshri.tmcurator.shared;
 
 /**
  *
  * @author jweile
  */
-//FIXME: This path doesn't work with the async-autogeneration.
-@RemoteServiceRelativePath("data")
-public interface DataProviderService extends RemoteService {
-    
-    PairDataSheet nextPairSheet(String user);
-    
-    PairDataSheet currPairSheet(String user);
-    
-    PairDataSheet prevPairSheet(String user);
-    
-    double currProgress(String user);
-    
-    List<Action> getActions();
+ public enum Effect {
+    INHIBIT, ACTIVATE, ENHANCE;
+
+    public static Effect fromInt(int i) {
+        if (i > 0) {
+            return ENHANCE;
+        } else if (i < 0) {
+            return INHIBIT;
+        } else {
+            return ACTIVATE;
+        }
+    }
     
 }

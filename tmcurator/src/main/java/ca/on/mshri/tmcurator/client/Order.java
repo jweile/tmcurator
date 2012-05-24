@@ -16,28 +16,34 @@
  */
 package ca.on.mshri.tmcurator.client;
 
-import ca.on.mshri.tmcurator.shared.Action;
-import ca.on.mshri.tmcurator.shared.PairDataSheet;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import java.util.List;
-
 /**
  *
  * @author jweile
  */
-//FIXME: This path doesn't work with the async-autogeneration.
-@RemoteServiceRelativePath("data")
-public interface DataProviderService extends RemoteService {
-    
-    PairDataSheet nextPairSheet(String user);
-    
-    PairDataSheet currPairSheet(String user);
-    
-    PairDataSheet prevPairSheet(String user);
-    
-    double currProgress(String user);
-    
-    List<Action> getActions();
+ public enum Order {
+    FWD(1), BCK(-1), NONE(0);
+    private int mod;
+
+    private Order(int mod) {
+        this.mod = mod;
+    }
+
+    public static Order fromInt(int i) {
+        if (i > 0) {
+            return FWD;
+        } else if (i < 0) {
+            return BCK;
+        } else {
+            return NONE;
+        }
+    }
+
+    public Order flip() {
+        return fromInt(mod() * -1);
+    }
+
+    public int mod() {
+        return mod;
+    }
     
 }

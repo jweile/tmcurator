@@ -16,28 +16,33 @@
  */
 package ca.on.mshri.tmcurator.client;
 
-import ca.on.mshri.tmcurator.shared.Action;
-import ca.on.mshri.tmcurator.shared.PairDataSheet;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import java.util.List;
+import com.google.gwt.resources.client.ImageResource;
 
 /**
  *
  * @author jweile
  */
-//FIXME: This path doesn't work with the async-autogeneration.
-@RemoteServiceRelativePath("data")
-public interface DataProviderService extends RemoteService {
+ public enum EntityType {
+    PROTEIN(Resources.INSTANCE.protein()), GENE(Resources.INSTANCE.gene()), UNKNOWN(Resources.INSTANCE.unknown());
     
-    PairDataSheet nextPairSheet(String user);
-    
-    PairDataSheet currPairSheet(String user);
-    
-    PairDataSheet prevPairSheet(String user);
-    
-    double currProgress(String user);
-    
-    List<Action> getActions();
+    private ImageResource r;
+
+    private EntityType(ImageResource r) {
+        this.r = r;
+    }
+
+    public static EntityType fromString(String s) {
+        if (s.equalsIgnoreCase("protein")) {
+            return PROTEIN;
+        } else if (s.equalsIgnoreCase("gene")) {
+            return GENE;
+        } else {
+            return UNKNOWN;
+        }
+    }
+
+    public ImageResource getImage() {
+        return r;
+    }
     
 }

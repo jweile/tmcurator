@@ -16,6 +16,7 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import ca.on.mshri.tmcurator.shared.Action;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -54,7 +55,7 @@ public class ActionSelectorDialog extends Dialog {
 
             @Override
             public void onSelect(SelectEvent event) {
-                caller.setAction(tree.getSelectionModel().getSelectedItem().getName());
+                caller.setAction(tree.getSelectionModel().getSelectedItem());
                 ActionSelectorDialog.this.hide();
             }
         });
@@ -68,7 +69,7 @@ public class ActionSelectorDialog extends Dialog {
         setWidget(pbCon);
         
         DataProviderServiceAsync service = DataProviderServiceAsync.Util.getInstance();
-        service.getActions(new AsyncCallback<Map<String,String>>() {
+        service.getActions(new AsyncCallback<List<Action>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -78,7 +79,7 @@ public class ActionSelectorDialog extends Dialog {
             }
 
             @Override
-            public void onSuccess(Map<String,String> result) {
+            public void onSuccess(List<Action> result) {
                 
                 TreeStore<Action> treeStore = new TreeStore<Action>(new ModelKeyProvider<Action>(){
                     @Override
@@ -142,19 +143,21 @@ public class ActionSelectorDialog extends Dialog {
         show();
     }
     
-    private void select(String name) {
-        if (name != null) {
-            Action action = null;
-            for (Action a : tree.getStore().getAll()) {
-                if (a.getName().equals(name)) {
-                    action = a;
-                    break;
+    private void select(Action a) {
+        if (a != null) {
+            Action selectedAction = a;
+            if (a.getParentStr() != null && a.getParentStr().equals("DECOY")) {
+                for (Action aCurr : tree.getStore().getAll()) {
+                    if (aCurr.getName().equals(a.getName())) {
+                        selectedAction = aCurr;
+                        break;
+                    }
                 }
             }
-            if (action != null) {
-                tree.getSelectionModel().select(action, false);
+            if (selectedAction != null) {
+                tree.getSelectionModel().select(selectedAction, false);
                 tree.collapseAll();
-                expandPath(tree,action);
+                expandPath(tree,selectedAction);
             }
         }
     }
@@ -169,24 +172,23 @@ public class ActionSelectorDialog extends Dialog {
     
     
     
-    private void fillTreeStore(Map<String, String> action2parents, TreeStore<Action> treeStore) {
+    private void fillTreeStore(List<Action> actionList, TreeStore<Action> treeStore) {
         
         Map<String,Action> actions = new HashMap<String,Action>();
         
-        //register each type
-        for (String id : action2parents.keySet()) {
-            actions.put(id, new Action(id));
+        //register each action by name
+        for (Action a : actionList) {
+            actions.put(a.getName(), a);
         }
         
         //assign parents of each type
-        for (String id: action2parents.keySet()) {
-            String parentStr = action2parents.get(id);
-            if (parentStr != null && parentStr.trim().length() > 0) {
-                String[] parentIds = parentStr.split("; ");
+        for (Action a : actionList) {
+            if (a.getParentStr() != null && a.getParentStr().trim().length() > 0) {
+                String[] parentIds = a.getParentStr().split("; ");
                 for (String parentId : parentIds) {
                     Action parent = actions.get(parentId);
                     if (parent != null) {
-                        actions.get(id).addParent(parent);
+                        a.addParent(parent);
                     }
                 }
             }
@@ -194,7 +196,7 @@ public class ActionSelectorDialog extends Dialog {
         }
         
         //make clones of subtrees with multiple parents (to bypass GXT restrictions)
-        for (Action a : actions.values()) {
+        for (Action a : actionList) {
             if (a.getParents().size() > 1) {
                 a.splitIntoClones();
             }
