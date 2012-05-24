@@ -45,13 +45,23 @@ public class DBInit {
             
             Statement statement = db.createStatement();
             
-            statement.executeUpdate("CREATE TABLE pairs (id TEXT PRIMARY KEY, g1id TEXT, g2id TEXT, g1sym TEXT, g2sym TEXT);");
-            statement.executeUpdate("CREATE TABLE articles (id INTEGER PRIMARY KEY, pmid INTEGER, citation TEXT);");
-            statement.executeUpdate("CREATE TABLE mentions (id INTEGER PRIMARY KEY, pair_id TEXT,"
-                    + "article_id INTEGER, actionType TEXT, upstream TEXT, downstream TEXT, type1 TEXT, type2 TEXT, sentence TEXT );");
-            statement.executeUpdate("CREATE TABLE actiontypes (name TEXT PRIMARY KEY , pl TEXT, parent TEXT, nbgp INTEGER,"
-                    + "updown INTEGER, effect INTEGER, same_process INTEGER, close_connection INTEGER);");
-            statement.executeUpdate("CREATE TABLE users (name TEXT PRIMARY KEY, token TEXT, current INTEGER);");
+            statement.executeUpdate("CREATE TABLE pairs (id TEXT PRIMARY KEY, "
+                    + "g1id TEXT, g2id TEXT, g1sym TEXT, g2sym TEXT);");
+            statement.executeUpdate("CREATE TABLE articles "
+                    + "(id INTEGER PRIMARY KEY, pmid INTEGER, citation TEXT);");
+            statement.executeUpdate("CREATE TABLE mentions "
+                    + "(id INTEGER PRIMARY KEY, pair_id TEXT, article_id INTEGER, "
+                    + "actionType TEXT, upstream TEXT, downstream TEXT, "
+                    + "type1 TEXT, type2 TEXT, sentence TEXT );");
+            statement.executeUpdate("CREATE TABLE actiontypes "
+                    + "(name TEXT PRIMARY KEY , pl TEXT, parent TEXT, nbgp INTEGER,"
+                    + "updown INTEGER, effect INTEGER, same_process INTEGER, "
+                    + "close_connection INTEGER);");
+            statement.executeUpdate("CREATE TABLE users (name TEXT PRIMARY KEY, "
+                    + "token TEXT, current INTEGER);");
+            statement.executeUpdate("CREATE TABLE verdicts (id TEXT PRIMARY KEY, "
+                    + "pairId INTEGER, mentionId INTEGER, action TEXT, "
+                    + "updown INTEGER, g1type TEXT, g2type TEXT, user TEXT);");
             
             db.commit();
             

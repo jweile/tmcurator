@@ -34,58 +34,73 @@ import java.util.Map;
  */
 public class MentionContainer extends ContentPanel {
     
+    VerdictControls verdictControls;
+    
+    String g1Sym, g2Sym;
     
     public MentionContainer(Map<String,String> mention, String g1sym, String g2sym) {
-            setCollapsible(true);
-            setHeight("200px");
-            
-            BorderLayoutContainer borderLayout = new BorderLayoutContainer();
-            
-            StringBuilder b = new StringBuilder();
-            b.append("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi")
-             .append("?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=")
-             .append(mention.get("pmid"));
-            final String url = b.toString();
-            
-            TextButton pmButton = new TextButton("Pubmed");
-            pmButton.setIcon(Resources.INSTANCE.document());
-            pmButton.setIconAlign(IconAlign.TOP);
-            pmButton.addSelectHandler(new SelectHandler() {
+        
+        this.g1Sym = g1sym;
+        this.g2Sym = g2sym;
+        
+        setCollapsible(true);
+        setHeight("200px");
 
-                @Override
-                public void onSelect(SelectEvent event) {
-                    Window.open(url, "_blank", "");
-                }
-            });
-            
-            VBoxLayoutContainer pmButtonContainer = new VBoxLayoutContainer();
-            pmButtonContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
-            pmButtonContainer.add(pmButton, BoxConfig.MARGIN);
-            
-            borderLayout.setWestWidget(pmButtonContainer);
-            
-            VBoxLayoutContainer sentenceAndVerdictContainer = new VBoxLayoutContainer();
-            sentenceAndVerdictContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
-            
-            ContentPanel textBox = new ContentPanel();
-            textBox.setHeaderVisible(false);
-            textBox.setWidget(
-                    new ScrollPanel(
-                            new HTML(mention.get("sentence"))
-                            )
-                    );
-            textBox.setHeight("2px");//don't ask me. it fixes the bug. no idea why.
-            
-            sentenceAndVerdictContainer.add(textBox, BoxConfig.FLEX_MARGIN);
-            
-            VerdictControls verdictControls = new VerdictControls();
-            verdictControls.configure(mention,g1sym,g2sym);
-            
-            sentenceAndVerdictContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
-            
-            borderLayout.setCenterWidget(sentenceAndVerdictContainer);
-            
-            add(borderLayout);
+        BorderLayoutContainer borderLayout = new BorderLayoutContainer();
+
+        StringBuilder b = new StringBuilder();
+        b.append("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi")
+         .append("?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=")
+         .append(mention.get("pmid"));
+        final String url = b.toString();
+
+        TextButton pmButton = new TextButton("Pubmed");
+        pmButton.setIcon(Resources.INSTANCE.document());
+        pmButton.setIconAlign(IconAlign.TOP);
+        pmButton.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                Window.open(url, "_blank", "");
+            }
+        });
+
+        VBoxLayoutContainer pmButtonContainer = new VBoxLayoutContainer();
+        pmButtonContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
+        pmButtonContainer.add(pmButton, BoxConfig.MARGIN);
+
+        borderLayout.setWestWidget(pmButtonContainer);
+
+        VBoxLayoutContainer sentenceAndVerdictContainer = new VBoxLayoutContainer();
+        sentenceAndVerdictContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
+
+        ContentPanel textBox = new ContentPanel();
+        textBox.setHeaderVisible(false);
+        textBox.setWidget(
+                new ScrollPanel(
+                        new HTML(mention.get("sentence"))
+                        )
+                );
+        textBox.setHeight("2px");//don't ask me. it fixes the bug. no idea why.
+
+        sentenceAndVerdictContainer.add(textBox, BoxConfig.FLEX_MARGIN);
+
+        verdictControls = new VerdictControls();
+        verdictControls.configure(mention,g1sym,g2sym);
+
+        sentenceAndVerdictContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
+
+        borderLayout.setCenterWidget(sentenceAndVerdictContainer);
+
+        add(borderLayout);
+    }
+    
+    public void extractData() {
+        String action = verdictControls.getAction().getName();
+        int order = verdictControls.getOrder().mod();
+        String type1 = verdictControls.getG1Type().name();
+        String type2 = verdictControls.getG2Type().name();
+        
     }
     
     

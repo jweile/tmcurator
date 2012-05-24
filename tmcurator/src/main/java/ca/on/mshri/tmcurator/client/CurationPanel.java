@@ -143,6 +143,14 @@ public class CurationPanel extends BorderLayoutContainer {
         forceLayout();
     }
 
+    private void extractData() {
+        for (IsWidget w : interpretationPanel) {
+            if (w instanceof MentionContainer) {
+                MentionContainer mention = (MentionContainer)w;
+                
+            }
+        }
+    }
 
     private IsWidget makeButtonPanel() {
         HBoxLayoutContainer container = new HBoxLayoutContainer();

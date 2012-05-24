@@ -123,7 +123,10 @@ public class VerdictControls extends BorderLayoutContainer{
         this.g2Type = t2;
         repaint();
     }
-    
+
+    public Order getOrder() {
+        return order;
+    }
     
     
     public void configure(Map<String,String> data, String g1sym, String g2sym) {

@@ -19,10 +19,12 @@ package ca.on.mshri.tmcurator.server;
 import ca.on.mshri.tmcurator.client.DataProviderService;
 import ca.on.mshri.tmcurator.shared.Action;
 import ca.on.mshri.tmcurator.shared.Effect;
+import ca.on.mshri.tmcurator.shared.MentionVerdict;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
+import ca.on.mshri.tmcurator.shared.Verdict;
+import ca.on.mshri.tmcurator.shared.VerdictSheet;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -41,8 +43,8 @@ import java.util.logging.Logger;
 public class DataProviderServiceImpl extends RemoteServiceServlet 
                                         implements DataProviderService {
 
-    private static final String DBFILE = 
-            System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
+//    private static final String DBFILE = 
+//            System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
     
     @Override
     public PairDataSheet nextPairSheet(String user) {
@@ -63,36 +65,18 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     @Override
     public double currProgress(String user) {
         
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Cannot load SQLite JDBC driver.",ex);
-        }
-        
-        Connection db = null;
-        
-        try {
-            
-            db = DriverManager.getConnection("jdbc:sqlite:"+DBFILE);
-            
-            int curr = getProgress(db, user, Inc.CURR);
-            int tot = getTotalPairNum(db);
-            
-            double progress = (double)curr / (double)tot;
-            
-            return progress;
-            
-            
-        } catch (SQLException ex) {
-            throw new RuntimeException("Cannot connect to database!",ex);
-        } finally {
-            try {
-                db.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(DataProviderServiceImpl.class.getName()).log(Level.SEVERE, 
-                        "Unable to close database connection", ex);
+        return new DBAccess<Object, Double>() {
+
+            @Override
+            public Double transaction(Connection db, String user, Object in) {
+                int curr = getProgress(db, user, Inc.CURR);
+                int tot = getTotalPairNum(db);
+
+                double progress = (double)curr / (double)tot;
+
+                return progress;
             }
-        }
+        }.run(user, null);
     }
     
 
@@ -114,51 +98,98 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         }
     }
     
-    
-    private PairDataSheet queryPairData(String user, Inc inc) {
-        
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Cannot load SQLite JDBC driver.",ex);
-        }
-        
-        Connection db = null;
-        
-        try {
-            
-            db = DriverManager.getConnection("jdbc:sqlite:"+DBFILE);
-            
-            
-            int pairNum = getProgress(db,user,inc);
-            int totPairNum = getTotalPairNum(db);
-            
-            if (pairNum <= totPairNum) {
-                PairDataSheet s = new PairDataSheet();
+    public void saveVerdicts(String user, VerdictSheet sheet) {
+        new DBAccess<VerdictSheet, Object>() {
 
-                s.setPairNumber(pairNum);
-                s.setTotalPairNumber(totPairNum);
-
-                obtainPairInfo(pairNum, s,db);
-
-                s.setMentions(obtainMentions(pairNum, db));
-
-                return s;
-            } else {
-                //FIXME: make sure frontend accounts for EOL case
+            @Override
+            public Object transaction(Connection db, String user, VerdictSheet in) {
+                try {
+                    _saveVerdicts(db, user, in);
+                } catch (SQLException ex) {
+                    throw new RuntimeException("Unable to query database!", ex);
+                }
                 return null;
             }
+
+        }.run(user, sheet);
+    }
+    
+    private void _saveVerdicts(Connection db, String user, VerdictSheet sheet) throws SQLException {
+        
+        Statement sql = db.createStatement();
+        
+        for (Verdict verdict : sheet.getVerdicts()) {
             
-        } catch (SQLException ex) {
-            throw new RuntimeException("Cannot connect to database!",ex);
-        } finally {
-            try {
-                db.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(DataProviderServiceImpl.class.getName()).log(Level.SEVERE, 
-                        "Unable to close database connection", ex);
+            int mentionId = verdict instanceof MentionVerdict ? 
+                    ((MentionVerdict)verdict).getMentionId() : -1;
+            
+            String id = makeVerdictId(user, verdict.getPairId(), mentionId);
+            
+            ResultSet result = sql.executeQuery(
+                    "SELECT COUNT(*) FROM verdicts WHERE id='"+id+"';");
+            result.next();
+            assert(result.getInt(1) <= 1);
+            boolean exists = result.getInt(1) > 0;
+            
+            if (exists) {
+                sql.executeUpdate(String.format(
+                        "UPDATE verdicts SET action='%s', updown='%s', g1type='%s', g2type='%s' WHERE id='%s';",
+                        verdict.getAction(),
+                        verdict.getOrder(),
+                        verdict.getG1Type(),
+                        verdict.getG2Type(),
+                        id));
+            } else {
+                sql.executeUpdate(String.format("INSERT INTO verdicts VALUES ('%s','%s','%s','%s','%s','%s','%s','%s');",
+                        id,
+                        verdict.getPairId(),
+                        mentionId,
+                        verdict.getAction(),
+                        verdict.getOrder(),
+                        verdict.getG1Type(),
+                        verdict.getG2Type(),
+                        user));
             }
         }
+    }
+    
+    private String makeVerdictId(String user, int pairId, int mentionId) {
+        return new StringBuilder()
+                    .append(user)
+                    .append("_")
+                    .append(pairId)
+                    .append("_")
+                    .append(mentionId)
+                    .toString();
+    }
+    
+    private PairDataSheet queryPairData(String user, Inc inc) {
+          
+        return new DBAccess<Inc, PairDataSheet>() {
+
+            @Override
+            public PairDataSheet transaction(Connection db, String user, Inc inc) {
+                int currPairId = getProgress(db,user,inc);
+                int totPairNum = getTotalPairNum(db);
+
+                if (currPairId <= totPairNum) {
+                    PairDataSheet s = new PairDataSheet();
+
+                    s.setPairNumber(currPairId);
+                    s.setTotalPairNumber(totPairNum);
+
+                    obtainPairInfo(currPairId, s,db);
+
+                    s.setMentions(obtainMentions(currPairId, db));
+
+                    return s;
+                } else {
+                    //FIXME: make sure frontend accounts for EOL case
+                    return null;
+                }
+            }
+        }.run(user, inc);
+            
     }
 
     private void obtainPairInfo(int pairNum, PairDataSheet s, Connection db) {
@@ -238,33 +269,15 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
 
     @Override
     public List<Action> getActions() {
-        
-        try {
-            Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ex) {
-            throw new RuntimeException("Cannot load SQLite JDBC driver.",ex);
-        }
-        
-        Connection db = null;
-        
-        try {
             
-            db = DriverManager.getConnection("jdbc:sqlite:"+DBFILE);
-            
-            return makeActionList(db);
-            
-            
-        } catch (SQLException ex) {
-            throw new RuntimeException("Cannot connect to database!",ex);
-        } finally {
-            try {
-                db.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(DataProviderServiceImpl.class.getName()).log(Level.SEVERE, 
-                        "Unable to close database connection", ex);
+        return new DBAccess<Object, List<Action>>() {
+
+            @Override
+            public List<Action> transaction(Connection db, String user, Object in) {
+                return makeActionList(db);
             }
-        }
-        
+        }.run(null, null);
+            
     }
 
     
