@@ -29,6 +29,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import java.util.Map;
@@ -41,9 +42,11 @@ public class VerdictControls extends BorderLayoutContainer{
 
     private static final BorderLayoutData scaffoldLayout = new BorderLayoutData(40);
     
+    private static final Action ROOT = new Action("actiontype", "DECOY", Effect.ACTIVATE, false);
+    
     private Canvas canvas;
     
-    private Action action = null; 
+    private Action action = ROOT; 
     private String g1Sym = "", g2Sym = "";
     
     private EntityType g1Type = EntityType.UNKNOWN, g2Type = EntityType.UNKNOWN;
@@ -57,6 +60,7 @@ public class VerdictControls extends BorderLayoutContainer{
         HBoxLayoutContainer buttonPanel = new HBoxLayoutContainer();
         buttonPanel.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         
+        //TODO: implement 'negate' function
         buttonPanel.add(new TextButton("Switch", new SelectHandler() {
 
             @Override
@@ -88,14 +92,15 @@ public class VerdictControls extends BorderLayoutContainer{
         
         ContentPanel imageBox = new ContentPanel();
         imageBox.setHeaderVisible(false);
-        CenterLayoutContainer imageBoxCenter = new CenterLayoutContainer();
+        VBoxLayoutContainer imageBoxCenter = new VBoxLayoutContainer();
+        imageBoxCenter.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.CENTER);
         
         canvas = Canvas.createIfSupported();
         if (canvas != null) {
             canvas.setSize("150px", "70px");
-            imageBoxCenter.setWidget(canvas);
+            imageBoxCenter.add(canvas);
         } else {
-            imageBoxCenter.setWidget(new HTML("Browser does not support HTML5 Canvas!"));
+            imageBoxCenter.add(new HTML("Browser does not support HTML5 Canvas!"));
         }
                 
         imageBox.add(imageBoxCenter);
@@ -146,6 +151,7 @@ public class VerdictControls extends BorderLayoutContainer{
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }
         
+        //FIXME: direction is not recovered correctly after loading
         if (data.get("upstream").equalsIgnoreCase(g2Sym)) {
             order = order.flip();
         }
@@ -182,6 +188,7 @@ public class VerdictControls extends BorderLayoutContainer{
         ImageResource lImage = g1Type.getImage();
         ImageResource rImage = g2Type.getImage();
         
+        //FIXME: Images are only displayed after second rendering/loading
         int x = (imageW - lImage.getWidth())/2;
         int y = (imageH - lImage.getHeight())/2;
         ImageElement ie = ImageElement.as((new Image(lImage.getSafeUri())).getElement());
