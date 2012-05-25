@@ -146,7 +146,7 @@ public class VerdictControls extends BorderLayoutContainer{
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }
         
-        if (!data.get("upstream").equalsIgnoreCase(g1Sym)) {
+        if (data.get("upstream").equalsIgnoreCase(g2Sym)) {
             order = order.flip();
         }
                 

@@ -127,17 +127,27 @@ public class CurationPanel extends BorderLayoutContainer {
         
         titleBar.setHTML(b.toString());
         
+        verdictControls.setGenePair(pData.getG1Sym(), pData.getG2Sym());
+        
         interpretationPanel.clear();
         
+        int minusVerdict = 0;
         for (Map<String,String> mention : pData.getMentions()) {
             
-            MentionContainer mentionContainer = new MentionContainer(mention,
-                    pData.getG1Sym(), pData.getG2Sym(), pairId);
-            interpretationPanel.add(mentionContainer, BoxConfig.MARGIN);
+            if (mention.get("mentionId").equals("-1")) {
+                //then it's a verdict
+                verdictControls.configure(mention, pData.getG1Sym(), pData.getG2Sym());
+                minusVerdict = 1;
+            } else {
+                //it's a mention
+                MentionContainer mentionContainer = new MentionContainer(mention,
+                        pData.getG1Sym(), pData.getG2Sym(), pairId);
+                interpretationPanel.add(mentionContainer, BoxConfig.MARGIN);
+            }
             
         }
         
-        int height = pData.getMentions().size() * 210;
+        int height = (pData.getMentions().size() - minusVerdict) * 210;
         
         interpretationPanel.setHeight(height);
         
@@ -146,8 +156,6 @@ public class CurationPanel extends BorderLayoutContainer {
         
         VBoxLayoutContainer docPanel = (VBoxLayoutContainer)interpretationFrame.getParent();
         docPanel.setHeight(height+300);
-        
-        verdictControls.setGenePair(pData.getG1Sym(), pData.getG2Sym());
         
         forceLayout();
     }

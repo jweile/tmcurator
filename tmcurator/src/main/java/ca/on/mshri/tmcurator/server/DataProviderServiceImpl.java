@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.management.RuntimeErrorException;
 
 /**
  *
@@ -43,10 +44,6 @@ import java.util.logging.Logger;
 public class DataProviderServiceImpl extends RemoteServiceServlet 
                                         implements DataProviderService {
 
-//    private static final String DBFILE = 
-//            System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
-    
-    //TODO: load previous changes by user
     @Override
     public PairDataSheet nextPairSheet(String user) {
         return queryPairData(user,Inc.NEXT);
@@ -90,6 +87,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 ResultSet result = qry.executeQuery("SELECT COUNT(*) FROM pairs;");
                 result.next();
                 totalPairNum = result.getInt(1);
+                qry.close();
                 return totalPairNum;
             } catch (SQLException e) {
                 throw new RuntimeException("Unable to query database!",e);
@@ -132,6 +130,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             result.next();
             assert(result.getInt(1) <= 1);
             boolean exists = result.getInt(1) > 0;
+            result.close();
             
             if (exists) {
                 sql.executeUpdate(String.format(
@@ -152,6 +151,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                         verdict.getG2Type(),
                         user));
             }
+            sql.close();
         }
     }
     
@@ -182,7 +182,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
 
                     obtainPairInfo(currPairId, s,db);
 
-                    s.setMentions(obtainMentions(currPairId, db));
+                    s.setMentions(obtainMentions(currPairId, db, user));
 
                     return s;
                 } else {
@@ -203,6 +203,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             result.next();
             s.setG1Sym(result.getString("g1sym"));
             s.setG2Sym(result.getString("g2sym"));
+            qry.close();
             
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot query database.",ex);
@@ -219,11 +220,11 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             .append("AND pairs.ROWID='%s';")
             .toString();
     
-    private List<Map<String, String>> obtainMentions(int pairNum, Connection db) {
+    private List<Map<String, String>> obtainMentions(int pairId, Connection db, String user) {
         List<Map<String,String>> list = new ArrayList<Map<String, String>>();
         try {
             Statement qry = db.createStatement();
-            ResultSet result = qry.executeQuery(String.format(mentionQuery,pairNum));
+            ResultSet result = qry.executeQuery(String.format(mentionQuery,pairId));
             
             ResultSetMetaData rsmd = result.getMetaData();
             
@@ -235,7 +236,20 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                     map.put(cname, result.getString(cname));
                 }
                 
+                int mentionId = Integer.parseInt(map.get("mentionId"));
+                updateMentionWithUserChanges(db, map, user, pairId, mentionId);
+                
                 list.add(map);
+            }
+            
+            qry.close();
+            
+            //load verdict
+            Map<String,String> verdict = new HashMap<String,String>();
+            updateMentionWithUserChanges(db, verdict, user, pairId, -1);
+            if (verdict.size() > 0) {
+                configureVerdict(db,verdict);
+                list.add(verdict);
             }
             
             return list;
@@ -243,6 +257,66 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot query database.",ex);
         }
+    }
+    
+    
+    private void configureVerdict(Connection db, Map<String, String> verdict) {
+        
+        verdict.put("mentionId","-1");
+        verdict.put("upstream","");
+        try {
+            Statement sql = db.createStatement();
+            ResultSet result = sql.executeQuery("SELECT effect, close_connection FROM actiontypes WHERE name='"
+                    + verdict.get("actionType")
+                    + "';");
+            result.next();
+            
+            verdict.put("effect",result.getString("effect"));
+            verdict.put("close_connection",result.getString("close_connection"));
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Query failed!",ex);
+        }
+        
+    }
+    
+    
+    private void updateMentionWithUserChanges(Connection db, Map<String, String> map, String user, int pairId, int mentionId) {
+        
+        try {
+            
+            String verdictId = makeVerdictId(user, pairId, mentionId);
+            
+            Statement sql = db.createStatement();
+            
+            ResultSet result = sql.executeQuery(
+                    "SELECT COUNT(*) FROM verdicts WHERE id='"+verdictId+"';");
+            result.next();
+            int rCount = result.getInt(1);
+            result.close();
+            
+            assert(rCount <= 1);
+            
+            if (rCount == 1) {
+            
+                result = sql.executeQuery(
+                        "SELECT * FROM verdicts WHERE id='" + verdictId + "';");
+                result.next();
+                
+                map.put("actionType", result.getString("action"));
+                map.put("updown", result.getString("updown"));
+                map.put("type1", result.getString("g1type"));
+                map.put("type2", result.getString("g2type"));
+                
+                result.close();
+            }
+            
+            sql.close();
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Query failed!",ex);
+        }
+        
     }
 
     private int getProgress(Connection db, String user, Inc inc) {
@@ -262,7 +336,9 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                     user));
             
             result.next();
-            return result.getInt("current");
+            int current = result.getInt("current");
+            qry.close();
+            return current;
             
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot query database.",ex);
@@ -300,6 +376,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 list.add(new Action(name,parent,Effect.fromInt(effect), close==1));
             }
             
+            qry.close();
+            
             return list;
             
         } catch (SQLException ex) {
@@ -307,6 +385,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         }
         
     }
+
+
 
     private enum Inc {
         NEXT("+1"),CURR(""),PREV("-1");
