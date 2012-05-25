@@ -18,6 +18,7 @@ package ca.on.mshri.tmcurator.client;
 
 import ca.on.mshri.tmcurator.shared.Action;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
+import ca.on.mshri.tmcurator.shared.VerdictSheet;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.List;
@@ -39,5 +40,7 @@ public interface DataProviderService extends RemoteService {
     double currProgress(String user);
     
     List<Action> getActions();
+    
+    void saveVerdicts(String user, VerdictSheet sheet);
     
 }

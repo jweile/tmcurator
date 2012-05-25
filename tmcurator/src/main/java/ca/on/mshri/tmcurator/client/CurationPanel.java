@@ -16,7 +16,10 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import ca.on.mshri.tmcurator.shared.MentionVerdict;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
+import ca.on.mshri.tmcurator.shared.Verdict;
+import ca.on.mshri.tmcurator.shared.VerdictSheet;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -32,6 +35,8 @@ import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +52,8 @@ public class CurationPanel extends BorderLayoutContainer {
     private VBoxLayoutContainer interpretationPanel;
     
     private VerdictControls verdictControls;
+    
+    private int pairId;
     
     
     private CurationPanel() {
@@ -99,6 +106,8 @@ public class CurationPanel extends BorderLayoutContainer {
 
     public void updatePairData(PairDataSheet pData) {
         
+        this.pairId = pData.getPairNumber();
+        
         StringBuilder b = new StringBuilder();
         b.append("<span style=\"font-size: small;\">Gene pair #")
                 .append(pData.getPairNumber())
@@ -123,7 +132,7 @@ public class CurationPanel extends BorderLayoutContainer {
         for (Map<String,String> mention : pData.getMentions()) {
             
             MentionContainer mentionContainer = new MentionContainer(mention,
-                    pData.getG1Sym(), pData.getG2Sym());
+                    pData.getG1Sym(), pData.getG2Sym(), pairId);
             interpretationPanel.add(mentionContainer, BoxConfig.MARGIN);
             
         }
@@ -143,13 +152,25 @@ public class CurationPanel extends BorderLayoutContainer {
         forceLayout();
     }
 
-    private void extractData() {
+    private VerdictSheet extractData() {
+        List<Verdict> verdicts = new ArrayList<Verdict>();
         for (IsWidget w : interpretationPanel) {
             if (w instanceof MentionContainer) {
                 MentionContainer mention = (MentionContainer)w;
-                
+                MentionVerdict verdict = mention.extractData();
+                verdicts.add(verdict);
             }
         }
+        Verdict finalVerdict = new Verdict(pairId, 
+                verdictControls.getAction().getName(), 
+                verdictControls.getOrder().mod(), 
+                verdictControls.getG1Type().name(), 
+                verdictControls.getG2Type().name());
+        verdicts.add(finalVerdict);
+        
+        VerdictSheet sheet = new VerdictSheet(pairId);
+        sheet.setVerdicts(verdicts);
+        return sheet;
     }
 
     private IsWidget makeButtonPanel() {
@@ -158,15 +179,48 @@ public class CurationPanel extends BorderLayoutContainer {
         container.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         container.setPack(BoxLayoutPack.CENTER);
         
-        //TODO: implement saving of progress
         container.add(new TextButton("< Previous", new SelectHandler() {
-
             @Override
             public void onSelect(SelectEvent event) {
-                
-                TmCurator.LOAD_DIALOG.show();
+                saveThenLoadPrevious();
+            }
+        }), BoxConfig.MARGIN);
         
-                DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+        container.add(new TextButton("Home", new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                saveThenGreet();
+            }
+        }), BoxConfig.MARGIN);
+        
+        container.add(new TextButton("Next >", new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                saveThenLoadNext();
+            }
+        }), BoxConfig.MARGIN);
+        
+        return container;
+    }
+    
+    
+    private void saveThenLoadPrevious() {
+        TmCurator.LOAD_DIALOG.show();
+        
+        VerdictSheet sheet = extractData();
+        
+        final DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+        
+        dataService.saveVerdicts(TmCurator.MOCK_USER, sheet, new AsyncCallback<Void>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
+                displayError(caught);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
                 dataService.prevPairSheet(TmCurator.MOCK_USER, new AsyncCallback<PairDataSheet>() {
 
                     @Override
@@ -185,26 +239,26 @@ public class CurationPanel extends BorderLayoutContainer {
 
                 });
             }
-            
-        }), BoxConfig.MARGIN);
+        });
+    }
+    
+    private void saveThenLoadNext() {
+        TmCurator.LOAD_DIALOG.show();
         
-        container.add(new TextButton("Home", new SelectHandler() {
+        VerdictSheet sheet = extractData();
+        
+        final DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+        
+        dataService.saveVerdicts(TmCurator.MOCK_USER, sheet, new AsyncCallback<Void>() {
 
             @Override
-            public void onSelect(SelectEvent event) {
-                TmCurator.getInstance().loadGreetingPanel();
+            public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
+                displayError(caught);
             }
-            
-        }), BoxConfig.MARGIN);
-        
-        container.add(new TextButton("Next >", new SelectHandler() {
 
             @Override
-            public void onSelect(SelectEvent event) {
-                
-                TmCurator.LOAD_DIALOG.show();
-        
-                DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+            public void onSuccess(Void result) {
                 dataService.nextPairSheet(TmCurator.MOCK_USER, new AsyncCallback<PairDataSheet>() {
 
                     @Override
@@ -223,10 +277,30 @@ public class CurationPanel extends BorderLayoutContainer {
 
                 });
             }
-            
-        }), BoxConfig.MARGIN);
+        });
+    }
+    
+    private void saveThenGreet() {
+        TmCurator.LOAD_DIALOG.show();
         
-        return container;
+        VerdictSheet sheet = extractData();
+        
+        final DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+        
+        dataService.saveVerdicts(TmCurator.MOCK_USER, sheet, new AsyncCallback<Void>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
+                displayError(caught);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                TmCurator.LOAD_DIALOG.hide();
+                TmCurator.getInstance().loadGreetingPanel();
+            }
+        });
     }
     
     

@@ -46,6 +46,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
 //    private static final String DBFILE = 
 //            System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
     
+    //TODO: load previous changes by user
     @Override
     public PairDataSheet nextPairSheet(String user) {
         return queryPairData(user,Inc.NEXT);
@@ -65,10 +66,10 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     @Override
     public double currProgress(String user) {
         
-        return new DBAccess<Object, Double>() {
+        return new DBAccess<Void, Double>() {
 
             @Override
-            public Double transaction(Connection db, String user, Object in) {
+            public Double transaction(Connection db, String user, Void in) {
                 int curr = getProgress(db, user, Inc.CURR);
                 int tot = getTotalPairNum(db);
 
@@ -98,11 +99,12 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         }
     }
     
+    @Override
     public void saveVerdicts(String user, VerdictSheet sheet) {
-        new DBAccess<VerdictSheet, Object>() {
+        new DBAccess<VerdictSheet, Void>() {
 
             @Override
-            public Object transaction(Connection db, String user, VerdictSheet in) {
+            public Void transaction(Connection db, String user, VerdictSheet in) {
                 try {
                     _saveVerdicts(db, user, in);
                 } catch (SQLException ex) {
@@ -208,7 +210,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     }
 
     private static final String mentionQuery = new StringBuilder()
-            .append("SELECT pmid, sentence, citation, type1, type2, upstream, ")
+            .append("SELECT mentions.ROWID AS mentionId, pmid, sentence, citation, type1, type2, upstream, ")
             .append("downstream, actionType, updown, effect, close_connection ")
             .append("FROM pairs,mentions,articles,actiontypes ")
             .append("WHERE mentions.pair_id=pairs.id ")
@@ -270,10 +272,10 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     @Override
     public List<Action> getActions() {
             
-        return new DBAccess<Object, List<Action>>() {
+        return new DBAccess<Void, List<Action>>() {
 
             @Override
-            public List<Action> transaction(Connection db, String user, Object in) {
+            public List<Action> transaction(Connection db, String user, Void in) {
                 return makeActionList(db);
             }
         }.run(null, null);

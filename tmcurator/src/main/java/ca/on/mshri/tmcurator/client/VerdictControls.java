@@ -154,6 +154,7 @@ public class VerdictControls extends BorderLayoutContainer{
     }
 
 
+    //FIXME: action needs to determine directedness!
     private void repaint() {
         
         if (canvas == null) {

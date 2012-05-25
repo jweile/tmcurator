@@ -44,6 +44,10 @@ public class VerdictSheet implements IsSerializable {
     public List<Verdict> getVerdicts() {
         return verdicts;
     }
+
+    public void setVerdicts(List<Verdict> verdicts) {
+        this.verdicts = verdicts;
+    }
     
     
 }

@@ -16,6 +16,7 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import ca.on.mshri.tmcurator.shared.MentionVerdict;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -34,14 +35,20 @@ import java.util.Map;
  */
 public class MentionContainer extends ContentPanel {
     
-    VerdictControls verdictControls;
+    private VerdictControls verdictControls;
     
-    String g1Sym, g2Sym;
+    private String g1Sym, g2Sym;
     
-    public MentionContainer(Map<String,String> mention, String g1sym, String g2sym) {
+    private Map<String,String> mention;
+    
+    private int pairId;
+    
+    public MentionContainer(Map<String,String> mention, String g1sym, String g2sym, int pairId) {
         
+        this.mention = mention;
         this.g1Sym = g1sym;
         this.g2Sym = g2sym;
+        this.pairId = pairId;
         
         setCollapsible(true);
         setHeight("200px");
@@ -95,12 +102,15 @@ public class MentionContainer extends ContentPanel {
         add(borderLayout);
     }
     
-    public void extractData() {
+    public MentionVerdict extractData() {
         String action = verdictControls.getAction().getName();
         int order = verdictControls.getOrder().mod();
         String type1 = verdictControls.getG1Type().name();
         String type2 = verdictControls.getG2Type().name();
         
+        int mentionId = Integer.parseInt(mention.get("mentionId"));
+        
+        return new MentionVerdict(mentionId, pairId, action, order, type1, type2);
     }
     
     
