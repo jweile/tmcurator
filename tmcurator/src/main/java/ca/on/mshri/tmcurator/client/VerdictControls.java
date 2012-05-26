@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -42,7 +41,7 @@ public class VerdictControls extends BorderLayoutContainer{
 
     private static final BorderLayoutData scaffoldLayout = new BorderLayoutData(40);
     
-    private static final Action ROOT = new Action("actiontype", "DECOY", Effect.ACTIVATE, false);
+    private static final Action ROOT = new Action("actiontype", "DECOY", Effect.ACTIVATE, false, false);
     
     private Canvas canvas;
     
@@ -146,7 +145,7 @@ public class VerdictControls extends BorderLayoutContainer{
             order = Order.fromInt(orderInt);
             Effect effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
             boolean close = Integer.parseInt(data.get("close_connection")) == 1;
-            this.action = new Action(data.get("actionType"), "DECOY", effect, close);
+            this.action = new Action(data.get("actionType"), "DECOY", effect, close, orderInt != 0);
         } catch (NumberFormatException e) {
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }

@@ -16,14 +16,17 @@
  */
 package ca.on.mshri.tmcurator.client;
 
-import com.google.gwt.user.client.ui.IsWidget;
-import com.sencha.gxt.core.client.util.Margins;
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.button.TextButton;
-import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
-import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
+import com.sencha.gxt.widget.core.client.form.PasswordField;
+import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
  *
@@ -31,40 +34,99 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
  */
 public class LoginDialog extends Dialog {
 
+    private static LoginDialog instance;
+    
+    private TextField username;
+    private PasswordField password;
+    private HTML label;
+    
     public LoginDialog() {
-        setHeadingText("Login with OpenID");
+        setHeadingText("Please log in");
         setHideOnButtonClick(false);
         setPredefinedButtons(new PredefinedButton[0]);
-        setPixelSize(650, 260);
+        setPixelSize(300, 150);
         setModal(true);
+        setClosable(false);
+        setResizable(false);
         
-        HBoxLayoutContainer hc = new HBoxLayoutContainer();
+        VBoxLayoutContainer con = new VBoxLayoutContainer();
         
-        BoxLayoutData layout = new BoxLayoutData(new Margins(5,5,5,5));
+        username = new TextField();
+        password = new PasswordField();
+        //TODO: find out how to trigger action on "enter" press
+        label = new HTML();
+        con.add(new FieldLabel(username, "User"), BoxConfig.MARGIN);
+        con.add(new FieldLabel(password, "Password"), BoxConfig.MARGIN);
+        con.add(label,BoxConfig.MARGIN);
         
-        SelectHandler handler = new SelectHandler() {
+        add(con);
+        
+        addButton(new TextButton("Create account", new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                LoginDialog.this.hide();
+                //TODO: implement new account creation.
             }
-            
-        };
+        }));
         
-        hc.add(makeButton("Google", handler),layout);
-        hc.add(makeButton("OID.org", handler),layout);
-        hc.add(makeButton("Other", handler),layout);
-        
-        add(hc);
+        addButton(new TextButton("Login", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                doLogin(username.getText(), password.getText());
+            }
+        }));
         
     }
-    
-    private IsWidget makeButton(String label, SelectHandler handler) {
-        TextButton b = new TextButton(label, handler);
-        b.setPixelSize(200, 200);
-        return b;
+
+    @Override
+    public void show() {
+        username.setText("");
+        password.setText("");
+        label.setHTML("");
+        super.show();
     }
     
     
     
+    public static LoginDialog getInstance() {
+        if (instance == null) {
+            instance = new LoginDialog();
+        }
+        return instance;
+    }
+    
+    private void doLogin(final String user, String pwd) {
+        
+        LoginServiceAsync.Util.getInstance()
+                .login(user, pwd, new AsyncCallback<Boolean>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                error(caught.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Boolean success) {
+                if (success) {
+                    Cookies.setCookie("tmcurator.user", user);
+                    TmCurator.getInstance().setUser(user);
+                    LoginDialog.this.hide();
+                    TmCurator.getInstance().loadGreetingPanel();
+                } else {
+                    error("Wrong password!");
+                }
+            }
+
+        });
+    }
+    
+    
+    private void error(String message) {
+        username.setText("");
+        password.setText("");
+        label.setHTML("<p style=\"font-size:10px;color:red;\">"
+                + message
+                + "</p>");
+    }
 }

@@ -33,9 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.management.RuntimeErrorException;
 
 /**
  *
@@ -366,14 +363,15 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             
             Statement qry = db.createStatement();
             ResultSet r = qry.executeQuery(
-                    "SELECT name, parent, effect, close_connection FROM actiontypes;");
+                    "SELECT name, parent, effect, close_connection, updown FROM actiontypes;");
             
             while(r.next()) {
                 String name = r.getString("name");
                 String parent = r.getString("parent");
                 int effect = r.getInt("effect");
                 int close = r.getInt("close_connection");
-                list.add(new Action(name,parent,Effect.fromInt(effect), close==1));
+                int updown = r.getInt("updown");
+                list.add(new Action(name,parent,Effect.fromInt(effect), close==1, updown != 0));
             }
             
             qry.close();

@@ -18,6 +18,9 @@ package ca.on.mshri.tmcurator.client;
 
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.sencha.gxt.widget.core.client.ContentPanel;
@@ -33,8 +36,12 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 public class TmCurator implements EntryPoint {
     
     private static TmCurator instance = null;
+
+    private String user = null;
     
     private ContentPanel mainPanel;
+    
+    TextButton login;
 
     public TmCurator() {
         //unfortunately can't make constructor private as GWT has to call it from the outside.
@@ -47,10 +54,16 @@ public class TmCurator implements EntryPoint {
                                     setModal(true);
                                     auto();
                                 }};
-    
-    //TODO: Implement real login functionality.
-    public static final String MOCK_USER="user";
 
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+        login.setText(user);
+    }
+    
     public static TmCurator getInstance() {
         return instance;
     }
@@ -62,9 +75,9 @@ public class TmCurator implements EntryPoint {
         placeMainPanel();
         placeLoginButton();
         
-//        checkLogin();
+        checkLogin();
         
-        loadGreetingPanel();
+//        loadGreetingPanel();
         
         
     }
@@ -79,11 +92,22 @@ public class TmCurator implements EntryPoint {
     
     private void placeLoginButton() {
         
-        TextButton login = new TextButton("Login");
+        login = new TextButton("Login");
         login.setIcon(Resources.INSTANCE.user());
         
         Menu loginMenu = new Menu();
-        loginMenu.add(new MenuItem("Log out"));
+        loginMenu.add(new MenuItem("Log out", new SelectionHandler<MenuItem>() {
+
+            @Override
+            public void onSelection(SelectionEvent<MenuItem> event) {
+                user = null;
+                login.setText("Login");
+                Cookies.removeCookie("tmcurator.user");
+                mainPanel.clear();
+                LoginDialog.getInstance().show();
+            }
+        }));
+        
         loginMenu.add(new MenuItem("Delete account"));
         
         login.setMenu(loginMenu);
@@ -97,7 +121,7 @@ public class TmCurator implements EntryPoint {
         
         DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
-        dataService.currProgress(MOCK_USER, new AsyncCallback<Double>() {
+        dataService.currProgress(user, new AsyncCallback<Double>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -129,7 +153,7 @@ public class TmCurator implements EntryPoint {
         
         DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
-        dataService.currPairSheet(MOCK_USER, new AsyncCallback<PairDataSheet>() {
+        dataService.currPairSheet(user, new AsyncCallback<PairDataSheet>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -155,18 +179,18 @@ public class TmCurator implements EntryPoint {
 
     
     private void checkLogin() {
-        
-        LoginDialog ld = new LoginDialog();
-        ld.show();
-        
+        user = Cookies.getCookie("tmcurator.user");
+        if (user == null) {
+            LoginDialog.getInstance().show();
+        } else {
+            login.setText(user);
+            loadGreetingPanel();
+        }
     }
     
     
     private void displayError(Throwable caught) {
-        
-        AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
-//        RootPanel.get().add(b);
-        b.show();
+        new AlertMessageBox("Error",caught.getMessage()).show();
     }
     
 }

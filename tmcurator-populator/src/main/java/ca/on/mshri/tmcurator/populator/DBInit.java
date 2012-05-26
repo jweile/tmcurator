@@ -58,7 +58,7 @@ public class DBInit {
                     + "updown INTEGER, effect INTEGER, same_process INTEGER, "
                     + "close_connection INTEGER);");
             statement.executeUpdate("CREATE TABLE users (name TEXT PRIMARY KEY, "
-                    + "token TEXT, current INTEGER);");
+                    + "token TEXT, current INTEGER, password TEXT);");
             statement.executeUpdate("CREATE TABLE verdicts (id TEXT PRIMARY KEY, "
                     + "pairId INTEGER, mentionId INTEGER, action TEXT, "
                     + "updown INTEGER, g1type TEXT, g2type TEXT, user TEXT);");

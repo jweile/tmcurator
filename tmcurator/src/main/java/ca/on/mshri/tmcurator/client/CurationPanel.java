@@ -219,7 +219,7 @@ public class CurationPanel extends BorderLayoutContainer {
         
         final DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
-        dataService.saveVerdicts(TmCurator.MOCK_USER, sheet, new AsyncCallback<Void>() {
+        dataService.saveVerdicts(TmCurator.getInstance().getUser(), sheet, new AsyncCallback<Void>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -229,7 +229,7 @@ public class CurationPanel extends BorderLayoutContainer {
 
             @Override
             public void onSuccess(Void result) {
-                dataService.prevPairSheet(TmCurator.MOCK_USER, new AsyncCallback<PairDataSheet>() {
+                dataService.prevPairSheet(TmCurator.getInstance().getUser(), new AsyncCallback<PairDataSheet>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
@@ -257,7 +257,8 @@ public class CurationPanel extends BorderLayoutContainer {
         
         final DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
-        dataService.saveVerdicts(TmCurator.MOCK_USER, sheet, new AsyncCallback<Void>() {
+        dataService.saveVerdicts(TmCurator.getInstance().getUser(), 
+                sheet, new AsyncCallback<Void>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -267,7 +268,8 @@ public class CurationPanel extends BorderLayoutContainer {
 
             @Override
             public void onSuccess(Void result) {
-                dataService.nextPairSheet(TmCurator.MOCK_USER, new AsyncCallback<PairDataSheet>() {
+                dataService.nextPairSheet(TmCurator.getInstance().getUser(), 
+                        new AsyncCallback<PairDataSheet>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
@@ -293,9 +295,10 @@ public class CurationPanel extends BorderLayoutContainer {
         
         VerdictSheet sheet = extractData();
         
-        final DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+        DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
-        dataService.saveVerdicts(TmCurator.MOCK_USER, sheet, new AsyncCallback<Void>() {
+        dataService.saveVerdicts(TmCurator.getInstance().getUser(), 
+                sheet, new AsyncCallback<Void>() {
 
             @Override
             public void onFailure(Throwable caught) {

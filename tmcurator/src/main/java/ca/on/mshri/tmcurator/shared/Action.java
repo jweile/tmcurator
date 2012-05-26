@@ -37,6 +37,8 @@ public class Action implements IsSerializable {
     
     private boolean close;
     
+    private boolean directed;
+    
     private Effect effect;
     
     private String parentStr;
@@ -45,7 +47,7 @@ public class Action implements IsSerializable {
         //for serialization
     }
     
-    public Action(String name, String parentStr, Effect effect, boolean close) {
+    public Action(String name, String parentStr, Effect effect, boolean close, boolean directed) {
         this.name = name;
         this.parentStr = parentStr;
         this.effect = effect;
@@ -53,7 +55,7 @@ public class Action implements IsSerializable {
         this._id = name;
     }
     
-    private Action(String name, Effect effect, boolean close, String cloneIdSuffix) {
+    private Action(String name, Effect effect, boolean close, boolean directed, String cloneIdSuffix) {
         this.name = name;
         this.effect = effect;
         this.close = close;
@@ -72,6 +74,12 @@ public class Action implements IsSerializable {
         return effect;
     }
 
+    public boolean isDirected() {
+        return directed;
+    }
+
+    
+    
     public boolean isClose() {
         return close;
     }
@@ -119,7 +127,7 @@ public class Action implements IsSerializable {
     }
 
     private Action duplicateSubTree(String cloneIdSuffix) {
-        Action a2 = new Action(this.name, this.effect, this.close, cloneIdSuffix);
+        Action a2 = new Action(this.name, this.effect, this.close, this.directed, cloneIdSuffix);
         
         for (Action c : getChildren()) {
             Action c2 = c.duplicateSubTree(cloneIdSuffix);

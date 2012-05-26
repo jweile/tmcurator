@@ -15,6 +15,16 @@
     <servlet-name>dataProviderServlet</servlet-name>
     <url-pattern>/TmCurator/data</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>loginServlet</servlet-name>
+    <servlet-class>ca.on.mshri.tmcurator.server.LoginServiceImpl</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>loginServlet</servlet-name>
+    <url-pattern>/TmCurator/login</url-pattern>
+  </servlet-mapping>
 
   <!-- Default page to serve -->
   <welcome-file-list>
