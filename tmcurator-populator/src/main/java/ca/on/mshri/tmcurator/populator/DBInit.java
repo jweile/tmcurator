@@ -63,7 +63,7 @@ public class DBInit {
                     + "token TEXT, current INTEGER, password TEXT);");
             statement.executeUpdate("CREATE TABLE verdicts (id TEXT PRIMARY KEY, "
                     + "pairId INTEGER, mentionId INTEGER, action TEXT, "
-                    + "updown INTEGER, g1type TEXT, g2type TEXT, negative INTEGER user TEXT);");
+                    + "updown INTEGER, g1type TEXT, g2type TEXT, negative INTEGER, user TEXT);");
             
             db.commit();
             

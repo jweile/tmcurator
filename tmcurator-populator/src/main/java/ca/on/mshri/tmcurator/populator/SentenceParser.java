@@ -98,7 +98,7 @@ public class SentenceParser {
                         actionAs.get("typeFirst"),
                         actionAs.get("typeSecond"),
                         sentence,
-                        actionAs.get("negative"));
+                        actionAs.get("negative").equalsIgnoreCase("true") ? 1 : 0);
                 updates.addMention(actionAs.get("amid"), qry);
                     
             }

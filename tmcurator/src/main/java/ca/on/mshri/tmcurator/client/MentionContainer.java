@@ -107,10 +107,11 @@ public class MentionContainer extends ContentPanel {
         int order = verdictControls.getOrder().mod();
         String type1 = verdictControls.getG1Type().name();
         String type2 = verdictControls.getG2Type().name();
+        boolean negative = verdictControls.isNegative();
         
         int mentionId = Integer.parseInt(mention.get("mentionId"));
         
-        return new MentionVerdict(mentionId, pairId, action, order, type1, type2);
+        return new MentionVerdict(mentionId, pairId, action, order, type1, type2, negative);
     }
     
     

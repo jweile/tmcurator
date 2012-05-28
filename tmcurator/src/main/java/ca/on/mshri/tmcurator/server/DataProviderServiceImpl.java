@@ -131,14 +131,17 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             
             if (exists) {
                 sql.executeUpdate(String.format(
-                        "UPDATE verdicts SET action='%s', updown='%s', g1type='%s', g2type='%s' WHERE id='%s';",
+                        "UPDATE verdicts SET action='%s', updown='%s', g1type='%s', g2type='%s', negative='%s' WHERE id='%s';",
                         verdict.getAction(),
                         verdict.getOrder(),
                         verdict.getG1Type(),
                         verdict.getG2Type(),
+                        verdict.isNegative()?1:0,
                         id));
             } else {
-                sql.executeUpdate(String.format("INSERT INTO verdicts VALUES ('%s','%s','%s','%s','%s','%s','%s','%s');",
+                sql.executeUpdate(String.format("INSERT INTO verdicts "
+                        + "(id, pairId, mentionId, action, updown, g1type, g2type, negative, user) "
+                        + "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s');",
                         id,
                         verdict.getPairId(),
                         mentionId,
@@ -146,6 +149,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                         verdict.getOrder(),
                         verdict.getG1Type(),
                         verdict.getG2Type(),
+                        verdict.isNegative()?1:0,//int value
                         user));
             }
             sql.close();
@@ -209,7 +213,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
 
     private static final String mentionQuery = new StringBuilder()
             .append("SELECT mentions.ROWID AS mentionId, pmid, sentence, citation, type1, type2, upstream, ")
-            .append("downstream, actionType, updown, effect, close_connection ")
+            .append("downstream, actionType, updown, effect, close_connection, negative ")
             .append("FROM pairs,mentions,articles,actiontypes ")
             .append("WHERE mentions.pair_id=pairs.id ")
             .append("AND mentions.actionType=actiontypes.name ")
@@ -304,6 +308,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 map.put("updown", result.getString("updown"));
                 map.put("type1", result.getString("g1type"));
                 map.put("type2", result.getString("g2type"));
+                map.put("negative", result.getString("negative"));
                 
                 result.close();
             }

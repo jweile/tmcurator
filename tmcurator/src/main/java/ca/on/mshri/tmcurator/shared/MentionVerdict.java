@@ -28,8 +28,8 @@ public class MentionVerdict extends Verdict {
         //for serialization
     }
 
-    public MentionVerdict(int mentionId, int pairId, String action, int order, String g1Type, String g2Type) {
-        super(pairId, action, order, g1Type, g2Type);
+    public MentionVerdict(int mentionId, int pairId, String action, int order, String g1Type, String g2Type, boolean negative) {
+        super(pairId, action, order, g1Type, g2Type, negative);
         this.mentionId = mentionId;
     }
     

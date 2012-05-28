@@ -52,6 +52,8 @@ public class VerdictControls extends BorderLayoutContainer{
     
     private Order order = Order.NONE;
     
+    private boolean negative = false;
+    
     public VerdictControls() {
                 
         BorderLayoutData borderData = new BorderLayoutData(300);
@@ -83,6 +85,16 @@ public class VerdictControls extends BorderLayoutContainer{
             @Override
             public void onSelect(SelectEvent event) {
                 ActionSelectorDialog.getInstance().show(VerdictControls.this);
+            }
+            
+        }), BoxConfig.FLEX_MARGIN);
+        
+        buttonPanel.add(new TextButton("Negate", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                negative = !negative;
+                repaint();
             }
             
         }), BoxConfig.FLEX_MARGIN);
@@ -144,13 +156,15 @@ public class VerdictControls extends BorderLayoutContainer{
             int orderInt = Integer.parseInt(data.get("updown"));
             order = Order.fromInt(orderInt);
             Effect effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
+            //FIXME: there is no verdict for most pairs yet. alter mention table!
             boolean close = Integer.parseInt(data.get("close_connection")) == 1;
+            this.negative = data.get("negative").equals("1");
             this.action = new Action(data.get("actionType"), "DECOY", effect, close, orderInt != 0);
         } catch (NumberFormatException e) {
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }
         
-        //FIXME: direction is not recovered correctly after loading
+        //FIXME: direction is not recovered correctly after loading?
         if (data.get("upstream").equalsIgnoreCase(g2Sym)) {
             order = order.flip();
         }
@@ -159,7 +173,6 @@ public class VerdictControls extends BorderLayoutContainer{
     }
 
 
-    //FIXME: action needs to determine directedness!
     private void repaint() {
         
         if (canvas == null) {
@@ -208,7 +221,7 @@ public class VerdictControls extends BorderLayoutContainer{
         
         if (action != null) {
             x = imageW + arrowW / 2;
-            y = imageW / 2;
+            y = imageH / 2;
             int lw = action.isClose() ? 20 : 30;
             if (action.getEffect() != Effect.ACTIVATE) {
                 g2.setStrokeStyle("red");
@@ -238,6 +251,29 @@ public class VerdictControls extends BorderLayoutContainer{
                     g2.fill();
                 }
             }
+            
+            //negation
+            if (negative) {
+                g2.setStrokeStyle("red");
+                g2.setLineWidth(2);
+                //center point
+                x = totW/2;
+                y = imageH/2;
+                
+                int xOffset = (int)(10.0 * Math.cos(.25 * Math.PI));
+                int yOffset = (int)(10.0 * Math.sin(.25 * Math.PI));
+                
+                g2.beginPath();
+                g2.arc(x, y, 10, 0, Math.PI * 2.0, true);
+                g2.closePath();
+                g2.stroke();
+                
+                g2.beginPath();
+                g2.moveTo(x - xOffset, y - yOffset);
+                g2.lineTo(x + xOffset , y + yOffset);
+                g2.closePath();
+                g2.stroke();
+            }
         }
     }
 
@@ -249,6 +285,10 @@ public class VerdictControls extends BorderLayoutContainer{
 
     Action getAction() {
         return action;
+    }
+
+    public boolean isNegative() {
+        return negative;
     }
     
     
