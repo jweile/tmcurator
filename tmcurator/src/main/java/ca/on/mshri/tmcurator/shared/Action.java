@@ -52,6 +52,7 @@ public class Action implements IsSerializable {
         this.parentStr = parentStr;
         this.effect = effect;
         this.close = close;
+        this.directed = directed;
         this._id = name;
     }
     
@@ -59,6 +60,7 @@ public class Action implements IsSerializable {
         this.name = name;
         this.effect = effect;
         this.close = close;
+        this.directed = directed;
         this._id = name+cloneIdSuffix;
     }
 

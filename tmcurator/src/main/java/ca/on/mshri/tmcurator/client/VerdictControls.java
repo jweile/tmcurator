@@ -243,6 +243,7 @@ public class VerdictControls extends BorderLayoutContainer{
 
     void setAction(Action a) {
         action = a;
+        order = a.isDirected() ? Order.FWD : Order.NONE;
         repaint();
     }
 
