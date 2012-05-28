@@ -108,7 +108,9 @@ public class TmCurator implements EntryPoint {
             }
         }));
         
-        loginMenu.add(new MenuItem("Delete account"));
+        MenuItem deleteAccount = new MenuItem("Delete account");
+        deleteAccount.setEnabled(false);
+        loginMenu.add(deleteAccount);
         
         login.setMenu(loginMenu);
         
