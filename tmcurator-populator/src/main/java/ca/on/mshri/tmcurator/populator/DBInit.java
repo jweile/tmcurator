@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +54,7 @@ public class DBInit {
             statement.executeUpdate("CREATE TABLE mentions "
                     + "(id INTEGER PRIMARY KEY, pair_id TEXT, article_id INTEGER, "
                     + "actionType TEXT, upstream TEXT, downstream TEXT, "
-                    + "type1 TEXT, type2 TEXT, sentence TEXT );");
+                    + "type1 TEXT, type2 TEXT, sentence TEXT, negative INTEGER );");
             statement.executeUpdate("CREATE TABLE actiontypes "
                     + "(name TEXT PRIMARY KEY , pl TEXT, parent TEXT, nbgp INTEGER,"
                     + "updown INTEGER, effect INTEGER, same_process INTEGER, "
@@ -61,7 +63,7 @@ public class DBInit {
                     + "token TEXT, current INTEGER, password TEXT);");
             statement.executeUpdate("CREATE TABLE verdicts (id TEXT PRIMARY KEY, "
                     + "pairId INTEGER, mentionId INTEGER, action TEXT, "
-                    + "updown INTEGER, g1type TEXT, g2type TEXT, user TEXT);");
+                    + "updown INTEGER, g1type TEXT, g2type TEXT, negative INTEGER user TEXT);");
             
             db.commit();
             
@@ -72,24 +74,30 @@ public class DBInit {
         
     }
     
-    public void readSentences(Connection db, File sentenceDir) {
+    public void readSentences(Connection db, List<File> sentenceDirs) {
         
-        if (!sentenceDir.exists()) {
-            throw new RuntimeException(sentenceDir.getName()+ "does not exist!");
-        }
+        List<File> sentenceFiles = new ArrayList<File>();
         
-        if (!sentenceDir.isDirectory()) {
-            throw new RuntimeException(sentenceDir.getName()+ "is not a directory!");
-        }
-        
-        File[] sentenceFiles = sentenceDir.listFiles(new FilenameFilter() {
-
-            @Override
-            public boolean accept(File file, String string) {
-                return string.endsWith(".xml.gz");
+        for (File sentenceDir : sentenceDirs) {
+            if (!sentenceDir.exists()) {
+                throw new RuntimeException(sentenceDir.getName()+ "does not exist!");
             }
+
+            if (!sentenceDir.isDirectory()) {
+                throw new RuntimeException(sentenceDir.getName()+ "is not a directory!");
+            }
+
+            File[] files = sentenceDir.listFiles(new FilenameFilter() {
+
+                @Override
+                public boolean accept(File file, String string) {
+                    return string.endsWith(".xml.gz");
+                }
+
+            });
             
-        });
+            sentenceFiles.addAll(Arrays.asList(files));
+        }
         
         SentenceParser parser = new SentenceParser();
         UpdateCollection updates = new UpdateCollection();

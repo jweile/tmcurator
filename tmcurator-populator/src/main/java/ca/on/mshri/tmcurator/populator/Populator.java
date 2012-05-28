@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Formatter;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -132,7 +134,11 @@ public class Populator {
             
             dbinit.readActionTypes(db);
             
-            dbinit.readSentences(db, new File(args[0]));
+            List<File> dirs = new ArrayList<File>();
+            for (String filename : args) {
+                dirs.add(new File(filename));
+            }
+            dbinit.readSentences(db, dirs);
             
             dbinit.createIndices(db);
             

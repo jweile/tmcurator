@@ -88,7 +88,7 @@ public class SentenceParser {
                     sentence = processSentence(sentenceTag, pairAs.get("g1Sym"), pairAs.get("g2Sym"));
                 }
 
-                qry = String.format("INSERT INTO mentions VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');",
+                qry = String.format("INSERT INTO mentions VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');",
                         actionAs.get("amid"),
                         pairId,
                         articleAs.get("arid"),
@@ -97,7 +97,8 @@ public class SentenceParser {
                         actionAs.get("downstreamTermMentionStr"),
                         actionAs.get("typeFirst"),
                         actionAs.get("typeSecond"),
-                        sentence);
+                        sentence,
+                        actionAs.get("negative"));
                 updates.addMention(actionAs.get("amid"), qry);
                     
             }
