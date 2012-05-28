@@ -1,18 +1,18 @@
 /*
- *  Copyright (C) 2012 Jochen Weile, M.Sc. <jochenweile@gmail.com>
+ * Copyright (C) 2012 Department of Molecular Genetics, University of Toronto
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Lesser General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package ca.on.mshri.tmcurator.client;
 
@@ -32,52 +32,58 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  *
  * @author jweile
  */
-public class LoginDialog extends Dialog {
+public class CreateUserDialog extends Dialog {
 
-    private static LoginDialog instance;
-    
+    private static CreateUserDialog instance;
     private TextField username;
     private PasswordField password;
+    private PasswordField passwordRepeat;
     private HTML label;
-    
-    public LoginDialog() {
+
+    public CreateUserDialog() {
         setHeadingText("Please log in");
         setHideOnButtonClick(false);
         setPredefinedButtons(new PredefinedButton[0]);
-        setPixelSize(300, 150);
+        setPixelSize(300, 200);
         setModal(true);
         setClosable(false);
         setResizable(false);
-        
+
         VBoxLayoutContainer con = new VBoxLayoutContainer();
-        
+
         username = new TextField();
         password = new PasswordField();
+        passwordRepeat = new PasswordField();
         //TODO: find out how to trigger action on "enter" press
         label = new HTML();
-        con.add(new FieldLabel(username, "User"), BoxConfig.MARGIN);
+        con.add(new FieldLabel(username, "User name"), BoxConfig.MARGIN);
         con.add(new FieldLabel(password, "Password"), BoxConfig.MARGIN);
-        con.add(label,BoxConfig.MARGIN);
-        
+        con.add(new FieldLabel(passwordRepeat, "Repeat password"), BoxConfig.MARGIN);
+        con.add(label, BoxConfig.MARGIN);
+
         add(con);
-        
-        addButton(new TextButton("Create account", new SelectHandler() {
+
+        addButton(new TextButton("Cancel", new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                LoginDialog.this.hide();
-                CreateUserDialog.getInstance().show();
+                CreateUserDialog.this.hide();
+                LoginDialog.getInstance().show();
             }
         }));
-        
+
         addButton(new TextButton("Login", new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                doLogin(username.getText(), password.getText());
+                if (password.getText().equals(passwordRepeat.getText())) {
+                   createUser(username.getText(), password.getText()); 
+                } else {
+                    error("Passwords do not match!");
+                }
             }
         }));
-        
+
     }
 
     @Override
@@ -87,20 +93,17 @@ public class LoginDialog extends Dialog {
         label.setHTML("");
         super.show();
     }
-    
-    
-    
-    public static LoginDialog getInstance() {
+
+    public static CreateUserDialog getInstance() {
         if (instance == null) {
-            instance = new LoginDialog();
+            instance = new CreateUserDialog();
         }
         return instance;
     }
-    
-    private void doLogin(final String user, String pwd) {
-        
-        LoginServiceAsync.Util.getInstance()
-                .login(user, pwd, new AsyncCallback<Boolean>() {
+
+    private void createUser(final String user, String pwd) {
+
+        LoginServiceAsync.Util.getInstance().addUser(user, pwd, new AsyncCallback<Boolean>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -112,17 +115,15 @@ public class LoginDialog extends Dialog {
                 if (success) {
                     Cookies.setCookie("tmcurator.user", user);
                     TmCurator.getInstance().setUser(user);
-                    LoginDialog.this.hide();
+                    CreateUserDialog.this.hide();
                     TmCurator.getInstance().loadGreetingPanel();
                 } else {
-                    error("Wrong password!");
+                    error("Account not created!");
                 }
             }
-
         });
     }
-    
-    
+
     private void error(String message) {
         username.setText("");
         password.setText("");
