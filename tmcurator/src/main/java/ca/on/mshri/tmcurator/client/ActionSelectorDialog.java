@@ -17,7 +17,13 @@
 package ca.on.mshri.tmcurator.client;
 
 import ca.on.mshri.tmcurator.shared.Action;
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
@@ -47,7 +53,7 @@ public class ActionSelectorDialog extends Dialog {
     private VerdictControls caller;
 
     private ActionSelectorDialog() {
-        setSize("800px","600px");
+        setSize("400px","400px");
         
         setHeadingText("Select action type");
         
@@ -112,6 +118,26 @@ public class ActionSelectorDialog extends Dialog {
                 ContentPanel cp = new ContentPanel();
                 cp.setHeaderVisible(false);
                 cp.setWidget(tree);
+                
+                tree.setCell(new SimpleSafeHtmlCell<String>(SimpleSafeHtmlRenderer.getInstance(), "click") {
+
+                    private long lastClickTime = 0;
+                    
+                    @Override
+                    public void onBrowserEvent(Context context, Element parent, 
+                            String value, NativeEvent event, ValueUpdater<String> valueUpdater) {
+                        super.onBrowserEvent(context, parent, value, event, valueUpdater);
+                        if (event.getType().equals("click")) {
+                            long time = System.currentTimeMillis();
+                            if (time - lastClickTime < 500L) {
+                                caller.setAction(tree.getSelectionModel().getSelectedItem());
+                                ActionSelectorDialog.this.hide();
+                            }
+                            lastClickTime = time;
+                        }
+                    }
+                    
+                });
                 
                 setWidget(cp);
                 ActionSelectorDialog.this.forceLayout();
