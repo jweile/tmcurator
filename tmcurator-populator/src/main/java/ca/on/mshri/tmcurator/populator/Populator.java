@@ -142,6 +142,8 @@ public class Populator {
             
             dbinit.createIndices(db);
             
+            dbinit.createTestUser(db);
+            
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot connect to database!",ex);
         } finally {

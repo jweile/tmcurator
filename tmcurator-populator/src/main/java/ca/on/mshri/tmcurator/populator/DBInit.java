@@ -74,6 +74,18 @@ public class DBInit {
         
     }
     
+    public void createTestUser(Connection db) {
+        try {
+            Statement s = db.createStatement();
+            
+            s.executeUpdate("INSERT INTO users VALUES ('user', '', 201, 'foo');");
+            db.commit();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Unable to create test user", ex);
+        }
+        
+    }
+    
     public void readSentences(Connection db, List<File> sentenceDirs) {
         
         List<File> sentenceFiles = new ArrayList<File>();
