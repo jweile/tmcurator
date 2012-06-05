@@ -21,21 +21,32 @@ import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
+import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.ValueProvider;
+import com.sencha.gxt.core.client.util.Margins;
+import com.sencha.gxt.data.shared.LabelProvider;
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.AutoProgressBar;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
+import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.ComboBox;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +62,8 @@ public class ActionSelectorDialog extends Dialog {
     private Tree<Action,String> tree;
     
     private VerdictControls caller;
+    
+    private ComboBox<Action> searchBox;
 
     private ActionSelectorDialog() {
         setSize("400px","400px");
@@ -115,9 +128,6 @@ public class ActionSelectorDialog extends Dialog {
                     }
                 });
                 
-                ContentPanel cp = new ContentPanel();
-                cp.setHeaderVisible(false);
-                cp.setWidget(tree);
                 
                 tree.setCell(new SimpleSafeHtmlCell<String>(SimpleSafeHtmlRenderer.getInstance(), "click") {
 
@@ -139,7 +149,37 @@ public class ActionSelectorDialog extends Dialog {
                     
                 });
                 
-                setWidget(cp);
+                searchBox = new ComboBox<Action>(makeListStore(result), new LabelProvider<Action>() {
+                    @Override
+                    public String getLabel(Action item) {
+                        return item.getName();
+                    }
+                });
+                searchBox.setEmptyText("Search...");
+                searchBox.setTypeAhead(true);
+                searchBox.setForceSelection(true);
+                searchBox.setTriggerAction(TriggerAction.ALL);
+                searchBox.addSelectionHandler(new SelectionHandler<Action>() {
+                    @Override
+                    public void onSelection(SelectionEvent<Action> event) {
+                        select(event.getSelectedItem());
+                    }
+                }); 
+                
+                BorderLayoutContainer mainPanel = new BorderLayoutContainer();
+                
+                ContentPanel treePanel = new ContentPanel();
+                treePanel.setHeaderVisible(false);
+                treePanel.setWidget(tree);
+                BorderLayoutData centerData = new BorderLayoutData();
+                centerData.setMargins(new Margins(5,5,5,5));
+                mainPanel.setCenterWidget(treePanel,centerData);
+                
+                BorderLayoutData northData = new BorderLayoutData(25);
+                northData.setMargins(new Margins(5,5,5,5));
+                mainPanel.setNorthWidget(searchBox,northData);
+                
+                setWidget(mainPanel);
                 ActionSelectorDialog.this.forceLayout();
                 
                 if (caller != null) {
@@ -163,6 +203,9 @@ public class ActionSelectorDialog extends Dialog {
 
     public void show(VerdictControls caller) {
         this.caller = caller;
+        if (searchBox != null) {
+            searchBox.setValue(null);
+        }
         if (tree != null) {
             select(caller.getAction());
         }
@@ -181,9 +224,10 @@ public class ActionSelectorDialog extends Dialog {
                 }
             }
             if (selectedAction != null) {
-                tree.getSelectionModel().select(selectedAction, false);
                 tree.collapseAll();
                 expandPath(tree,selectedAction);
+                tree.getSelectionModel().select(selectedAction, false);
+                tree.scrollIntoView(selectedAction);
             }
         }
     }
@@ -251,6 +295,30 @@ public class ActionSelectorDialog extends Dialog {
                 addChildrenOf(c, treeStore);
             }
         }
+    }
+    
+    
+    private ListStore<Action> makeListStore(List<Action> result) {
+        ListStore<Action> store = new ListStore<Action>(new ModelKeyProvider<Action>() {
+
+            @Override
+            public String getKey(Action item) {
+                return item.getId();
+            }
+            
+        });
+        
+        Collections.sort(result, new Comparator<Action>() {
+
+            @Override
+            public int compare(Action t, Action t1) {
+                return t.getId().compareTo(t1.getId());
+            }
+        });
+        
+        store.addAll(result);
+        
+        return store;
     }
 
 }
