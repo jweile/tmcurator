@@ -19,6 +19,7 @@ package ca.on.mshri.tmcurator.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -137,6 +138,24 @@ public class Action implements IsSerializable {
         }
         
         return a2;
+    }
+    
+    /**
+     * Recursively sorts all child nodes and their children and so on.
+     */
+    public void sort() {
+        if (children != null) {
+            Collections.sort(children, new Comparator<Action>() {
+
+                @Override
+                public int compare(Action t, Action t1) {
+                    return t.name.compareTo(t1.name);
+                }
+            });
+            for (Action child : children) {
+                child.sort();
+            }
+        }
     }
     
     

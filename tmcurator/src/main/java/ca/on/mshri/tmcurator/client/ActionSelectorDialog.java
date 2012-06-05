@@ -238,6 +238,7 @@ public class ActionSelectorDialog extends Dialog {
         
         //enter tree into treestore
         for (Action root : roots) {
+            root.sort();
             treeStore.add(root);
             addChildrenOf(root, treeStore);
         }
