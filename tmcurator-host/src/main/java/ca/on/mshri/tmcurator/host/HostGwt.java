@@ -123,7 +123,8 @@ public class HostGwt {
     }
 
     private void run() throws Exception {
-        Server server = new Server(8081);
+        int port = Integer.parseInt(System.getProperty("ca.on.mshri.tmcurator.port", "8081"));
+        Server server = new Server(port);
 
         LOG.info("Creating context...");
         WebAppContext handler = new WebAppContext();
