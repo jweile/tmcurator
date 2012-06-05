@@ -8,4 +8,5 @@ catalog.xml
 nbactions.xml
 \.log(\.\d)*$
 \.db$
+\.bak$
 

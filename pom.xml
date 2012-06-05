@@ -3,26 +3,31 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
   http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-  
-  <name>TmCurator parent</name>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ca.on.mshri</groupId>
-  <artifactId>tmcurator-parent</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+    <name>TmCurator parent</name>
 
-  <packaging>pom</packaging>
-  
-  <modules>
+    <groupId>ca.on.mshri</groupId>
+    <artifactId>tmcurator-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
       <module>tmcurator</module>
       <module>tmcurator-host</module>
       <module>tmcurator-populator</module>
-  </modules>
-  
-  
-  <properties>
+    </modules>
+
+
+    <properties>
       <netbeans.hint.license>lgpl30</netbeans.hint.license>
-  </properties>
+    </properties>
+
+    <scm>
+      <connection>scm:hg:${project.basedir}</connection>
+      <developerConnection>scm:hg:${project.basedir}</developerConnection>
+    </scm>
   
     <developers>
       <developer>
@@ -41,10 +46,10 @@
     </organization>
 
     <licenses>
-    <license>
-      <name>Lesser GNU Public License, Version 3.0</name>
-      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
-    </license>
+        <license>
+          <name>Lesser GNU Public License, Version 3.0</name>
+          <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+        </license>
     </licenses>
   
 </project>
