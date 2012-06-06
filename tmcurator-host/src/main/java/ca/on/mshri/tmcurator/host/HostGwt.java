@@ -38,15 +38,30 @@ public class HostGwt {
     
     private static final Logger LOG = Logger.getLogger(HostGwt.class.getName());
     
+    private File dbfile;
+    
+    private static HostGwt instance;
+
+    public static HostGwt getInstance() {
+        if (instance == null) {
+            instance = new HostGwt();
+        }
+        return instance;
+    }
+
+    private HostGwt() {
+        //use getInstance()
+    }
+    
+    
+    
     public static void main(String[] args) throws Throwable {
         
         try {
             
             setupLogging();
            
-            checkDatabase();
-            
-            new HostGwt().run();
+            getInstance().run();
         
         } catch (Throwable t) {
             logProcessedError(t);
@@ -109,13 +124,13 @@ public class HostGwt {
             b.append("\nReason: ").append(cause.getMessage());
         }
 
-        Logger.getLogger(HostGwt.class.getName()).log(Level.SEVERE, b.toString());
+        LOG.log(Level.SEVERE, b.toString());
     }
 
-    private static void checkDatabase() {
+    private void checkDatabase() {
         
         String dbpath = System.getProperty("ca.on.mshri.tmcurator.db","tmcurator.db");
-        File dbfile = new File(dbpath);
+        dbfile = new File(dbpath);
         if (!(dbfile.exists() && dbfile.canRead())) {
             throw new RuntimeException("Unable to read database at location "+dbpath+
                     "\nSet system property ca.on.mshri.tmcurator.dbca.on.mshri.tmcurator.db");
@@ -123,8 +138,14 @@ public class HostGwt {
     }
 
     private void run() throws Exception {
+        
+        checkDatabase();
+        
         int port = Integer.parseInt(System.getProperty("ca.on.mshri.tmcurator.port", "8081"));
         Server server = new Server(port);
+        
+        LOG.info("Scheduling periodic backup service...");
+        new BackupService().start();
 
         LOG.info("Creating context...");
         WebAppContext handler = new WebAppContext();
@@ -139,5 +160,11 @@ public class HostGwt {
         server.start();
         server.join();
     }
+
+    public File getDbfile() {
+        return dbfile;
+    }
+    
+    
     
 }
