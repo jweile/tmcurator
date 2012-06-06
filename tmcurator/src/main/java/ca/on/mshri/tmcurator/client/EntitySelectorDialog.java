@@ -16,6 +16,8 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.Event;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.ListStore;
@@ -83,6 +85,15 @@ public class EntitySelectorDialog extends Dialog {
         c.add(new FieldLabel(combo2, "Right entity"),BoxConfig.MARGIN);
         
         setWidget(c);
+    }
+
+    @Override
+    public void onBrowserEvent(Event event) {
+        super.onBrowserEvent(event);
+        //FIXME: Only works if dialog has keyboard focus
+        if (event.getKeyCode() == KeyCodes.KEY_ESCAPE) {
+            hide();
+        }
     }
 
     public static EntitySelectorDialog getInstance() {

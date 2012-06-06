@@ -17,9 +17,8 @@
 package ca.on.mshri.tmcurator.client;
 
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.sencha.gxt.widget.core.client.Dialog;
@@ -56,16 +55,15 @@ public class CreateUserDialog extends Dialog {
 
         username = new TextField();
         password = new PasswordField();
-        passwordRepeat = new PasswordField();
-        passwordRepeat.addKeyUpHandler(new KeyUpHandler() {
-
+        passwordRepeat = new PasswordField(){
             @Override
-            public void onKeyUp(KeyUpEvent event) {
-                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+            public void onBrowserEvent(Event event) {
+                super.onBrowserEvent(event);
+                if (event.getKeyCode() == KeyCodes.KEY_ENTER) {
                     ok();
                 }
             }
-        });
+        };
         
         label = new HTML();
         con.add(new FieldLabel(username, "User name"), BoxConfig.MARGIN);
