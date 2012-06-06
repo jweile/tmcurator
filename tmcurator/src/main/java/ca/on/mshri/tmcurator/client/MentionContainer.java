@@ -21,12 +21,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sencha.gxt.cell.core.client.ButtonCell.IconAlign;
+import com.sencha.gxt.core.client.Style.Side;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.tips.ToolTipConfig;
 import java.util.Map;
 
 /**
@@ -71,6 +73,11 @@ public class MentionContainer extends ContentPanel {
                 Window.open(url, "_blank", "");
             }
         });
+        
+        ToolTipConfig tt = new ToolTipConfig("Citation", mention.get("citation"));
+        tt.setCloseable(true);
+        tt.setAnchor(Side.LEFT);
+        pmButton.setToolTipConfig(tt);
 
         VBoxLayoutContainer pmButtonContainer = new VBoxLayoutContainer();
         pmButtonContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
