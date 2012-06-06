@@ -55,6 +55,8 @@ public class CurationPanel extends BorderLayoutContainer {
     
     private int pairId;
     
+    private TextButton nextButton, prevButton;
+    
     
     private CurationPanel() {
         
@@ -157,6 +159,10 @@ public class CurationPanel extends BorderLayoutContainer {
         VBoxLayoutContainer docPanel = (VBoxLayoutContainer)interpretationFrame.getParent();
         docPanel.setHeight(height+300);
         
+        //disable next/previous buttons if not available
+        prevButton.setEnabled(pData.getPairNumber() > 1);
+        nextButton.setEnabled(pData.getPairNumber() < pData.getTotalPairNumber());
+        
         forceLayout();
     }
 
@@ -188,12 +194,14 @@ public class CurationPanel extends BorderLayoutContainer {
         container.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         container.setPack(BoxLayoutPack.CENTER);
         
-        container.add(new TextButton("< Previous", new SelectHandler() {
+        prevButton = new TextButton("< Previous", new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
                 saveThenLoadPrevious();
             }
-        }), BoxConfig.MARGIN);
+        });
+        
+        container.add(prevButton, BoxConfig.MARGIN);
         
         container.add(new TextButton("Home", new SelectHandler() {
             @Override
@@ -202,12 +210,13 @@ public class CurationPanel extends BorderLayoutContainer {
             }
         }), BoxConfig.MARGIN);
         
-        container.add(new TextButton("Next >", new SelectHandler() {
+        nextButton = new TextButton("Next >", new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
                 saveThenLoadNext();
             }
-        }), BoxConfig.MARGIN);
+        });
+        container.add(nextButton, BoxConfig.MARGIN);
         
         return container;
     }
