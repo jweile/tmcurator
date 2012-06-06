@@ -16,6 +16,9 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -53,7 +56,17 @@ public class LoginDialog extends Dialog {
         
         username = new TextField();
         password = new PasswordField();
-        //TODO: find out how to trigger action on "enter" press
+        //FIXME: This doesn't work, due to a bug in GXT
+        password.addKeyUpHandler(new KeyUpHandler() {
+
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
+                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+                    doLogin(username.getText(), password.getText());
+                }
+            }
+        });
+        
         label = new HTML();
         con.add(new FieldLabel(username, "User"), BoxConfig.MARGIN);
         con.add(new FieldLabel(password, "Password"), BoxConfig.MARGIN);

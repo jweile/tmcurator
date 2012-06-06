@@ -16,6 +16,9 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -41,7 +44,7 @@ public class CreateUserDialog extends Dialog {
     private HTML label;
 
     public CreateUserDialog() {
-        setHeadingText("Please log in");
+        setHeadingText("Create new account");
         setHideOnButtonClick(false);
         setPredefinedButtons(new PredefinedButton[0]);
         setPixelSize(300, 200);
@@ -54,7 +57,16 @@ public class CreateUserDialog extends Dialog {
         username = new TextField();
         password = new PasswordField();
         passwordRepeat = new PasswordField();
-        //TODO: find out how to trigger action on "enter" press
+        passwordRepeat.addKeyUpHandler(new KeyUpHandler() {
+
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
+                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+                    ok();
+                }
+            }
+        });
+        
         label = new HTML();
         con.add(new FieldLabel(username, "User name"), BoxConfig.MARGIN);
         con.add(new FieldLabel(password, "Password"), BoxConfig.MARGIN);
@@ -76,14 +88,18 @@ public class CreateUserDialog extends Dialog {
 
             @Override
             public void onSelect(SelectEvent event) {
-                if (password.getText().equals(passwordRepeat.getText())) {
-                   createUser(username.getText(), password.getText()); 
-                } else {
-                    error("Passwords do not match!");
-                }
+                ok();
             }
         }));
 
+    }
+    
+    private void ok() {
+        if (password.getText().equals(passwordRepeat.getText())) {
+           createUser(username.getText(), password.getText()); 
+        } else {
+            error("Passwords do not match!");
+        }
     }
 
     @Override
