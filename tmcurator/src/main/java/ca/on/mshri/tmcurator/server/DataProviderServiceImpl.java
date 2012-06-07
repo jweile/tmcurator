@@ -129,19 +129,22 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             boolean exists = result.getInt(1) > 0;
             result.close();
             
+            String comment = verdict.getComment() == null ? "" : verdict.getComment();
+            
             if (exists) {
                 sql.executeUpdate(String.format(
-                        "UPDATE verdicts SET action='%s', updown='%s', g1type='%s', g2type='%s', negative='%s' WHERE id='%s';",
+                        "UPDATE verdicts SET action='%s', updown='%s', g1type='%s', g2type='%s', negative='%s', comment='%s' WHERE id='%s';",
                         verdict.getAction(),
                         verdict.getOrder(),
                         verdict.getG1Type(),
                         verdict.getG2Type(),
                         verdict.isNegative()?1:0,
+                        verdict.getComment(),
                         id));
             } else {
                 sql.executeUpdate(String.format("INSERT INTO verdicts "
-                        + "(id, pairId, mentionId, action, updown, g1type, g2type, negative, user) "
-                        + "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s');",
+                        + "(id, pairId, mentionId, action, updown, g1type, g2type, negative, comment, user) "
+                        + "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');",
                         id,
                         verdict.getPairId(),
                         mentionId,
@@ -150,6 +153,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                         verdict.getG1Type(),
                         verdict.getG2Type(),
                         verdict.isNegative()?1:0,//int value
+                        verdict.getComment(),
                         user));
             }
             sql.close();
@@ -309,6 +313,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 map.put("type1", result.getString("g1type"));
                 map.put("type2", result.getString("g2type"));
                 map.put("negative", result.getString("negative"));
+                map.put("comment", result.getString("comment"));
                 
                 result.close();
             }

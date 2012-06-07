@@ -182,6 +182,7 @@ public class TmCurator implements EntryPoint {
     
     private void checkLogin() {
         user = Cookies.getCookie("tmcurator.user");
+        //FIXME: There should be a remote service call to verify user existence
         if (user == null) {
             LoginDialog.getInstance().show();
         } else {

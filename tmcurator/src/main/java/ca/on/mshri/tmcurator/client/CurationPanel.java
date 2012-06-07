@@ -180,7 +180,8 @@ public class CurationPanel extends BorderLayoutContainer {
                 verdictControls.getOrder().mod(), 
                 verdictControls.getG1Type().name(), 
                 verdictControls.getG2Type().name(),
-                verdictControls.isNegative());
+                verdictControls.isNegative(),
+                verdictControls.getComment());
         verdicts.add(finalVerdict);
         
         VerdictSheet sheet = new VerdictSheet(pairId);

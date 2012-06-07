@@ -24,6 +24,7 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
@@ -31,6 +32,7 @@ import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.TextArea;
 import java.util.Map;
 
 /**
@@ -45,6 +47,8 @@ public class VerdictControls extends BorderLayoutContainer{
     
     private Canvas canvas;
     
+    private TextArea commentBox;
+    
     private Action action = ROOT; 
     private String g1Sym = "", g2Sym = "";
     
@@ -56,7 +60,7 @@ public class VerdictControls extends BorderLayoutContainer{
     
     public VerdictControls() {
                 
-        BorderLayoutData borderData = new BorderLayoutData(300);
+        Margins margins = new Margins(5,5,5,5);
         
         HBoxLayoutContainer buttonPanel = new HBoxLayoutContainer();
         buttonPanel.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
@@ -99,7 +103,8 @@ public class VerdictControls extends BorderLayoutContainer{
             
         }), BoxConfig.FLEX_MARGIN);
         
-        setEastWidget(buttonPanel, borderData);
+        BorderLayoutData eastLayout = new BorderLayoutData(300);
+        setEastWidget(buttonPanel, eastLayout);
         
         ContentPanel imageBox = new ContentPanel();
         imageBox.setHeaderVisible(false);
@@ -115,7 +120,17 @@ public class VerdictControls extends BorderLayoutContainer{
         }
                 
         imageBox.add(imageBoxCenter);
-        setCenterWidget(imageBox);
+        BorderLayoutData centerLayout = new BorderLayoutData();
+        centerLayout.setMargins(margins);
+        setCenterWidget(imageBox,centerLayout);
+        
+        commentBox = new TextArea();
+        commentBox.setEmptyText("Comments...");
+        
+        BorderLayoutData westLayout = new BorderLayoutData(200);
+        westLayout.setMargins(margins);
+        
+        setWestWidget(commentBox, westLayout);
         
         
     }
@@ -144,6 +159,14 @@ public class VerdictControls extends BorderLayoutContainer{
         return order;
     }
     
+    public String getComment() {
+        if (commentBox != null && commentBox.getText() != null) {
+            return commentBox.getText();
+        } else {
+            return "";
+        }
+    }
+    
     
     public void configure(Map<String,String> data, String g1sym, String g2sym) {
         
@@ -160,6 +183,10 @@ public class VerdictControls extends BorderLayoutContainer{
             boolean close = Integer.parseInt(data.get("close_connection")) == 1;
             this.negative = data.get("negative").equals("1");
             this.action = new Action(data.get("actionType"), "DECOY", effect, close, orderInt != 0);
+            String comment = data.get("comment");
+            if (comment != null && comment.length() > 0) {
+                commentBox.setText(comment);
+            }
         } catch (NumberFormatException e) {
             throw new RuntimeException("Attributes in mention have wrong format.",e);
         }

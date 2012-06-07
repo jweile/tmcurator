@@ -30,18 +30,20 @@ public class Verdict implements IsSerializable {
     private String g1Type;
     private String g2Type;
     private boolean negative;
+    private String comment;
     
     Verdict() {
         //for serialization
     }
 
-    public Verdict(int pairId, String action, int order, String g1Type, String g2Type, boolean negative) {
+    public Verdict(int pairId, String action, int order, String g1Type, String g2Type, boolean negative, String comment) {
         this.pairId = pairId;
         this.action = action;
         this.order = order;
         this.g1Type = g1Type;
         this.g2Type = g2Type;
         this.negative = negative;
+        this.comment = comment;
     }
 
     public String getAction() {
@@ -67,6 +69,9 @@ public class Verdict implements IsSerializable {
     public boolean isNegative() {
         return negative;
     }
-        
+
+    public String getComment() {
+        return comment;
+    }
         
 }
