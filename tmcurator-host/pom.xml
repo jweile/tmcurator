@@ -94,9 +94,9 @@
         </dependency>
         
         <dependency>
-            <groupId>com.almworks.sqlite4java</groupId>
-            <artifactId>sqlite4java</artifactId>
-            <version>0.282</version>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.7.2</version>
         </dependency>
         
     </dependencies>

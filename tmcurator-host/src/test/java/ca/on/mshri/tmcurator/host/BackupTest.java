@@ -16,6 +16,8 @@
  */
 package ca.on.mshri.tmcurator.host;
 
+import ca.on.mshri.tmcurator.host.BackupService.Backup;
+import java.io.File;
 import junit.framework.TestCase;
 
 /**
@@ -24,8 +26,29 @@ import junit.framework.TestCase;
  */
 public class BackupTest extends TestCase {
     
-    public void testBackup() {
-        new BackupService().start();
+    private File dbFile = new File(new File(new File(new File("src"),"test"),"resources"),"test.db");
+    private File bakDir = new File("backup");
+    
+    public void testBackupScheduling() {
+        new BackupService().start(dbFile);
     }
+    
+    public void testBackup() throws InterruptedException {
+        Backup bak = new Backup(dbFile);
+        bak.run();
+        
+        assertTrue("No backup directory", bakDir.exists());
+        assertTrue("No backup file", bakDir.list().length > 0);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (bakDir.exists()) {
+            bakDir.delete();
+        }
+    }
+    
+    
     
 }

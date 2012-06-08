@@ -145,7 +145,7 @@ public class HostGwt {
         Server server = new Server(port);
         
         LOG.info("Scheduling periodic backup service...");
-        new BackupService().start();
+        new BackupService().start(dbfile);
 
         LOG.info("Creating context...");
         WebAppContext handler = new WebAppContext();

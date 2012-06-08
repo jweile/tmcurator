@@ -16,10 +16,11 @@
  */
 package ca.on.mshri.tmcurator.host;
 
-import com.almworks.sqlite4java.SQLiteBackup;
-import com.almworks.sqlite4java.SQLiteConnection;
-import com.almworks.sqlite4java.SQLiteException;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,16 +36,28 @@ import java.util.logging.Logger;
  * @author jweile
  */
 public class BackupService  {
-
-    public void start() {
+    
+    public void start(File dbfile) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException("Failed to load JDBC driver",ex);
+        }
+        
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         //perform backup every 24h
-        scheduler.scheduleAtFixedRate(new Backup(), 1, 1, TimeUnit.DAYS);
+        scheduler.scheduleAtFixedRate(new Backup(dbfile), 1, 1, TimeUnit.DAYS);
     }
     
-    private static class Backup implements Runnable {
+    static class Backup implements Runnable {
         
         private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        
+        private File dbFile;
+        
+        Backup(File dbFile) {
+            this.dbFile = dbFile;
+        }
 
         @Override
         public void run() {
@@ -57,22 +70,25 @@ public class BackupService  {
             
             File backupFile = new File(backupDir, "tmcurator_"+DF.format(new Date())+".db.bak");
             
-            SQLiteConnection db = new SQLiteConnection(HostGwt.getInstance().getDbfile());
+            Connection db = null;
+        
             try {
-                SQLiteBackup backup = db.initializeBackup(backupFile);
+
+                db = DriverManager.getConnection("jdbc:sqlite:"+dbFile.getAbsolutePath());
+                Statement sql = db.createStatement();
+                sql.executeUpdate("backup to "+backupFile.getAbsolutePath());
+                
+            } catch (SQLException ex) {
+                    Logger.getLogger(Backup.class.getName()).log(Level.SEVERE, 
+                            "Backup failed!", ex);
+            } finally {
                 try {
-                    while (!backup.isFinished()) {
-                        backup.backupStep(32);
-                    }
-                } finally {
-                    backup.dispose();
+                    db.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Backup.class.getName()).log(Level.SEVERE, 
+                            "Unable to close database connection", ex);
                 }
-            } catch (SQLiteException e) {
-                Logger.getLogger(BackupService.class.getName())
-                        .log(Level.SEVERE, "Backup failed!", e);
             }
-            
-            
             
             for (File oldBackupFile : backupDir.listFiles()) {
                 //         v9                 v28
