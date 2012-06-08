@@ -16,13 +16,19 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HTML; 
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ProgressBar;
+import com.sencha.gxt.widget.core.client.button.ButtonBar;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.menu.Menu;
+import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 /**
  *
@@ -58,7 +64,7 @@ public class GreetingPanel extends VBoxLayoutContainer {
         progressbar = new ProgressBar();
         progressbar.updateProgress(0.0, "Curation progress: 0%");
         add(progressbar, layout);
-        
+                
         TextButton continueButton = new TextButton("Continue");
         continueButton.addSelectHandler(new SelectHandler() {
 
@@ -68,7 +74,20 @@ public class GreetingPanel extends VBoxLayoutContainer {
             }
 
         });
-        add(continueButton, layout);
+        
+        TextButton jumpButton = new TextButton("Jump to pair", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                //TODO get actual number from database
+                JumpToPairDialog.getInstance(5000).show(100);
+            }
+        });
+        HBoxLayoutContainer bb = new HBoxLayoutContainer();
+        bb.setSize("150px", "30px");
+        bb.add(continueButton, BoxConfig.FLEX_MARGIN);
+        bb.add(jumpButton, BoxConfig.FLEX_MARGIN);
+        add(bb, layout);
         
     }
     

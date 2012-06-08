@@ -179,7 +179,6 @@ public class VerdictControls extends BorderLayoutContainer{
             int orderInt = Integer.parseInt(data.get("updown"));
             order = Order.fromInt(orderInt);
             Effect effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
-            //FIXME: there is no verdict for most pairs yet. alter mention table!
             boolean close = Integer.parseInt(data.get("close_connection")) == 1;
             this.negative = data.get("negative").equals("1");
             this.action = new Action(data.get("actionType"), "DECOY", effect, close, orderInt != 0);
