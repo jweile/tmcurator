@@ -123,7 +123,7 @@ public class TmCurator implements EntryPoint {
         
         DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
         
-        dataService.currProgress(user, new AsyncCallback<Double>() {
+        dataService.currProgress(user, new AsyncCallback<int[]>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -132,11 +132,11 @@ public class TmCurator implements EntryPoint {
             }
 
             @Override
-            public void onSuccess(Double result) {
+            public void onSuccess(int[] result) {
                 TmCurator.LOAD_DIALOG.hide();
-                
+                                
                 GreetingPanel gp = GreetingPanel.getInstance();
-                gp.setProgress(result);
+                gp.setProgress(result[0], result[1]);
 
                 mainPanel.clear();
                 mainPanel.add(gp);
@@ -178,6 +178,10 @@ public class TmCurator implements EntryPoint {
 
         });
     }
+    
+    public ContentPanel getMainPanel() {
+        return mainPanel;
+    }
 
     
     private void checkLogin() {
@@ -192,7 +196,7 @@ public class TmCurator implements EntryPoint {
     }
     
     
-    private void displayError(Throwable caught) {
+    public void displayError(Throwable caught) {
         new AlertMessageBox("Error",caught.getMessage()).show();
     }
     

@@ -57,20 +57,23 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     public PairDataSheet prevPairSheet(String user) {
         return queryPairData(user,Inc.PREV);
     }
+    
+    @Override
+    public PairDataSheet gotoPairSheet(int pairNum) {
+        return queryPairData(pairNum);
+    }
 
     @Override
-    public double currProgress(String user) {
+    public int[] currProgress(String user) {
         
-        return new DBAccess<Void, Double>() {
+        return new DBAccess<Void, int[]>() {
 
             @Override
-            public Double transaction(Connection db, String user, Void in) {
+            public int[] transaction(Connection db, String user, Void in) {
                 int curr = getProgress(db, user, Inc.CURR);
                 int tot = getTotalPairNum(db);
 
-                double progress = (double)curr / (double)tot;
-
-                return progress;
+                return new int[]{curr,tot};
             }
         }.run(user, null);
     }
@@ -197,6 +200,34 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 }
             }
         }.run(user, inc);
+            
+    }
+    
+    private PairDataSheet queryPairData(int pairNum) {
+          
+        return new DBAccess<Integer, PairDataSheet>() {
+
+            @Override
+            public PairDataSheet transaction(Connection db, String user, Integer currPairId) {
+                int totPairNum = getTotalPairNum(db);
+
+                if (currPairId <= totPairNum) {
+                    PairDataSheet s = new PairDataSheet();
+
+                    s.setPairNumber(currPairId);
+                    s.setTotalPairNumber(totPairNum);
+
+                    obtainPairInfo(currPairId, s,db);
+
+                    s.setMentions(obtainMentions(currPairId, db, user));
+
+                    return s;
+                } else {
+                    //FIXME: make sure frontend accounts for EOL case
+                    return null;
+                }
+            }
+        }.run(null, pairNum);
             
     }
 

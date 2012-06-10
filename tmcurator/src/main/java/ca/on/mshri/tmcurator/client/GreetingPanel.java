@@ -37,6 +37,8 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 public class GreetingPanel extends VBoxLayoutContainer {
 
     private static GreetingPanel instance = null;
+    
+    private int pairNum, totalPairNum;
 
     private ProgressBar progressbar;
     /**
@@ -80,7 +82,7 @@ public class GreetingPanel extends VBoxLayoutContainer {
             @Override
             public void onSelect(SelectEvent event) {
                 //TODO get actual number from database
-                JumpToPairDialog.getInstance(5000).show(100);
+                JumpToPairDialog.getInstance(totalPairNum).show(pairNum);
             }
         });
         HBoxLayoutContainer bb = new HBoxLayoutContainer();
@@ -91,10 +93,14 @@ public class GreetingPanel extends VBoxLayoutContainer {
         
     }
     
-    public void setProgress(double progress) {
+    public void setProgress(int pairNum, int totalPairNum) {
         
-        int percent = (int)(progress * 100.0);
-        progressbar.updateProgress(progress, "Curation progress: "+percent+"%");
+        this.pairNum = pairNum;
+        this.totalPairNum = totalPairNum;
+        
+        double progress = (double) pairNum / (double) totalPairNum;
+        
+        progressbar.updateProgress(progress, "Curation progress: "+pairNum+" of "+totalPairNum);
     }
     
     

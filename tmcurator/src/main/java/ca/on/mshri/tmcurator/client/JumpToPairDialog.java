@@ -17,6 +17,7 @@
 package ca.on.mshri.tmcurator.client;
 
 import ca.on.mshri.tmcurator.shared.GenePair;
+import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -131,9 +132,9 @@ public class JumpToPairDialog extends Dialog {
 
             @Override
             public void onSelect(SelectEvent event) {
-                //TODO jump to selected pair
-                hide();
+                jump();
             }
+
         }));
     }
 
@@ -307,5 +308,40 @@ public class JumpToPairDialog extends Dialog {
         ValueProvider<GenePair, String> g2Sym();
         
         ValueProvider<GenePair, Integer> id();
+    }
+    
+    
+    private void jump() {
+        hide();
+        
+        pair = pairSpinner.getValue();
+        
+        final TmCurator main = TmCurator.getInstance();
+        TmCurator.LOAD_DIALOG.show();
+
+        DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+
+        dataService.gotoPairSheet(pair, new AsyncCallback<PairDataSheet>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
+                main.displayError(caught);
+            }
+
+            @Override
+            public void onSuccess(PairDataSheet result) {
+
+                TmCurator.LOAD_DIALOG.hide();
+
+                CurationPanel p = CurationPanel.getInstance();
+                p.updatePairData(result);
+
+                main.getMainPanel().clear();
+                main.getMainPanel().add(p);
+                main.getMainPanel().forceLayout();
+            }
+
+        });
     }
 }
