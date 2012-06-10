@@ -17,6 +17,7 @@
 package ca.on.mshri.tmcurator.client;
 
 import ca.on.mshri.tmcurator.shared.Action;
+import ca.on.mshri.tmcurator.shared.GenePair;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import ca.on.mshri.tmcurator.shared.VerdictSheet;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -42,5 +43,7 @@ public interface DataProviderService extends RemoteService {
     List<Action> getActions();
     
     void saveVerdicts(String user, VerdictSheet sheet);
+    
+    List<GenePair> findPairs(String qry);
     
 }

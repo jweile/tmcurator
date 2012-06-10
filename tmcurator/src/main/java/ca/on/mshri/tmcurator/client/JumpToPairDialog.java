@@ -16,23 +16,29 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import ca.on.mshri.tmcurator.shared.GenePair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor.Path;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
+import com.sencha.gxt.widget.core.client.AutoProgressBar;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Slider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer.VBoxLayoutAlign;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.FieldSet;
@@ -42,6 +48,8 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +63,11 @@ public class JumpToPairDialog extends Dialog {
     
     private int pair;
     
-    private Grid<Pair> resultGrid;
+    private Grid<GenePair> resultGrid;
     
     private FieldSet resultFieldSet;
+    
+    private VBoxLayoutContainer resultContainer;
     
     private Slider pairSlider;
     
@@ -141,7 +151,15 @@ public class JumpToPairDialog extends Dialog {
     private IsWidget makeSearchBar() {
         BorderLayoutContainer con = new BorderLayoutContainer();
         
-        searchField = new TextField();
+        searchField = new TextField() {
+            @Override
+            public void onBrowserEvent(Event event) {
+                super.onBrowserEvent(event);
+                if (event.getKeyCode() == KeyCodes.KEY_ENTER) {
+                    triggerSearch();
+                }
+            }
+        };
         searchField.setEmptyText("Enter query...");
         con.setCenterWidget(searchField);
         
@@ -149,18 +167,43 @@ public class JumpToPairDialog extends Dialog {
         layout.setMargins(new Margins(0,0,0,5));
         
         con.setEastWidget(new TextButton("Search",new SelectHandler() {
-
             @Override
             public void onSelect(SelectEvent event) {
-                searchField.getText();
-                resultGrid.getStore().clear();
-                resultGrid.getStore().add(new Pair(1,"foo","bar"));
-                resultGrid.getView().refresh(true);
-                resultFieldSet.expand();
+                triggerSearch();
             }
         }),layout);
         
         return con;
+    }
+    
+    private void triggerSearch() {
+        resultContainer.clear();
+        AutoProgressBar pb = new AutoProgressBar();
+        pb.updateText("Searching...");
+        pb.setWidth("230px");
+        resultContainer.add(pb);
+        resultFieldSet.expand();
+        pb.auto();
+
+        String qry = searchField.getText();
+        DataProviderServiceAsync service = DataProviderServiceAsync.Util.getInstance();
+        service.findPairs(qry, new AsyncCallback<List<GenePair>>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                resultContainer.clear();
+                resultContainer.add(new HTML(caught.getMessage()));
+            }
+
+            @Override
+            public void onSuccess(List<GenePair> result) {
+                resultContainer.clear();
+                resultGrid.getStore().clear();
+                resultGrid.getStore().addAll(result);
+                resultContainer.add(resultGrid);
+                resultGrid.getView().refresh(true);
+            }
+        });
     }
 
     private IsWidget makeSliderField() {
@@ -205,87 +248,64 @@ public class JumpToPairDialog extends Dialog {
         pairSlider.setValue(pair);
         searchField.setValue(null);
         resultGrid.getStore().clear();
+        resultGrid.getView().refresh(true);
         resultFieldSet.collapse();
     }
     
     
     private IsWidget makeResultsField() {
         resultFieldSet = new FieldSet();
+        resultFieldSet.setHeight("100px");
         resultFieldSet.setHeadingText("Results");
         resultFieldSet.setCollapsible(true);
         
         PairProps pairProps = GWT.create(PairProps.class);
         
-        List<ColumnConfig<Pair,?>> cols = new ArrayList<ColumnConfig<Pair,?>>();
-        cols.add(new ColumnConfig<Pair,Integer>(pairProps.id(),90,"Pair #"));
-        cols.add(new ColumnConfig<Pair,String>(pairProps.g1Sym(), 90, "Gene 1"));
-        cols.add(new ColumnConfig<Pair,String>(pairProps.g2Sym(), 90, "Gene 2"));
+        List<ColumnConfig<GenePair,?>> cols = new ArrayList<ColumnConfig<GenePair,?>>();
+        cols.add(new ColumnConfig<GenePair,Integer>(pairProps.id(),90,"Pair #"));
+        cols.add(new ColumnConfig<GenePair,String>(pairProps.g1Sym(), 90, "Gene 1"));
+        cols.add(new ColumnConfig<GenePair,String>(pairProps.g2Sym(), 90, "Gene 2"));
         
-        ColumnModel<Pair> model = new ColumnModel<Pair>(cols);
+        ColumnModel<GenePair> model = new ColumnModel<GenePair>(cols);
         
-        ListStore<Pair> resultStore = new ListStore<Pair>(pairProps.key());
+        ListStore<GenePair> resultStore = new ListStore<GenePair>(pairProps.key());
         
-        resultGrid = new Grid<Pair>(resultStore, model);
+        resultGrid = new Grid<GenePair>(resultStore, model);
         resultGrid.getView().setEmptyText("No results");
+        resultGrid.setHeight("100px");
         
-        VBoxLayoutContainer con = new VBoxLayoutContainer();
-        con.setHeight("220px");
-        con.add(resultGrid);
+        resultGrid.getSelectionModel()
+                .addSelectionChangedHandler(new SelectionChangedHandler<GenePair>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<GenePair> event) {
+                if (event.getSelection() != null && event.getSelection().size() > 0) {
+                    GenePair pair = event.getSelection().get(0);
+                    int pairNum = pair.getId();
+                    System.out.println(pairNum);
+                    pairSpinner.setValue(pairNum);
+                    pairSlider.setValue(pairNum);
+                }
+            }
+        });
         
-//        ScrollPanel scroll = new ScrollPanel(con);
-//        scroll.setHeight("220px");
+        resultContainer = new VBoxLayoutContainer(VBoxLayoutAlign.CENTER);
+        resultContainer.setHeight("100px");
+        resultContainer.add(resultGrid);
         
-        resultFieldSet.setWidget(con);
+        resultFieldSet.setWidget(resultContainer);
         resultFieldSet.collapse();
         
         return resultFieldSet;
     }
-
-    public static class Pair {
-        private String g1Sym;
-        private String g2Sym;
-        private int id;
-        
-        public Pair(int id, String g1Sym, String g2Sym) {
-            this.id = id;
-            this.g1Sym = g1Sym;
-            this.g2Sym = g2Sym;
-        }
-
-        public String getG1Sym() {
-            return g1Sym;
-        }
-
-        public void setG1Sym(String g1Sym) {
-            this.g1Sym = g1Sym;
-        }
-
-        public String getG2Sym() {
-            return g2Sym;
-        }
-
-        public void setG2Sym(String g2Sym) {
-            this.g2Sym = g2Sym;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-        
-    }
     
-    public static interface PairProps extends PropertyAccess<Pair> {
+    public static interface PairProps extends PropertyAccess<GenePair> {
         @Path("id")
-        ModelKeyProvider<Pair> key();
+        ModelKeyProvider<GenePair> key();
 
-        ValueProvider<Pair, String> g1Sym();
+        ValueProvider<GenePair, String> g1Sym();
         
-        ValueProvider<Pair, String> g2Sym();
+        ValueProvider<GenePair, String> g2Sym();
         
-        ValueProvider<Pair, Integer> id();
+        ValueProvider<GenePair, Integer> id();
     }
 }

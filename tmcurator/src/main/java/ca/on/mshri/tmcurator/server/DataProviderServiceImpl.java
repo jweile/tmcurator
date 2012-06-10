@@ -20,6 +20,7 @@ import ca.on.mshri.tmcurator.client.DataProviderService;
 import ca.on.mshri.tmcurator.shared.Action;
 import ca.on.mshri.tmcurator.shared.Effect;
 import ca.on.mshri.tmcurator.shared.MentionVerdict;
+import ca.on.mshri.tmcurator.shared.GenePair;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import ca.on.mshri.tmcurator.shared.Verdict;
 import ca.on.mshri.tmcurator.shared.VerdictSheet;
@@ -394,7 +395,37 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         
     }
 
+    @Override
+    public List<GenePair> findPairs(String qry) {
+        return new DBAccess<String, List<GenePair>>() {
+            @Override
+            public List<GenePair> transaction(Connection db, String user, String in) {
+                return _findPairs(db,in);
+            }
+        }.run(null, qry);
+    }
 
+    private List<GenePair> _findPairs(Connection db, String in) {
+        if (in != null) {
+            in = in.replaceAll("'", "''");
+        }
+        List<GenePair> list = new ArrayList<GenePair>();
+        try {
+            Statement sql = db.createStatement();
+            ResultSet r = sql.executeQuery(
+                    "SELECT ROWID, g1sym, g2sym FROM pairs "
+                    + "WHERE g1sym LIKE '%"+in+"%' OR g1sym LIKE '%"+in+"%';");
+            while (r.next()) {
+                GenePair p = new GenePair(r.getInt("ROWID"), 
+                        r.getString("g1sym"), r.getString("g2sym"));
+                list.add(p);
+            }
+            
+        } catch (SQLException e) {
+            throw new RuntimeException("DB query failed!");
+        }
+        return list;
+    }
 
     private enum Inc {
         NEXT("+1"),CURR(""),PREV("-1");
