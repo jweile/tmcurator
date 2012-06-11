@@ -30,6 +30,7 @@ public class PairDataSheet implements IsSerializable {
     private int totalPairNumber;
     private String g1Sym;
     private String g2Sym;
+    private int numVerdicts;
     
     private List<Map<String, String>> mentions;
 
@@ -71,6 +72,14 @@ public class PairDataSheet implements IsSerializable {
 
     public void setTotalPairNumber(int totalPairNumber) {
         this.totalPairNumber = totalPairNumber;
+    }
+
+    public int getNumVerdicts() {
+        return numVerdicts;
+    }
+
+    public void setNumVerdicts(int numVerdicts) {
+        this.numVerdicts = numVerdicts;
     }
 
     

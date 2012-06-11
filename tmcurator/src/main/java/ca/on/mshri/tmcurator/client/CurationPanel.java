@@ -63,7 +63,7 @@ public class CurationPanel extends BorderLayoutContainer {
         setHeight(600);
         
         BorderLayoutData borderData = new BorderLayoutData(50);
-        borderData.setMargins(new Margins(10));
+        borderData.setMargins(new Margins(20));
         
         titleBar = new HTML();
         setNorthWidget(titleBar,borderData);
@@ -126,6 +126,12 @@ public class CurationPanel extends BorderLayoutContainer {
                 .append("\" target=\"_blank\">")
                 .append(pData.getG2Sym())
                 .append("</a></span>");
+        
+        if (pData.getNumVerdicts() > 0) {
+            b.append("<br/><span style=\"font-size: small;color:red;\">Existing curations: ")
+                    .append(pData.getNumVerdicts())
+                    .append("</span>");
+        }
         
         titleBar.setHTML(b.toString());
         

@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -203,6 +201,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
 
                     s.setPairNumber(currPairId);
                     s.setTotalPairNumber(totPairNum);
+                    s.setNumVerdicts(getNumVerdicts(db, currPairId));
 
                     obtainPairInfo(currPairId, s,db);
 
@@ -371,6 +370,19 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             throw new RuntimeException("Query failed!",ex);
         }
         
+    }
+    
+    private int getNumVerdicts(Connection db, int currPairId) {
+        try {
+            Statement s = db.createStatement();
+            ResultSet r = s.executeQuery(
+                    "SELECT COUNT(DISTINCT user) FROM verdicts WHERE pairId='"
+                    +currPairId+"';");
+            r.next();
+            return r.getInt(1);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Query failed!",ex);
+        }
     }
 
     private int getProgress(Connection db, String user, Inc inc) {
