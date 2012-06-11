@@ -59,8 +59,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     }
     
     @Override
-    public PairDataSheet gotoPairSheet(int pairNum) {
-        return queryPairData(pairNum);
+    public PairDataSheet gotoPairSheet(String user, int pairNum) {
+        return queryPairData(user, pairNum);
     }
 
     @Override
@@ -217,7 +217,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             
     }
     
-    private PairDataSheet queryPairData(int pairNum) {
+    private PairDataSheet queryPairData(String user, int pairNum) {
           
         return new DBAccess<Integer, PairDataSheet>() {
 
@@ -226,6 +226,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 int totPairNum = getTotalPairNum(db);
 
                 if (currPairId <= totPairNum) {
+                    setPairId(db, user, currPairId);
+                    
                     PairDataSheet s = new PairDataSheet();
 
                     s.setPairNumber(currPairId);
@@ -241,8 +243,18 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                     return null;
                 }
             }
-        }.run(null, pairNum);
+        }.run(user, pairNum);
             
+    }
+
+    private void setPairId(Connection db, String user, Integer currPairId) {
+        try {
+            Statement s = db.createStatement();
+            s.executeUpdate("UPDATE users SET current='"+currPairId+"' WHERE name='"+user+"';");
+            s.close();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Cannot query database.",ex);
+        }
     }
 
     private void obtainPairInfo(int pairNum, PairDataSheet s, Connection db) {

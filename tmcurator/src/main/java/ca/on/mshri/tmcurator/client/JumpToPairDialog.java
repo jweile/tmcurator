@@ -321,7 +321,7 @@ public class JumpToPairDialog extends Dialog {
 
         DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
 
-        dataService.gotoPairSheet(pair, new AsyncCallback<PairDataSheet>() {
+        dataService.gotoPairSheet(TmCurator.getInstance().getUser(), pair, new AsyncCallback<PairDataSheet>() {
 
             @Override
             public void onFailure(Throwable caught) {

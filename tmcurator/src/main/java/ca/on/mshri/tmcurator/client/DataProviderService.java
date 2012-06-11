@@ -38,7 +38,7 @@ public interface DataProviderService extends RemoteService {
     
     PairDataSheet prevPairSheet(String user);
     
-    PairDataSheet gotoPairSheet(int pairNum);
+    PairDataSheet gotoPairSheet(String user, int pairNum);
     
     int[] currProgress(String user);
     
