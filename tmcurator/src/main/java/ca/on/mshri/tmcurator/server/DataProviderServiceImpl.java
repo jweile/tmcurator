@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -72,8 +74,9 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             public int[] transaction(Connection db, String user, Void in) {
                 int curr = getProgress(db, user, Inc.CURR);
                 int tot = getTotalPairNum(db);
+                int filled = getNumVerdicts(db, user);
 
-                return new int[]{curr,tot};
+                return new int[]{curr,tot,filled};
             }
         }.run(user, null);
     }
@@ -95,6 +98,18 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             }
         } else {
             return totalPairNum;
+        }
+    }
+    
+    
+    private int getNumVerdicts(Connection db, String user) {
+        try {
+            Statement s = db.createStatement();
+            ResultSet r = s.executeQuery("SELECT COUNT(DISTINCT pairId) FROM verdicts WHERE user='"+user+"';");
+            r.next();
+            return r.getInt(1);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Unable to query database!",ex);
         }
     }
     

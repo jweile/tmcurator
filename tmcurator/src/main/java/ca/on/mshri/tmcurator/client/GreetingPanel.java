@@ -16,19 +16,14 @@
  */
 package ca.on.mshri.tmcurator.client;
 
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HTML; 
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ProgressBar;
-import com.sencha.gxt.widget.core.client.button.ButtonBar;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.menu.Menu;
-import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 /**
  *
@@ -38,7 +33,7 @@ public class GreetingPanel extends VBoxLayoutContainer {
 
     private static GreetingPanel instance = null;
     
-    private int pairNum, totalPairNum;
+    private int pairNum, totalPairNum, progress;
 
     private ProgressBar progressbar;
     /**
@@ -93,14 +88,15 @@ public class GreetingPanel extends VBoxLayoutContainer {
         
     }
     
-    public void setProgress(int pairNum, int totalPairNum) {
+    public void setProgress(int pairNum, int totalPairNum, int progress) {
         
+        this.progress = progress;
         this.pairNum = pairNum;
         this.totalPairNum = totalPairNum;
         
-        double progress = (double) pairNum / (double) totalPairNum;
+        double share = (double) progress / (double) totalPairNum;
         
-        progressbar.updateProgress(progress, "Curation progress: "+pairNum+" of "+totalPairNum);
+        progressbar.updateProgress(share, "Curation progress: "+progress+" of "+totalPairNum);
     }
     
     

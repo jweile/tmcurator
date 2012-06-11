@@ -136,7 +136,7 @@ public class TmCurator implements EntryPoint {
                 TmCurator.LOAD_DIALOG.hide();
                                 
                 GreetingPanel gp = GreetingPanel.getInstance();
-                gp.setProgress(result[0], result[1]);
+                gp.setProgress(result[0], result[1], result[2]);
 
                 mainPanel.clear();
                 mainPanel.add(gp);
