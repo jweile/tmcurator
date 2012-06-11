@@ -160,7 +160,8 @@ public class VerdictControls extends BorderLayoutContainer{
     }
     
     public String getComment() {
-        if (commentBox != null && commentBox.getText() != null) {
+        if (commentBox != null && commentBox.getText() != null 
+                && !commentBox.getText().equals(commentBox.getEmptyText())) {
             return commentBox.getText();
         } else {
             return "";
