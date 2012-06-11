@@ -238,9 +238,9 @@ public class VerdictControls extends BorderLayoutContainer{
         ie = ImageElement.as((new Image(rImage.getSafeUri())).getElement());
         g2.drawImage(ie, imageW + arrowW + x, y);
         
-        String legend = g1Sym + " - \"" + 
+        String legend = format(g1Sym,g1Type) + " - \"" + 
                 (action != null ? action.getName() : "?") + 
-                "\" - " + g2Sym;
+                "\" - " + format(g2Sym,g2Type);
         
         g2.setTextAlign(Context2d.TextAlign.CENTER);
         g2.setTextBaseline(Context2d.TextBaseline.MIDDLE);
@@ -316,6 +316,17 @@ public class VerdictControls extends BorderLayoutContainer{
 
     public boolean isNegative() {
         return negative;
+    }
+
+    private String format(String sym, EntityType entityType) {
+        if (entityType == EntityType.PROTEIN) {
+            StringBuilder b = new StringBuilder();
+            b.append(Character.toUpperCase(sym.charAt(0)));
+            b.append(sym.substring(1, sym.length()));
+            return b.toString();
+        } else {
+            return sym.toUpperCase();
+        }
     }
     
     
