@@ -24,6 +24,7 @@ import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.sencha.gxt.cell.core.client.ButtonCell.IconAlign;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -58,6 +59,8 @@ public class VerdictControls extends BorderLayoutContainer{
     
     private boolean negative = false;
     
+    private boolean invalid = false;
+    
     public VerdictControls() {
                 
         Margins margins = new Margins(5,5,5,5);
@@ -65,35 +68,43 @@ public class VerdictControls extends BorderLayoutContainer{
         HBoxLayoutContainer buttonPanel = new HBoxLayoutContainer();
         buttonPanel.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.STRETCH);
         
-        //TODO: implement 'negate' function
-        buttonPanel.add(new TextButton("Switch", new SelectHandler() {
+        TextButton button = new TextButton("Switch", new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
                 order = order.flip();
                 repaint();
             }
-        }), BoxConfig.FLEX_MARGIN);
+        });
+//        button.setIcon(Resources.INSTANCE.switching());
+//        button.setIconAlign(IconAlign.TOP);
+        buttonPanel.add(button, BoxConfig.FLEX_MARGIN);
         
-        buttonPanel.add(new TextButton("Entities", new SelectHandler() {
+        button = new TextButton("Entities", new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
                 EntitySelectorDialog.getInstance().show(VerdictControls.this);
             }
             
-        }), BoxConfig.FLEX_MARGIN);
+        });
+//        button.setIcon(Resources.INSTANCE.entity());
+//        button.setIconAlign(IconAlign.TOP);
+        buttonPanel.add(button, BoxConfig.FLEX_MARGIN);
         
-        buttonPanel.add(new TextButton("Action", new SelectHandler() {
+        button = new TextButton("Action", new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
                 ActionSelectorDialog.getInstance().show(VerdictControls.this);
             }
             
-        }), BoxConfig.FLEX_MARGIN);
+        });
+//        button.setIcon(Resources.INSTANCE.action());
+//        button.setIconAlign(IconAlign.TOP);
+        buttonPanel.add(button, BoxConfig.FLEX_MARGIN);
         
-        buttonPanel.add(new TextButton("Negate", new SelectHandler() {
+        button = new TextButton("Negate", new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
@@ -101,9 +112,25 @@ public class VerdictControls extends BorderLayoutContainer{
                 repaint();
             }
             
-        }), BoxConfig.FLEX_MARGIN);
+        });
+//        button.setIcon(Resources.INSTANCE.negate());
+//        button.setIconAlign(IconAlign.TOP);
+        buttonPanel.add(button, BoxConfig.FLEX_MARGIN);
         
-        BorderLayoutData eastLayout = new BorderLayoutData(300);
+        button = new TextButton("Invalid", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                invalid = !invalid;
+                repaint();
+            }
+            
+        });
+//        button.setIcon(Resources.INSTANCE.invalid());
+//        button.setIconAlign(IconAlign.TOP);
+        buttonPanel.add(button, BoxConfig.FLEX_MARGIN);
+        
+        BorderLayoutData eastLayout = new BorderLayoutData(350);
         setEastWidget(buttonPanel, eastLayout);
         
         ContentPanel imageBox = new ContentPanel();
@@ -182,6 +209,7 @@ public class VerdictControls extends BorderLayoutContainer{
             Effect effect = Effect.fromInt(Integer.parseInt(data.get("effect")));
             boolean close = Integer.parseInt(data.get("close_connection")) == 1;
             this.negative = data.get("negative").equals("1");
+            this.invalid = data.get("negative").equals("2");
             this.action = new Action(data.get("actionType"), "DECOY", effect, close, orderInt != 0);
             String comment = data.get("comment");
             if (comment != null && comment.length() > 0) {
@@ -217,12 +245,22 @@ public class VerdictControls extends BorderLayoutContainer{
         canvas.setCoordinateSpaceHeight(totH);
         
         Context2d g2 = canvas.getContext2d();
+        g2.setTextAlign(Context2d.TextAlign.CENTER);
+        g2.setTextBaseline(Context2d.TextBaseline.MIDDLE);
+        g2.setLineWidth(.5);
+        
+        if (invalid) {
+            g2.setFillStyle("lightgray");
+            g2.fillRect(0,0,totW, totH);
+            g2.setFillStyle("black");
+            g2.fillText("Invalid extraction", totW/2, totH / 2);
+            return;
+        }
         
         g2.setFillStyle("white");
         g2.fillRect(0, 0, totW, totH);
         
         g2.setFillStyle("black");
-        g2.setLineWidth(.5);
         
         ImageResource lImage = g1Type.getImage();
         ImageResource rImage = g2Type.getImage();
@@ -242,8 +280,6 @@ public class VerdictControls extends BorderLayoutContainer{
                 (action != null ? action.getName() : "?") + 
                 "\" - " + format(g2Sym,g2Type);
         
-        g2.setTextAlign(Context2d.TextAlign.CENTER);
-        g2.setTextBaseline(Context2d.TextBaseline.MIDDLE);
         g2.fillText(legend, totW/2, imageH + txtH / 2);
         
         if (action != null) {
@@ -317,6 +353,12 @@ public class VerdictControls extends BorderLayoutContainer{
     public boolean isNegative() {
         return negative;
     }
+
+    public boolean isInvalid() {
+        return invalid;
+    }
+    
+    
 
     private String format(String sym, EntityType entityType) {
         if (entityType == EntityType.PROTEIN) {

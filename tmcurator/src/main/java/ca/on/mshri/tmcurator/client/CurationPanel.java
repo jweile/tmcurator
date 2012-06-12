@@ -188,6 +188,7 @@ public class CurationPanel extends BorderLayoutContainer {
                 verdictControls.getG2Type().name(),
                 verdictControls.isNegative(),
                 verdictControls.getComment());
+        finalVerdict.setInvalid(verdictControls.isInvalid());
         verdicts.add(finalVerdict);
         
         VerdictSheet sheet = new VerdictSheet(pairId);

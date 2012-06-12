@@ -155,7 +155,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                         verdict.getOrder(),
                         verdict.getG1Type(),
                         verdict.getG2Type(),
-                        verdict.isNegative()?1:0,
+                        verdict.isInvalid() ? 2 : (verdict.isNegative()?1:0),
                         verdict.getComment(),
                         id));
             } else {
@@ -169,7 +169,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                         verdict.getOrder(),
                         verdict.getG1Type(),
                         verdict.getG2Type(),
-                        verdict.isNegative()?1:0,//int value
+                        verdict.isInvalid() ? 2 : (verdict.isNegative()?1:0),//int value
                         verdict.getComment(),
                         user));
             }

@@ -36,6 +36,26 @@ public interface Resources extends ClientBundle {
     ImageResource document();
     
     
+    @Source("ca/on/mshri/tmcurator/client/action.png")
+    ImageResource action();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/entity.png")
+    ImageResource entity();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/invalid.png")
+    ImageResource invalid();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/negate.png")
+    ImageResource negate();
+    
+    
+    @Source("ca/on/mshri/tmcurator/client/switch.png")
+    ImageResource switching();
+    
+    
     @Source("ca/on/mshri/tmcurator/client/gene.jpg")
     ImageResource gene();
     

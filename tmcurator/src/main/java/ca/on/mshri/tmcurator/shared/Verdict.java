@@ -31,6 +31,7 @@ public class Verdict implements IsSerializable {
     private String g2Type;
     private boolean negative;
     private String comment;
+    private boolean invalid;
     
     Verdict() {
         //for serialization
@@ -73,5 +74,14 @@ public class Verdict implements IsSerializable {
     public String getComment() {
         return comment;
     }
-        
+
+    public boolean isInvalid() {
+        return invalid;
+    }
+
+    public void setInvalid(boolean invalid) {
+        this.invalid = invalid;
+    }
+    
+    
 }

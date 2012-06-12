@@ -119,7 +119,9 @@ public class MentionContainer extends ContentPanel {
         
         int mentionId = Integer.parseInt(mention.get("mentionId"));
         
-        return new MentionVerdict(mentionId, pairId, action, order, type1, type2, negative, comment);
+        MentionVerdict v = new MentionVerdict(mentionId, pairId, action, order, type1, type2, negative, comment);
+        v.setInvalid(verdictControls.isInvalid());
+        return v;
     }
     
     
