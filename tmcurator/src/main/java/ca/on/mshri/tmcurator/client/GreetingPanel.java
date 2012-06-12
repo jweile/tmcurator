@@ -56,7 +56,7 @@ public class GreetingPanel extends VBoxLayoutContainer {
         
         BoxLayoutData layout = new BoxLayoutData(new Margins(0,0,10,0));
         
-        add(new HTML("Welcome back!"),layout);
+        add(new HTML("Hello "+TmCurator.getInstance().getUser()+"!"),layout);
         
         progressbar = new ProgressBar();
         progressbar.updateProgress(0.0, "Curation progress: 0%");
