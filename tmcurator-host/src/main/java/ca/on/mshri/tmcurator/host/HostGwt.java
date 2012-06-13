@@ -103,7 +103,7 @@ public class HostGwt {
         }
         
         //setup log file writer
-        File logFile = new File("tmcurator-populator.log");
+        File logFile = new File("tmcurator-host.log");
         FileHandler fh = new FileHandler(logFile.getAbsolutePath());
         fh.setLevel(Level.ALL);
         fh.setFormatter(new SimpleFormatter());
