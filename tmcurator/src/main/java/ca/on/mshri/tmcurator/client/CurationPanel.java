@@ -177,8 +177,10 @@ public class CurationPanel extends BorderLayoutContainer {
         for (IsWidget w : interpretationPanel) {
             if (w instanceof MentionContainer) {
                 MentionContainer mention = (MentionContainer)w;
-                MentionVerdict verdict = mention.extractData();
-                verdicts.add(verdict);
+                if (mention.isApproved()) {
+                    MentionVerdict verdict = mention.extractData();
+                    verdicts.add(verdict);
+                }
             }
         }
         Verdict finalVerdict = new Verdict(pairId, 

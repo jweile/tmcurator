@@ -22,12 +22,15 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sencha.gxt.cell.core.client.ButtonCell.IconAlign;
 import com.sencha.gxt.core.client.Style.Side;
+import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.tips.ToolTipConfig;
 import java.util.Map;
 
@@ -44,6 +47,8 @@ public class MentionContainer extends ContentPanel {
     private Map<String,String> mention;
     
     private int pairId;
+    
+    private CheckBox approvalBox;
     
     public MentionContainer(Map<String,String> mention, String g1sym, String g2sym, int pairId) {
         
@@ -79,11 +84,18 @@ public class MentionContainer extends ContentPanel {
         tt.setAnchor(Side.LEFT);
         pmButton.setToolTipConfig(tt);
 
-        VBoxLayoutContainer pmButtonContainer = new VBoxLayoutContainer();
-        pmButtonContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
-        pmButtonContainer.add(pmButton, BoxConfig.MARGIN);
+        VBoxLayoutContainer westContainer = new VBoxLayoutContainer();
+        westContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
+        westContainer.add(pmButton, BoxConfig.MARGIN);
+        
+        approvalBox = new CheckBox();
+        approvalBox.setBoxLabel("Approve");
+        approvalBox.setValue(mention.get("hasVerdict").equals("1"));
+        BoxLayoutData flex = new BoxLayoutData(new Margins(5,5,5,5));
+        flex.setFlex(1);
+        westContainer.add(approvalBox, flex);
 
-        borderLayout.setWestWidget(pmButtonContainer);
+        borderLayout.setWestWidget(westContainer);
 
         VBoxLayoutContainer sentenceAndVerdictContainer = new VBoxLayoutContainer();
         sentenceAndVerdictContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
@@ -122,6 +134,10 @@ public class MentionContainer extends ContentPanel {
         MentionVerdict v = new MentionVerdict(mentionId, pairId, action, order, type1, type2, negative, comment);
         v.setInvalid(verdictControls.isInvalid());
         return v;
+    }
+    
+    public boolean isApproved() {
+        return approvalBox.getValue();
     }
     
     

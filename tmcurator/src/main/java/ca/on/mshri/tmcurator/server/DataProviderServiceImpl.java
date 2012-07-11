@@ -372,6 +372,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 map.put("type2", result.getString("g2type"));
                 map.put("negative", result.getString("negative"));
                 map.put("comment", result.getString("comment"));
+                map.put("hasVerdict", "1");
                 
                 result.close();
             }
