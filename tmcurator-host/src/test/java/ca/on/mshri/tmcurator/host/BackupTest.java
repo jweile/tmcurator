@@ -51,6 +51,7 @@ public class BackupTest extends TestCase {
         bak.filecopy(dbFile, outFile);
         
         assertTrue(outFile.exists());
+        assertTrue(outFile.length() == dbFile.length());
         outFile.delete();
     }
 
