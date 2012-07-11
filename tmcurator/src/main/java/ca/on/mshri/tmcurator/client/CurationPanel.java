@@ -51,7 +51,7 @@ public class CurationPanel extends BorderLayoutContainer {
     
     private VBoxLayoutContainer interpretationPanel;
     
-    private VerdictControls verdictControls;
+//    private VerdictControls verdictControls;
     
     private int pairId;
     
@@ -85,13 +85,13 @@ public class CurationPanel extends BorderLayoutContainer {
         interpretationFrame.add(interpretationPanel);
         docPanel.add(interpretationFrame, BoxConfig.MARGIN);
         
-        docPanel.add(new HTML("<br/><b>Verdict</b>"),BoxConfig.MARGIN);
-        
-        verdictControls = new VerdictControls();
-        ContentPanel verdictControlBox = new ContentPanel();
-        verdictControlBox.setHeight(100);
-        verdictControlBox.add(verdictControls);
-        docPanel.add(verdictControlBox, BoxConfig.MARGIN);
+//        docPanel.add(new HTML("<br/><b>Verdict</b>"),BoxConfig.MARGIN);
+//        
+//        verdictControls = new VerdictControls();
+//        ContentPanel verdictControlBox = new ContentPanel();
+//        verdictControlBox.setHeight(100);
+//        verdictControlBox.add(verdictControls);
+//        docPanel.add(verdictControlBox, BoxConfig.MARGIN);
         
         docPanel.add(makeButtonPanel(), BoxConfig.MARGIN);
         
@@ -135,7 +135,7 @@ public class CurationPanel extends BorderLayoutContainer {
         
         titleBar.setHTML(b.toString());
         
-        verdictControls.setGenePair(pData.getG1Sym(), pData.getG2Sym());
+//        verdictControls.setGenePair(pData.getG1Sym(), pData.getG2Sym());
         
         interpretationPanel.clear();
         
@@ -144,7 +144,7 @@ public class CurationPanel extends BorderLayoutContainer {
             
             if (mention.get("mentionId").equals("-1")) {
                 //then it's a verdict
-                verdictControls.configure(mention, pData.getG1Sym(), pData.getG2Sym());
+//                verdictControls.configure(mention, pData.getG1Sym(), pData.getG2Sym());
                 minusVerdict = 1;
             } else {
                 //it's a mention
@@ -183,15 +183,15 @@ public class CurationPanel extends BorderLayoutContainer {
                 }
             }
         }
-        Verdict finalVerdict = new Verdict(pairId, 
-                verdictControls.getAction().getName(), 
-                verdictControls.getOrder().mod(), 
-                verdictControls.getG1Type().name(), 
-                verdictControls.getG2Type().name(),
-                verdictControls.isNegative(),
-                verdictControls.getComment());
-        finalVerdict.setInvalid(verdictControls.isInvalid());
-        verdicts.add(finalVerdict);
+//        Verdict finalVerdict = new Verdict(pairId, 
+//                verdictControls.getAction().getName(), 
+//                verdictControls.getOrder().mod(), 
+//                verdictControls.getG1Type().name(), 
+//                verdictControls.getG2Type().name(),
+//                verdictControls.isNegative(),
+//                verdictControls.getComment());
+//        finalVerdict.setInvalid(verdictControls.isInvalid());
+//        verdicts.add(finalVerdict);
         
         VerdictSheet sheet = new VerdictSheet(pairId);
         sheet.setVerdicts(verdicts);
