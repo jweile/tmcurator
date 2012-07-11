@@ -17,6 +17,9 @@
 package ca.on.mshri.tmcurator.host;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -53,6 +56,8 @@ public class BackupService  {
         
         private static final DateFormat DF = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         
+        private static final String CLOSE_ERROR = "Unable to close stream!";
+        
         private File dbFile;
         
         Backup(File dbFile) {
@@ -71,6 +76,7 @@ public class BackupService  {
             File backupFile = new File(backupDir, "tmcurator_"+DF.format(new Date())+".db.bak");
             
             Connection db = null;
+            boolean requireFallBack = false;
         
             try {
 
@@ -79,14 +85,24 @@ public class BackupService  {
                 sql.executeUpdate("backup to "+backupFile.getAbsolutePath());
                 
             } catch (SQLException ex) {
-                    Logger.getLogger(Backup.class.getName()).log(Level.SEVERE, 
-                            "Backup failed!", ex);
+                Logger.getLogger(Backup.class.getName()).log(Level.WARNING, 
+                        "Programmatic backup failed! Fall-back to file copy.", ex);
+                requireFallBack = true;
             } finally {
                 try {
                     db.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(Backup.class.getName()).log(Level.SEVERE, 
-                            "Unable to close database connection", ex);
+                        "Unable to close database connection", ex);
+                }
+            }
+            
+            if (requireFallBack) {
+                try {
+                    filecopy(dbFile,backupFile);
+                } catch (IOException ex) {
+                    Logger.getLogger(BackupService.class.getName())
+                            .log(Level.SEVERE, "File copying failed!", ex);
                 }
             }
             
@@ -97,6 +113,9 @@ public class BackupService  {
                 try {
                     Date bckDate = DF.parse(dateStr);
                     if (bckDate != null && olderThan4Weeks(bckDate)) {
+                        Logger.getLogger(BackupService.class.getName())
+                                .log(Level.INFO, oldBackupFile.getName() +
+                                " is older than 4 weeks. Deleting...");
                         oldBackupFile.delete();
                     }
                 } catch (ParseException e) {
@@ -110,6 +129,40 @@ public class BackupService  {
         private boolean olderThan4Weeks(Date bckDate) {
             long week = TimeUnit.MILLISECONDS.convert(4 * 7, TimeUnit.DAYS);
             return System.currentTimeMillis() - bckDate.getTime() > week;
+        }
+
+        void filecopy(File from, File to) throws IOException {
+            
+            FileInputStream in = null;
+            FileOutputStream out = null;
+            
+            try {
+                in = new FileInputStream(from);
+                out = new FileOutputStream(to);
+
+                byte[] buf = new byte[1024];
+                int len;
+                while((len = in.read(buf)) > -1) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(BackupService.class.getName())
+                                .log(Level.SEVERE, CLOSE_ERROR, ex);
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(BackupService.class.getName())
+                                .log(Level.SEVERE, CLOSE_ERROR, ex);
+                    }
+                }
+            }
         }
         
     }

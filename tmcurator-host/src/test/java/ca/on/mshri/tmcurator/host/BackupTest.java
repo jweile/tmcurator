@@ -40,6 +40,19 @@ public class BackupTest extends TestCase {
         assertTrue("No backup directory", bakDir.exists());
         assertTrue("No backup file", bakDir.list().length > 0);
     }
+    
+    public void testFileCopy() throws Exception {
+        File outFile = new File(bakDir,"test.bak");
+        if (outFile.exists()) {
+            outFile.delete();
+        }
+        
+        Backup bak = new Backup(dbFile);
+        bak.filecopy(dbFile, outFile);
+        
+        assertTrue(outFile.exists());
+        outFile.delete();
+    }
 
     @Override
     protected void tearDown() throws Exception {
