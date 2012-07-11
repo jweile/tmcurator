@@ -90,7 +90,8 @@ public class MentionContainer extends ContentPanel {
         
         approvalBox = new CheckBox();
         approvalBox.setBoxLabel("Approve");
-        approvalBox.setValue(mention.get("hasVerdict").equals("1"));
+        String hasVerdict = mention.get("hasVerdict");
+        approvalBox.setValue(hasVerdict != null && hasVerdict.equals("1"));
         BoxLayoutData flex = new BoxLayoutData(new Margins(5,5,5,5));
         flex.setFlex(1);
         westContainer.add(approvalBox, flex);
