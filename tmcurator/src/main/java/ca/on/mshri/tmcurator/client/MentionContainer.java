@@ -59,10 +59,27 @@ public class MentionContainer extends ContentPanel {
         
         setCollapsible(true);
         setHeight("200px");
+        
+        StringBuilder b = new StringBuilder()
+                .append("<span style=\"font-size:10px\">")
+                .append("Sentence ID: ")
+                .append(mention.get("mentionId"))
+                .append(", PMID: ")
+                .append(mention.get("pmid"));
+        
+        if (mention.get("non_sgd").equals("1")) {
+            b.append("<span style=\"color:red\">")
+                    .append(" -- Warning: Not an approved SGD publication!")
+                    .append("</span>");
+        }
+                
+        b.append("</span>");
+        
+        setHeadingHtml(b.toString());
 
         BorderLayoutContainer borderLayout = new BorderLayoutContainer();
 
-        StringBuilder b = new StringBuilder();
+        b = new StringBuilder();
         b.append("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi")
          .append("?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=")
          .append(mention.get("pmid"));

@@ -19,8 +19,8 @@ package ca.on.mshri.tmcurator.populator;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.regex.Pattern;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -34,6 +34,13 @@ import org.jdom.input.SAXBuilder;
 public class SentenceParser {
     
 //    private final Logger log = Logger.getLogger(Parser.class.getName());
+    private HashSet<String> sgdSet;
+
+    public SentenceParser() {
+        sgdSet = new SGDRefReader().read();
+    }
+    
+    
     
     public UpdateCollection parse(InputStream in) {
         
@@ -69,10 +76,13 @@ public class SentenceParser {
             
             String citation = buildCitation(articleAs);
             
-            qry = String.format("INSERT INTO articles VALUES ('%s', '%s', '%s');",
+            int nonSGD = (!sgdSet.contains(articleAs.get("pmid"))) ? 1 : 0;
+            
+            qry = String.format("INSERT INTO articles VALUES ('%s', '%s', '%s', '%s');",
                     articleAs.get("arid"),
                     articleAs.get("pmid"),
-                    citation);
+                    citation,
+                    nonSGD);
             updates.addArticle(articleAs.get("pmid"), qry);
             
             for (Object o2: articleTag.getChildren("actionMention")) {

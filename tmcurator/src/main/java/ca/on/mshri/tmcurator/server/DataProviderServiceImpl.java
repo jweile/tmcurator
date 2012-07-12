@@ -274,7 +274,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     }
 
     private static final String mentionQuery = new StringBuilder()
-            .append("SELECT mentions.ROWID AS mentionId, pmid, sentence, citation, type1, type2, upstream, ")
+            .append("SELECT mentions.ROWID AS mentionId, pmid, sentence, citation, non_sgd, type1, type2, upstream, ")
             .append("downstream, actionType, updown, effect, close_connection, negative ")
             .append("FROM pairs,mentions,articles,actiontypes ")
             .append("WHERE mentions.pair_id=pairs.id ")

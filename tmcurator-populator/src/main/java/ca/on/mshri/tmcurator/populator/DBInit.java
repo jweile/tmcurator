@@ -50,7 +50,7 @@ public class DBInit {
             statement.executeUpdate("CREATE TABLE pairs (id TEXT PRIMARY KEY, "
                     + "g1id TEXT, g2id TEXT, g1sym TEXT, g2sym TEXT);");
             statement.executeUpdate("CREATE TABLE articles "
-                    + "(id INTEGER PRIMARY KEY, pmid INTEGER, citation TEXT);");
+                    + "(id INTEGER PRIMARY KEY, pmid INTEGER, citation TEXT, non_sgd INTEGER);");
             statement.executeUpdate("CREATE TABLE mentions "
                     + "(id INTEGER PRIMARY KEY, pair_id TEXT, article_id INTEGER, "
                     + "actionType TEXT, upstream TEXT, downstream TEXT, "
