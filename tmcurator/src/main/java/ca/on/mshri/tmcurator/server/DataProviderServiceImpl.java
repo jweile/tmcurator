@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -465,7 +467,61 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         }
         
     }
+    
+    @Override
+    public List<Action> getTopActions() {
+        
+        return new DBAccess<Void, List<Action>>() {
 
+            @Override
+            public List<Action> transaction(Connection db, String user, Void in) {
+                return _getTopActions(db);
+            }
+
+        }.run(null, null);
+    }
+
+    private static final String top10query = new StringBuilder()
+            .append("SELECT name, parent, effect, close_connection, updown ")
+            .append("FROM actiontypes WHERE name IN (SELECT action FROM ")
+            .append("(SELECT action, COUNT(*) AS freq FROM verdicts ")
+            .append("GROUP BY action ORDER BY freq DESC LIMIT 10)) ORDER BY name;")
+            .toString();
+    
+    private List<Action> _getTopActions(Connection db) {
+        
+        List<Action> actions = new ArrayList<Action>();
+        Statement qry = null;
+        try {
+            
+            qry = db.createStatement();
+            ResultSet r = qry.executeQuery(top10query);
+            
+            while(r.next()) {
+                String name = r.getString("name");
+                int effect = r.getInt("effect");
+                int close = r.getInt("close_connection");
+                int updown = r.getInt("updown");
+                actions.add(new Action(name,"DECOY",Effect.fromInt(effect), close==1, updown != 0));
+            }
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Database query failed.", ex);
+        } finally {
+            if (qry != null) {
+                try {
+                    qry.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(DataProviderServiceImpl.class.getName())
+                            .log(Level.SEVERE, "Failed to close statement.", ex);
+                }
+            }
+        }
+        
+        return actions;
+        
+    }
+    
     @Override
     public List<GenePair> findPairs(String qry) {
         return new DBAccess<String, List<GenePair>>() {

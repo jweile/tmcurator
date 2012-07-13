@@ -44,6 +44,8 @@ public interface DataProviderService extends RemoteService {
     
     List<Action> getActions();
     
+    List<Action> getTopActions();
+    
     void saveVerdicts(String user, VerdictSheet sheet);
     
     List<GenePair> findPairs(String qry);

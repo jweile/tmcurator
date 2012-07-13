@@ -27,6 +27,7 @@ import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
+import com.sencha.gxt.core.client.Style.LayoutRegion;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.data.shared.LabelProvider;
@@ -36,10 +37,13 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.AutoProgressBar;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.CenterLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.ExpandItemEvent;
+import com.sencha.gxt.widget.core.client.event.ExpandItemEvent.ExpandItemHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.ComboBox;
@@ -64,9 +68,13 @@ public class ActionSelectorDialog extends Dialog {
     private VerdictControls caller;
     
     private ComboBox<Action> searchBox;
+    
+    private ListView<Action,String> quickList;
+    
+    private BorderLayoutContainer mainPanel;
 
     private ActionSelectorDialog() {
-        setSize("400px","400px");
+        setSize("400px","500px");
         
         setHeadingText("Select action type");
         
@@ -166,7 +174,15 @@ public class ActionSelectorDialog extends Dialog {
                     }
                 }); 
                 
-                BorderLayoutContainer mainPanel = new BorderLayoutContainer();
+                
+                quickList = makeQuickList(); 
+                ContentPanel qlPanel = new ContentPanel();
+                qlPanel.setHeight("100px");
+                qlPanel.setHeaderVisible(true);
+                qlPanel.setHeadingText("Top 10 actions");
+                qlPanel.setWidget(quickList);
+                
+                mainPanel = new BorderLayoutContainer();
                 
                 ContentPanel treePanel = new ContentPanel();
                 treePanel.setHeaderVisible(false);
@@ -178,6 +194,20 @@ public class ActionSelectorDialog extends Dialog {
                 BorderLayoutData northData = new BorderLayoutData(25);
                 northData.setMargins(new Margins(5,5,5,5));
                 mainPanel.setNorthWidget(searchBox,northData);
+                
+                BorderLayoutData southData = new BorderLayoutData(100);
+                southData.setMargins(new Margins(5,5,5,5));
+                southData.setCollapsible(true);
+                mainPanel.setSouthWidget(qlPanel, southData);
+                mainPanel.collapse(LayoutRegion.SOUTH);
+                
+                mainPanel.addExpandHandler(new ExpandItemHandler<ContentPanel>() {
+
+                    @Override
+                    public void onExpand(ExpandItemEvent<ContentPanel> event) {
+                        loadQuickList();
+                    }
+                });
                 
                 setWidget(mainPanel);
                 ActionSelectorDialog.this.forceLayout();
@@ -208,6 +238,9 @@ public class ActionSelectorDialog extends Dialog {
         }
         if (tree != null) {
             select(caller.getAction());
+        }
+        if (mainPanel != null) {
+            mainPanel.collapse(LayoutRegion.SOUTH);
         }
         show();
     }
@@ -319,6 +352,62 @@ public class ActionSelectorDialog extends Dialog {
         store.addAll(result);
         
         return store;
+    }
+    
+    private ListView<Action,String> makeQuickList() {
+        ListStore<Action> qlStore = new ListStore<Action>(new ModelKeyProvider<Action>() {
+
+            @Override
+            public String getKey(Action item) {
+                return item.getId();
+            }
+
+        });
+        ListView<Action,String> quickList = new ListView<Action, String>(qlStore, new ValueProvider<Action, String>() {
+
+            @Override
+            public String getValue(Action object) {
+                return object.getName();
+            }
+
+            @Override
+            public void setValue(Action object, String value) {
+                //not supported
+            }
+
+            @Override
+            public String getPath() {
+                return "name";
+            }
+        });
+        quickList.getSelectionModel().addSelectionHandler(new SelectionHandler<Action>() {
+
+            @Override
+            public void onSelection(SelectionEvent<Action> event) {
+                select(event.getSelectedItem());
+            }
+        });
+        return quickList;
+    }
+    
+    
+    private void loadQuickList() {
+        DataProviderServiceAsync serv = DataProviderServiceAsync.Util.getInstance();
+        serv.getTopActions(new AsyncCallback<List<Action>>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
+                b.show();
+            }
+
+            @Override
+            public void onSuccess(List<Action> result) {
+                quickList.getStore().clear();
+                quickList.getStore().addAll(result);
+                quickList.refresh();
+            }
+        });
     }
 
 }
