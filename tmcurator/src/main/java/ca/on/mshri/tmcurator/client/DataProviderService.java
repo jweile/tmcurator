@@ -23,6 +23,7 @@ import ca.on.mshri.tmcurator.shared.VerdictSheet;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -49,5 +50,7 @@ public interface DataProviderService extends RemoteService {
     void saveVerdicts(String user, VerdictSheet sheet);
     
     List<GenePair> findPairs(String qry);
+    
+    void addSentence(Map<String, String> sentenceData) throws Exception ;
     
 }

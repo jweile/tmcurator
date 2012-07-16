@@ -554,6 +554,124 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         return list;
     }
 
+    
+    @Override
+    public void addSentence(Map<String, String> sentenceData) throws Exception {
+        
+        final String articleId = getArticleId(sentenceData.get("pmid"));
+        
+        if (articleId == null) {
+            throw new Exception("Unknown PMID!");
+        }
+        
+        new DBAccess<Map<String,String>, Void>() {
+
+            @Override
+            public Void transaction(Connection db, String user, Map<String, String> sentenceData) {
+                _addSentence(db, sentenceData, articleId);
+                return null;
+            }
+
+        }.run(null, sentenceData);
+        
+    }
+    
+    private static final String insertSentence = new StringBuilder()
+            .append("INSERT INTO mentions VALUES (")
+            .append("(SELECT MAX(id) FROM mentions)+1, ")
+            .append("(SELECT id FROM pairs WHERE ROWID='%s'), ")
+            .append("%s, 'actiontype', '%s', '%s', ")
+            .append("'UNKNOWN', 'UNKNOWN', '%s', '0');")
+            .toString();
+    
+    private void _addSentence(Connection db, Map<String, String> sentenceData, String articleId) {
+                
+        String q = String.format(insertSentence, 
+            sentenceData.get("pairId"),
+            articleId,
+            sentenceData.get("g1Sym"),
+            sentenceData.get("g2Sym"),
+            sentenceData.get("sentence")
+        );
+        
+        Statement s = null;
+        try {
+            
+            System.out.println(q);
+            s = db.createStatement();
+            int changes = s.executeUpdate(q);
+            System.out.println("Changed rows: "+changes);
+            
+        } catch (SQLException sqle) {
+            
+            throw new RuntimeException("Database update failed!", sqle);
+            
+        } finally {
+            
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(DataProviderServiceImpl.class.getName())
+                            .log(Level.SEVERE, "Unable to close connection", ex);
+                }
+            }
+        }
+        
+    }
+
+    private String getArticleId(String pmidStr) {
+        int pmid;
+        try {
+            pmid = Integer.parseInt(pmidStr);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+        
+        return new DBAccess<Integer, String>() {
+
+            @Override
+            public String transaction(Connection db, String user, Integer pmid) {
+                return _getArticleId(db, pmid);
+            }
+
+        }.run(null, pmid);
+    }
+    
+    private String _getArticleId(Connection db, Integer pmid) {
+        Statement s = null;
+        try {
+            s = db.createStatement();
+            
+            ResultSet r = s.executeQuery(String
+                    .format("SELECT COUNT(*) FROM articles WHERE pmid='%s';",pmid));
+            r.next();
+            
+            if (r.getInt(1) > 0) {
+                
+                r = s.executeQuery(String
+                        .format("SELECT id FROM articles WHERE pmid='%s';",pmid));
+                r.next();
+                return r.getString(1);
+                
+            } else {
+                return null;
+            }
+        } catch (SQLException sqle) {
+            throw new RuntimeException("Query failed!",sqle);
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(DataProviderServiceImpl.class.getName())
+                            .log(Level.SEVERE, "Unable to close connection!", ex);
+                }
+            }
+        }
+    }
+
+    
     private enum Inc {
         NEXT("+1"),CURR(""),PREV("-1");
         private String modifier;

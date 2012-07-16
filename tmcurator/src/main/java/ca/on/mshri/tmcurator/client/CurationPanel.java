@@ -30,12 +30,14 @@ import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
 import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +56,7 @@ public class CurationPanel extends BorderLayoutContainer {
 //    private VerdictControls verdictControls;
     
     private int pairId;
+    private String g1Sym, g2Sym;
     
     private TextButton nextButton, prevButton;
     
@@ -75,6 +78,8 @@ public class CurationPanel extends BorderLayoutContainer {
         docPanel.setStyleName("forcewhite", true);
         
         docPanel.add(new HTML("<b>Sentence interpretations</b>"),BoxConfig.MARGIN);
+        
+        docPanel.add(makeAddSentenceButtonPanel(), BoxConfig.MARGIN);
         
         ContentPanel interpretationFrame = new ContentPanel();
         interpretationFrame.setHeaderVisible(false);
@@ -109,6 +114,8 @@ public class CurationPanel extends BorderLayoutContainer {
     public void updatePairData(PairDataSheet pData) {
         
         this.pairId = pData.getPairNumber();
+        this.g1Sym = pData.getG1Sym();
+        this.g2Sym = pData.getG2Sym();
         
         StringBuilder b = new StringBuilder();
         b.append("<span style=\"font-size: small;\">Gene pair #")
@@ -117,14 +124,14 @@ public class CurationPanel extends BorderLayoutContainer {
                 .append(pData.getTotalPairNumber())
                 .append(":</span><br/><span class=\"sym1\">")
                 .append("<a href=\"http://www.yeastgenome.org/cgi-bin/search/luceneQS.fpl?query=")
-                .append(pData.getG1Sym())
+                .append(g1Sym)
                 .append("\" target=\"_blank\">")
-                .append(pData.getG1Sym().toUpperCase())
+                .append(g1Sym.toUpperCase())
                 .append("</a></span> & <span class=\"sym2\">")
                 .append("<a href=\"http://www.yeastgenome.org/cgi-bin/search/luceneQS.fpl?query=")
-                .append(pData.getG2Sym())
+                .append(g2Sym)
                 .append("\" target=\"_blank\">")
-                .append(pData.getG2Sym().toUpperCase())
+                .append(g2Sym.toUpperCase())
                 .append("</a></span>");
         
         if (pData.getNumVerdicts() > 0) {
@@ -149,7 +156,7 @@ public class CurationPanel extends BorderLayoutContainer {
             } else {
                 //it's a mention
                 MentionContainer mentionContainer = new MentionContainer(mention,
-                        pData.getG1Sym(), pData.getG2Sym(), pairId);
+                        g1Sym, g2Sym, pairId);
                 interpretationPanel.add(mentionContainer, BoxConfig.MARGIN);
             }
             
@@ -340,6 +347,69 @@ public class CurationPanel extends BorderLayoutContainer {
         AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
         RootPanel.get().add(b);
         b.show();
+    }
+
+    void addSentence(String sentence, String pmid) {
+        
+        TmCurator.LOAD_DIALOG.show();
+        
+        Map<String,String> sentenceData = new HashMap<String, String>();
+        sentenceData.put("sentence", sentence);
+        sentenceData.put("pmid", pmid);
+        sentenceData.put("g1Sym", g1Sym);
+        sentenceData.put("g2Sym", g2Sym);
+        sentenceData.put("pairId",pairId+"");
+        
+        final DataProviderServiceAsync serv = DataProviderServiceAsync.Util.getInstance();
+        serv.addSentence(sentenceData, new AsyncCallback<Void>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
+                displayError(caught);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                serv.currPairSheet(TmCurator.getInstance().getUser(), 
+                        new AsyncCallback<PairDataSheet>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        TmCurator.LOAD_DIALOG.hide();
+                        displayError(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(PairDataSheet result) {
+                        TmCurator.LOAD_DIALOG.hide();
+                        CurationPanel.this.updatePairData(result);
+                    }
+
+                });
+            }
+        });
+        
+        
+    }
+
+    private IsWidget makeAddSentenceButtonPanel() {
+        
+        HBoxLayoutContainer container = new HBoxLayoutContainer();
+        container.setHeight(30);
+        container.setHBoxLayoutAlign(HBoxLayoutContainer.HBoxLayoutAlign.MIDDLE);
+        container.setPack(BoxLayoutPack.END);
+        
+        container.add(new TextButton("Add sentence", new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                AddSentenceDialog.getInstance().show();
+            }
+        }), new BoxLayoutData(new Margins(0, 5, 0, 0)));
+        
+        return container;
+        
     }
     
     
