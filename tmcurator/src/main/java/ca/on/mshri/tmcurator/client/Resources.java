@@ -60,6 +60,10 @@ public interface Resources extends ClientBundle {
     ImageResource gene();
     
     
+    @Source("ca/on/mshri/tmcurator/client/rna.png")
+    ImageResource rna();
+    
+    
     @Source("ca/on/mshri/tmcurator/client/protein.jpg")
     ImageResource protein();
     

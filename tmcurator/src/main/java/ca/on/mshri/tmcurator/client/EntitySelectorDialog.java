@@ -121,6 +121,7 @@ public class EntitySelectorDialog extends Dialog {
             }
         });
         store.add(EntityType.GENE);
+        store.add(EntityType.TRANSCRIPT);
         store.add(EntityType.PROTEIN);
         store.add(EntityType.UNKNOWN);
         return store;

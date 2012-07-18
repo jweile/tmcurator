@@ -23,7 +23,8 @@ import com.google.gwt.resources.client.ImageResource;
  * @author jweile
  */
  public enum EntityType {
-    PROTEIN(Resources.INSTANCE.protein()), GENE(Resources.INSTANCE.gene()), UNKNOWN(Resources.INSTANCE.unknown());
+    PROTEIN(Resources.INSTANCE.protein()), TRANSCRIPT(Resources.INSTANCE.rna()), 
+    GENE(Resources.INSTANCE.gene()), UNKNOWN(Resources.INSTANCE.unknown());
     
     private ImageResource r;
 
@@ -36,6 +37,8 @@ import com.google.gwt.resources.client.ImageResource;
             return PROTEIN;
         } else if (s.equalsIgnoreCase("gene")) {
             return GENE;
+        } else if (s.equalsIgnoreCase("transcript")) {
+            return TRANSCRIPT;
         } else {
             return UNKNOWN;
         }
