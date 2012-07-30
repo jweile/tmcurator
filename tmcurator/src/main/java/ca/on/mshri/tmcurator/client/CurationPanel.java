@@ -162,15 +162,21 @@ public class CurationPanel extends BorderLayoutContainer {
             
         }
         
-        int height = (pData.getMentions().size() - minusVerdict) * 210;
+        int h;
         
-        interpretationPanel.setHeight(height);
+        if (!pData.getMentions().isEmpty()) {
+            h = (pData.getMentions().size() - minusVerdict) * 210;
+        } else {
+            h=100;
+            interpretationPanel.add(new HTML("No sentences are associated with this pair. Please click 'Next'."));
+        }
         
+        interpretationPanel.setHeight(h);
         ContentPanel interpretationFrame = ((ContentPanel)interpretationPanel.getParent());
-        interpretationFrame.setHeight(height);
+        interpretationFrame.setHeight(h);
         
         VBoxLayoutContainer docPanel = (VBoxLayoutContainer)interpretationFrame.getParent();
-        docPanel.setHeight(height+300);
+        docPanel.setHeight(h+300);
         
         //disable next/previous buttons if not available
         prevButton.setEnabled(pData.getPairNumber() > 1);
