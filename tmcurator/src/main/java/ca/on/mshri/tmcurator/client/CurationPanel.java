@@ -60,6 +60,8 @@ public class CurationPanel extends BorderLayoutContainer {
     
     private TextButton nextButton, prevButton;
     
+    private ScrollPanel scrollPanel;
+    
     
     private CurationPanel() {
         
@@ -71,7 +73,7 @@ public class CurationPanel extends BorderLayoutContainer {
         titleBar = new HTML();
         setNorthWidget(titleBar,borderData);
         
-        ScrollPanel scrollPanel = new ScrollPanel();
+        scrollPanel = new ScrollPanel();
         VBoxLayoutContainer docPanel = new VBoxLayoutContainer();
         docPanel.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);
         docPanel.setHeight(1000);
@@ -183,6 +185,7 @@ public class CurationPanel extends BorderLayoutContainer {
         nextButton.setEnabled(pData.getPairNumber() < pData.getTotalPairNumber());
         
         forceLayout();
+        scrollPanel.scrollToTop();
     }
 
     private VerdictSheet extractData() {
