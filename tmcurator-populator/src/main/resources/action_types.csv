@@ -479,3 +479,5 @@ unloose	.	release	1	1	1	1
 verbcomplex	.	form a complex				0	
 weakly	.	similar	1			0	
 genetic interaction	L	logicalactiontype	0	0	0	1	0
+counteract	P	suppress	0	1	-1	1	0
+function as positive regulator of	L	activate	0	1	1	1	0
