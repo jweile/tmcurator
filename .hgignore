@@ -9,4 +9,6 @@ nbactions.xml
 \.log(\.\d)*$
 \.db$
 \.bak$
+^results/
+\.DS_Store
 
