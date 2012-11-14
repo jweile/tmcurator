@@ -14,6 +14,7 @@ FROM (
 	mentions.actionType=verdicts.action AS match
 	FROM mentions, verdicts
 	WHERE mentions.ROWID=verdicts.mentionId
+		AND verdicts.negative <2
 )
 GROUP BY new
 ORDER BY total DESC, correctness DESC;
