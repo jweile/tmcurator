@@ -581,7 +581,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             .append("(SELECT MAX(id) FROM mentions)+1, ")
             .append("(SELECT id FROM pairs WHERE ROWID='%s'), ")
             .append("%s, 'actiontype', '%s', '%s', ")
-            .append("'UNKNOWN', 'UNKNOWN', '%s', '0');")
+            .append("'UNKNOWN', 'UNKNOWN', '%s', '0', '-1.0');")
             .toString();
     
     private void _addSentence(Connection db, Map<String, String> sentenceData, String articleId) {
