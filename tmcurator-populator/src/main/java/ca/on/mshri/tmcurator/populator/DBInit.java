@@ -54,7 +54,8 @@ public class DBInit {
             statement.executeUpdate("CREATE TABLE mentions "
                     + "(id INTEGER PRIMARY KEY, pair_id TEXT, article_id INTEGER, "
                     + "actionType TEXT, upstream TEXT, downstream TEXT, "
-                    + "type1 TEXT, type2 TEXT, sentence TEXT, negative INTEGER );");
+                    + "type1 TEXT, type2 TEXT, sentence TEXT, negative INTEGER, "
+                    + "score REAL );");
             statement.executeUpdate("CREATE TABLE actiontypes "
                     + "(name TEXT PRIMARY KEY , pl TEXT, parent TEXT, nbgp INTEGER,"
                     + "updown INTEGER, effect INTEGER, same_process INTEGER, "
