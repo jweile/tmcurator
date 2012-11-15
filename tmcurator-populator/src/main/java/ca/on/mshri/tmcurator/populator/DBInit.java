@@ -61,11 +61,13 @@ public class DBInit {
                     + "updown INTEGER, effect INTEGER, same_process INTEGER, "
                     + "close_connection INTEGER);");
             statement.executeUpdate("CREATE TABLE users (name TEXT PRIMARY KEY, "
-                    + "token TEXT, current INTEGER, password TEXT);");
+                    + "token TEXT, current INTEGER, password TEXT, start INTEGER);");
             statement.executeUpdate("CREATE TABLE verdicts (id TEXT PRIMARY KEY, "
                     + "pairId INTEGER, mentionId INTEGER, action TEXT, "
                     + "updown INTEGER, g1type TEXT, g2type TEXT, negative INTEGER, "
                     + "comment TEXT, user TEXT);");
+            statement.executeUpdate("CREATE TABLE config (offset INTEGER, "
+                    + "last_offset INTEGER, quota INTEGER);");
             
             db.commit();
             
@@ -76,11 +78,23 @@ public class DBInit {
         
     }
     
+    
+    public void setupConfigData(Connection db) {
+        try {
+            Statement s = db.createStatement();
+            
+            s.executeUpdate("INSERT INTO config VALUES (100, -99, 300);");
+            db.commit();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Unable to set up configuration parameters", ex);
+        }
+    }
+    
     public void createTestUser(Connection db) {
         try {
             Statement s = db.createStatement();
             
-            s.executeUpdate("INSERT INTO users VALUES ('user', '', 201, 'foo');");
+            s.executeUpdate("INSERT INTO users VALUES ('user', '', 201, 'foo', '201');");
             db.commit();
         } catch (SQLException ex) {
             throw new RuntimeException("Unable to create test user", ex);

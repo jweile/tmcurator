@@ -16,8 +16,8 @@
  */
 package ca.on.mshri.tmcurator.server;
 
-import ca.on.mshri.tmcurator.shared.LoginException;
 import ca.on.mshri.tmcurator.client.LoginService;
+import ca.on.mshri.tmcurator.shared.LoginException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -121,11 +121,10 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
         try {
             Statement sql = db.createStatement();
             sql.executeUpdate(String.format(
-                    "INSERT INTO users VALUES ('%s','%s','%s','%s');",
+                    "INSERT INTO users VALUES ('%s','',(SELECT last_offset+offset FROM config),'%s',(SELECT last_offset+offset FROM config));",
                     user,
-                    "",
-                    1,
                     pwd));
+            sql.executeUpdate("UPDATE config SET last_offset=last_offset+offset;");
             sql.close();
             return true;
         } catch (SQLException ex) {

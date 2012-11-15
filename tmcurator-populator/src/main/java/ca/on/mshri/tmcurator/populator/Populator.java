@@ -144,6 +144,8 @@ public class Populator {
             
             dbinit.createTestUser(db);
             
+            dbinit.setupConfigData(db);
+            
         } catch (SQLException ex) {
             throw new RuntimeException("Cannot connect to database!",ex);
         } finally {

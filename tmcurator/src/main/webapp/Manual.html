@@ -1,0 +1,134 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+	<title>TmCurator Tutorial</title>
+
+	<meta name="dc.title" content="TmCurator Tutorial" />
+	<meta name="dc.creator" content="Jochen Weile" />
+
+	<style type="text/css">
+		<!--
+		body {
+			font-family:helvetica,sans-serif;
+			font-size:12px;
+			text-align:justify;
+			counter-reset:section subsection;
+		}
+		.container {
+			width:600px;
+			margin-left: 30px;
+			margin-right: auto;
+			margin-top: 30px;
+			margin-bottom: 200px;
+		}
+		.titleframe {
+			text-align:center;
+			margin-top:100px;
+			margin-bottom:100px;
+		}
+		.hint {
+			font-size:9px;
+			text-align:right;
+			color: gray;
+		}
+		a {
+			color:black;
+		}
+		/* ### SECTIONING ### */
+		h2:before {
+			counter-increment:section;
+			content: counter(section) ". "; 
+		}
+		h2 {
+			counter-reset:subsection;
+		}
+		h3:before {
+			counter-increment:subsection;
+			content: counter(section) "." counter(subsection) ". "; 
+		}
+		-->
+    </style> 
+
+</head>
+
+<body>
+<div class="container">
+
+	<div class="titleframe">
+		<h1>TmCurator - Manual</h1>
+		<b>Jochen Weile</b>
+	</div>
+
+	<div class="hint">
+		<a href="javascript:window.print()">[Click to print page]</a>
+	</div>
+
+	<h2>Background</h2>
+	<!-- ________ -->
+	<p>TmCurator is part of a project that aims to generate a high-quality reference dataset of upstream-downstream relationships between proteins in <i>Saccharomyces cerevisiae</i>. In the first phase of the project, raw relationships were extracted from a large corpus of publications using text mining software. The second phase of the project will consist of manually curating these sentences to achieve high quality.</p>
+
+	<p>As part of the text mining process, a list of <i>S. cerevisiae</i> gene and protein names and a list of hierarchically arranged potential relationships (e.g. "binds", "interacts", "regulates") were assembled. These lists were used with the <a href="http://www.cs.columbia.edu/~vh/Papers/2004/GeneWaysOverview-JBI.pdf">GeneWays</a> text mining system, extracted plausible sentences and their contents from the publication corpus.</p>
+
+	<p>As part of the manual curation process we are aiming to (i) remove false extractions from the dataset, and (ii) salvage as many inaccurate extractions as possible by correcting the computer's interpretation. To make this process as efficient and time-saving as possible, we have created the TmCurator tool. It collates extracted sentences in pages, each of which concerns one pair of genes or proteins. Each curator is assigned a specific list of 300 pages, such that the list overlaps with those of four other curators. Each page is evaluated by three different persons. Thus, we hope to achieve a high quality of curation.</p>
+
+
+	<h2>System requirements</h2>
+	<!-- ___________________ -->
+
+	<p>To use TmCurator you will require a HTML5-compatible internet browser, such as</p>
+	<ul>
+		<li>Firefox 2.0 or higher</li>
+		<li>Chrome 4.0 or higher</li>
+		<li>Opera 9.0 or higher</li>
+		<li>Safari 3.1 or higher</li>
+		<li>Internet Explorer 9.0 or higher</li>
+	</ul>
+
+	<h2>Using the TmCurator interface</h2>
+	<!-- ________ -->
+
+	<p>Open your browser and navigate to <a href="http://dalai.mshri.on.ca:8081/"><code>http://dalai.mshri.on.ca:8081/</code></a> to see the TmCurator interface. A dialogue window will be visible, asking you to log in. Assuming you do not yet have an account, click on the "Create new account" button. The dialogue box will change, prompting you to choose a user name and password.</p>
+
+	<p>After successfully logging in, you will see the welcome screen. The welcome screen shows a percentage bar indicating your current progress. Underneath you will find two buttons labelled "Continue" and "Jump to Pair". You may also notice a third button in the top right corner of your screen that shows your chosen user name. You can use this button to log out of your session at any time. Unless you do so, the page will remember your user name (using a browser cookie) and automatically log you in whenever you navigate to the page.</p>
+
+	<p>For the purposes of this tutorial you will require the "Continue" button. Advanced users may read about the "Jump to pair" button in the appendix. Click on the "Continue" button. It will take you to the main curation interface, displaying a page on a particular pair of genes. The names of the two genes are displayed on the top of the page and highlighted in blue and orange. Below this title is a list of boxes. Each of these boxes represents a sentence which has been automatically extracted from a publication, in which the names of the two genes have been highlighted. Grouped around the sentence are a number of information and control elements. </p>
+	<ul>
+		<li><b>The title bar</b>. Each box has a narrow title bar which displays a unique ID for the sentence as well as any important messages. For example, if the sentence in question originates from a publication that was not approved by SGD as "yeast-related", a red warning message will appear here.</li>
+		<li><b>The "PubMed" button</b>. Clicking this button will open the publication from which this sentence has been extracted in a new browser tab. This may be useful to find the exact context of the displayed sentence if necessary. You can also hover your mouse over the button for a few seconds, causing citation information for the publication to be displayed.</li>
+		<li><b>The verdict field</b>. This component displays the computer's current interpretation of the sentence. Two symbols represent the currently assumed entity types for the two partners, i.e. whether they are interpreted to be genes, proteins, transcripts or neither. Between them you will find a labelled line representing the currently assumed relationship between the two entities. If applicable, the line will have an arrow tip indicating the directionality of the relationship.</li>
+		<li><b>The "Switch" button</b>. This button allows you to switch the direction of the arrow (if applicable)</li>
+		<li><b>The "Entities" button</b>. This button will let you change the entity types for the two objects in question. Available entity types are "Gene", "Protein", "Transcript" and "Unknown". Upon clicking the button, a dialogue box will open, offering two drop-down menus from which you can select the above entity types.</li>
+		<li><b>The "Action" button.</b> This button allows you to adjust the action or relationship between the two genes or proteins. When you click the button, a new dialogue window will appear. In its centre it contains a tree structure from which you can choose a word that reflects the true relationship between the two entities expressed in the sentence more accurately. Since the list is relatively extensive, a search bar at the top will allow you to find particular word you may be looking for. Finally, for your convenience a collapsible panel at the bottom of the dialogue window can display the ten words used most frequently by all curators. You can reveal the panel by clicking on the small button with double arrow symbol.</li>
+		<li><b>The "Negate" button.</b> This button can be used to negate a relationship. That is, for example to turn the statement "A interacts with B" into the statement "A does not interact with B".</li>
+		<li> <b>The "Invalid" button.</b> You can use this button to declare an extraction as invalid altogether. That is, to declare that the sentence does not at all make a statement about the two genes in question.</li>
+		<li><b>The comment box</b>. If you feel that there is a problem with a particular sentence that can not be addressed appropriately using the available options, you can leave a comment in this box, describing the problem.</li>
+		<li><b>The "Approve" check box</b>. By checking this box, you express your belief that (i) the currently displayed information correctly reflects the information within the sentence and that (ii) the sentence constitutes adequate evidence for the statement. If you do not check this box, the sentence will be ignored.</li>
+	</ul>
+
+	<p>When you have completed your curation of the sentences on a page you can go to next page for another gene pair by clicking on the "Next" button at the bottom of the page. This will cause all your changes to be saved to the database and the next page to be loaded. If, for some reason, you wish to go back to the previous page, you can use the "Previous" button instead. The "Home" button will bring you back to the start screen.</p>
+
+
+	<h2>Curation standards</h2>
+	<!-- ____________________ -->
+	<p>To ensure quality curation we have decided on a set of standards to be followed during curation. </p>
+
+
+	<h2>Appendix</h2>
+	<!-- _________ -->
+
+	<h3>Reporting errors</h3>
+	<p>If you encounter any bugs, errors or other problems with the software, please submit a report to the <a href="https://bitbucket.org/jweile/tmcurator/issues">issue tracker</a>. </p>
+
+	<h3>Jumping to custom gene pairs</h3>
+	<p>You </p>
+
+	<h3>Adding new</h3>
+
+</div>
+</body>
+
+</html>

@@ -19,8 +19,8 @@ package ca.on.mshri.tmcurator.server;
 import ca.on.mshri.tmcurator.client.DataProviderService;
 import ca.on.mshri.tmcurator.shared.Action;
 import ca.on.mshri.tmcurator.shared.Effect;
-import ca.on.mshri.tmcurator.shared.MentionVerdict;
 import ca.on.mshri.tmcurator.shared.GenePair;
+import ca.on.mshri.tmcurator.shared.MentionVerdict;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import ca.on.mshri.tmcurator.shared.Verdict;
 import ca.on.mshri.tmcurator.shared.VerdictSheet;
@@ -65,6 +65,14 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         return queryPairData(user, pairNum);
     }
 
+    /**
+     * Returns an integer array with exactly three elements
+     * <ol>
+     * <li> ID of gene pair the user has last curated</li>
+     * <li> Total number of gene pairs</li>
+     * <li> The number of gene pairs for which this user has submitted any verdicts.</li>
+     * </ol>
+     */
     @Override
     public int[] currProgress(String user) {
         
