@@ -134,9 +134,14 @@ public class TmCurator implements EntryPoint {
             @Override
             public void onSuccess(int[] result) {
                 TmCurator.LOAD_DIALOG.hide();
+                
+                int curr = result[0],//current pair for user
+                    total = result[1],//total number pairs in dataset
+                    filled = result[2],//user's quota fulfilment
+                    quota = result[3];//user's total quota
                                 
                 GreetingPanel gp = GreetingPanel.getInstance();
-                gp.setProgress(result[0], result[1], result[2]);
+                gp.setProgress(curr, total, filled, quota);
 
                 mainPanel.clear();
                 mainPanel.add(gp);

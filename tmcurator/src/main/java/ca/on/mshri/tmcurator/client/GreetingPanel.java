@@ -33,7 +33,7 @@ public class GreetingPanel extends VBoxLayoutContainer {
 
     private static GreetingPanel instance = null;
     
-    private int pairNum, totalPairNum, progress;
+    private int pairNum, totalPairNum;
 
     private ProgressBar progressbar;
     /**
@@ -88,15 +88,14 @@ public class GreetingPanel extends VBoxLayoutContainer {
         
     }
     
-    public void setProgress(int pairNum, int totalPairNum, int progress) {
+    public void setProgress(int curr, int total, int filled, int quota) {
         
-        this.progress = progress;
-        this.pairNum = pairNum;
-        this.totalPairNum = totalPairNum;
+        this.pairNum = curr;
+        this.totalPairNum = total;
         
-        double share = (double) progress / (double) totalPairNum;
+        double share = (double) filled / (double) quota;
         
-        progressbar.updateProgress(share, "Curation progress: "+progress+" of "+totalPairNum);
+        progressbar.updateProgress(share, "Contingent fulfilment: "+filled+" of "+quota);
     }
     
     

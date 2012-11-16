@@ -16,6 +16,7 @@
 			font-family:helvetica,sans-serif;
 			font-size:12px;
 			text-align:justify;
+			line-height: 18px;
 			counter-reset:section subsection;
 		}
 		.container {
@@ -29,6 +30,9 @@
 			text-align:center;
 			margin-top:100px;
 			margin-bottom:100px;
+		}
+		.affiliation {
+			font-size:10px;
 		}
 		.hint {
 			font-size:9px;
@@ -59,8 +63,14 @@
 <div class="container">
 
 	<div class="titleframe">
-		<h1>TmCurator - Manual</h1>
-		<b>Jochen Weile</b>
+
+		<!-- ################################### -->
+		<h1>The text mining curation interface</h1>
+		<!-- ################################### -->
+
+		<p><b>Jochen Weile<sup>*</sup></b></p>
+		<p><span class="affiliation"><sup>*</sup>Dept. of Molecular Genetics, University of Toronto, Canada</span></p>
+
 	</div>
 
 	<div class="hint">
@@ -95,7 +105,7 @@
 
 	<p>After successfully logging in, you will see the welcome screen. The welcome screen shows a percentage bar indicating your current progress. Underneath you will find two buttons labelled "Continue" and "Jump to Pair". You may also notice a third button in the top right corner of your screen that shows your chosen user name. You can use this button to log out of your session at any time. Unless you do so, the page will remember your user name (using a browser cookie) and automatically log you in whenever you navigate to the page.</p>
 
-	<p>For the purposes of this tutorial you will require the "Continue" button. Advanced users may read about the "Jump to pair" button in the appendix. Click on the "Continue" button. It will take you to the main curation interface, displaying a page on a particular pair of genes. The names of the two genes are displayed on the top of the page and highlighted in blue and orange. Below this title is a list of boxes. Each of these boxes represents a sentence which has been automatically extracted from a publication, in which the names of the two genes have been highlighted. Grouped around the sentence are a number of information and control elements. </p>
+	<p>For the purposes of this tutorial you will require the "Continue" button. Advanced users may read about the "Jump to pair" button in the <a href="#jumping">appendix</a>. Click on the "Continue" button. It will take you to the main curation interface, displaying a page on a particular pair of genes. The names of the two genes are displayed on the top of the page and highlighted in blue and orange. Below this title is a list of boxes. Each of these boxes represents a sentence which has been automatically extracted from a publication, in which the names of the two genes have been highlighted. Grouped around the sentence are a number of information and control elements. </p>
 	<ul>
 		<li><b>The title bar</b>. Each box has a narrow title bar which displays a unique ID for the sentence as well as any important messages. For example, if the sentence in question originates from a publication that was not approved by SGD as "yeast-related", a red warning message will appear here.</li>
 		<li><b>The "PubMed" button</b>. Clicking this button will open the publication from which this sentence has been extracted in a new browser tab. This may be useful to find the exact context of the displayed sentence if necessary. You can also hover your mouse over the button for a few seconds, causing citation information for the publication to be displayed.</li>
@@ -112,21 +122,26 @@
 	<p>When you have completed your curation of the sentences on a page you can go to next page for another gene pair by clicking on the "Next" button at the bottom of the page. This will cause all your changes to be saved to the database and the next page to be loaded. If, for some reason, you wish to go back to the previous page, you can use the "Previous" button instead. The "Home" button will bring you back to the start screen.</p>
 
 
-	<h2>Curation standards</h2>
+	<h2>Important guidelines</h2>
 	<!-- ____________________ -->
-	<p>To ensure quality curation we have decided on a set of standards to be followed during curation. </p>
+	<p>To ensure quality curation we have decided on a set of guidelines to be followed. </p>
 
 
 	<h2>Appendix</h2>
 	<!-- _________ -->
 
 	<h3>Reporting errors</h3>
+
 	<p>If you encounter any bugs, errors or other problems with the software, please submit a report to the <a href="https://bitbucket.org/jweile/tmcurator/issues">issue tracker</a>. </p>
 
-	<h3>Jumping to custom gene pairs</h3>
-	<p>You </p>
+	<h3><a name="jumping"/>Jumping to custom gene pairs</h3>
 
-	<h3>Adding new</h3>
+	<p>If for some reason, you wish to find a particular gene pair in the dataset you can do so by going back to the main page and clicking on the "Jump to pair" button. It will open a new dialogue window with a slider. You can use the slider to select a specific page in the data set. You can also search for specific genes by name using the search bar on the top of the dialogue. After submitting a search term, all pages with genes that match your query will be listed in a table below. You can then select your desired page from the list and the slider will jump to the corresponding position. Click "OK" to open the selected page.</p>
+
+	<h3>Adding new sentences</h3>
+
+	<p>Another advanced feature within the interface is the option to add new sentences to a gene pair. To do so you can use the "Add sentence" button on the top left of the desired gene pair page. The button opens a new dialogue window which will prompt you to enter the sentence and the PubMed ID of the publication from which the sentence originates. After submitting the sentence it will be displayed at the bottom of the page and can be used like any other pre-existing sentence for that gene pair.</p>
+
 
 </div>
 </body>

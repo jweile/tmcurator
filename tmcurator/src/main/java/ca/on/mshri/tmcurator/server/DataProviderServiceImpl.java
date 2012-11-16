@@ -66,11 +66,12 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     }
 
     /**
-     * Returns an integer array with exactly three elements
+     * Returns an integer array with exactly four elements
      * <ol>
      * <li> ID of gene pair the user has last curated</li>
      * <li> Total number of gene pairs</li>
-     * <li> The number of gene pairs for which this user has submitted any verdicts.</li>
+     * <li> Number of pairs from the users quota for which he has already submitted verdicts.</li>
+     * <li> The user's quota</li>
      * </ol>
      */
     @Override
@@ -82,9 +83,11 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             public int[] transaction(Connection db, String user, Void in) {
                 int curr = getProgress(db, user, Inc.CURR);
                 int tot = getTotalPairNum(db);
-                int filled = getNumVerdicts(db, user);
+//                int filled = getNumVerdicts(db, user);
+                int filled = getFulfilment(db, user);
+                int quota = getQuota(db);
 
-                return new int[]{curr,tot,filled};
+                return new int[]{curr,tot,filled,quota};
             }
         }.run(user, null);
     }
@@ -114,6 +117,33 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         try {
             Statement s = db.createStatement();
             ResultSet r = s.executeQuery("SELECT COUNT(DISTINCT pairId) FROM verdicts WHERE user='"+user+"';");
+            r.next();
+            return r.getInt(1);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Unable to query database!",ex);
+        }
+    }
+    
+    private int getFulfilment(Connection db, String user) {
+        try {
+            Statement s = db.createStatement();
+            //get all pairs from interval [start,start+quota] for which user has submitted verdicts.
+            ResultSet r = s.executeQuery(String.format("SELECT COUNT(*) FROM pairs WHERE (pairs.ROWID "
+                    + "BETWEEN (SELECT start FROM users WHERE name='%s') AND (SELECT start "
+                    + "FROM users WHERE name='%s') + (SELECT quota FROM config ))  "
+                    + "AND pairs.ROWID IN (SELECT DISTINCT pairId FROM verdicts WHERE user='%s');",
+                    user,user,user));
+            r.next();
+            return r.getInt(1);
+        } catch (SQLException ex) {
+            throw new RuntimeException("Unable to query database!",ex);
+        }
+    }
+    
+    private int getQuota(Connection db) {
+        try {
+            Statement s = db.createStatement();
+            ResultSet r = s.executeQuery("SELECT quota FROM config;");
             r.next();
             return r.getInt(1);
         } catch (SQLException ex) {
