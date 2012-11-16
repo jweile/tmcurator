@@ -190,19 +190,18 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             
             if (exists) {
                 sql.executeUpdate(String.format(
-                        "UPDATE verdicts SET action='%s', updown='%s', g1type='%s', g2type='%s', negative='%s', comment='%s', timestamp=strftime('%s','now') WHERE id='%s';",
+                        "UPDATE verdicts SET action='%s', updown='%s', g1type='%s', g2type='%s', negative='%s', comment='%s', timestamp=datetime('now') WHERE id='%s';",
                         verdict.getAction(),
                         verdict.getOrder(),
                         verdict.getG1Type(),
                         verdict.getG2Type(),
                         verdict.isInvalid() ? 2 : (verdict.isNegative()?1:0),
                         verdict.getComment(),
-                        "%s",//FIXME: find some better way of doing this
                         id));
             } else {
                 sql.executeUpdate(String.format("INSERT INTO verdicts "
                         + "(id, pairId, mentionId, action, updown, g1type, g2type, negative, comment, user, timestamp) "
-                        + "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',strftime('%s','now'));",
+                        + "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',datetime('now'));",
                         id,
                         verdict.getPairId(),
                         mentionId,
@@ -212,8 +211,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                         verdict.getG2Type(),
                         verdict.isInvalid() ? 2 : (verdict.isNegative()?1:0),//int value
                         verdict.getComment(),
-                        user,
-                        "%s"//FIXME: How stupid is this?!
+                        user
                         ));
             }
             sql.close();
