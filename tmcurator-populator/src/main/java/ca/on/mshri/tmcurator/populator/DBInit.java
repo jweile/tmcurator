@@ -65,7 +65,7 @@ public class DBInit {
             statement.executeUpdate("CREATE TABLE verdicts (id TEXT PRIMARY KEY, "
                     + "pairId INTEGER, mentionId INTEGER, action TEXT, "
                     + "updown INTEGER, g1type TEXT, g2type TEXT, negative INTEGER, "
-                    + "comment TEXT, user TEXT);");
+                    + "comment TEXT, user TEXT, timestamp DATETIME);");
             statement.executeUpdate("CREATE TABLE config (offset INTEGER, "
                     + "last_offset INTEGER, quota INTEGER);");
             
