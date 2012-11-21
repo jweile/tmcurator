@@ -142,7 +142,7 @@ public class Populator {
             
             dbinit.createIndices(db);
             
-            dbinit.createTestUser(db);
+            dbinit.createAdminUser(db);
             
             dbinit.setupConfigData(db);
             

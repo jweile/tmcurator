@@ -16,6 +16,7 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import ca.on.mshri.tmcurator.shared.Config;
 import ca.on.mshri.tmcurator.shared.PairDataSheet;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -36,6 +37,9 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 public class TmCurator implements EntryPoint {
     
     private static TmCurator instance = null;
+    
+    private Config config = null;
+
 
     private String user = null;
     
@@ -62,6 +66,10 @@ public class TmCurator implements EntryPoint {
     public void setUser(String user) {
         this.user = user;
         login.setText(user);
+        
+        if (user.equals("admin")) {
+            settingsItem.setEnabled(true);
+        }
     }
     
     public static TmCurator getInstance() {
@@ -74,6 +82,8 @@ public class TmCurator implements EntryPoint {
         
         placeMainPanel();
         placeLoginButton();
+        
+        loadConfig();
         
         checkLogin();
         
@@ -89,6 +99,9 @@ public class TmCurator implements EntryPoint {
         
         RootPanel.get("main").add(mainPanel);
     }
+    
+    //FIXME: find a way of not needing to store the menu item
+    private MenuItem settingsItem;
     
     private void placeLoginButton() {
         
@@ -108,6 +121,15 @@ public class TmCurator implements EntryPoint {
             }
         }));
         
+        settingsItem = new MenuItem("Settings", new SelectionHandler<MenuItem>() {
+            @Override
+            public void onSelection(SelectionEvent<MenuItem> event) {
+                SettingsDialog.getInstance().show();
+            }
+        });
+        settingsItem.setEnabled(false);
+        loginMenu.add(settingsItem);
+                
         MenuItem deleteAccount = new MenuItem("Delete account");
         deleteAccount.setEnabled(false);
         loginMenu.add(deleteAccount);
@@ -190,12 +212,12 @@ public class TmCurator implements EntryPoint {
 
     
     private void checkLogin() {
-        user = Cookies.getCookie("tmcurator.user");
+        String user = Cookies.getCookie("tmcurator.user");
         //FIXME: There should be a remote service call to verify user existence
         if (user == null) {
             LoginDialog.getInstance().show();
         } else {
-            login.setText(user);
+            setUser(user);
             loadGreetingPanel();
         }
     }
@@ -204,5 +226,35 @@ public class TmCurator implements EntryPoint {
     public void displayError(Throwable caught) {
         new AlertMessageBox("Error",caught.getMessage()).show();
     }
+
+    public Config getConfig() {
+        return config;
+    }
+    
+    
+    public void setConfig(Config c) {
+        config = c;
+    }
+    
+    
+    public void loadConfig() {
+        
+        LoginServiceAsync.Util.getInstance()
+                .getConfig(new AsyncCallback<Config>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                displayError(caught);
+            }
+
+            @Override
+            public void onSuccess(Config result) {
+                setConfig(result);
+            }
+                    
+        });
+    }
+    
+    
     
 }

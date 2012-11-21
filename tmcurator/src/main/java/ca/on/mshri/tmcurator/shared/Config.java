@@ -14,28 +14,46 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.on.mshri.tmcurator.client;
+package ca.on.mshri.tmcurator.shared;
 
-import ca.on.mshri.tmcurator.shared.Config;
-import ca.on.mshri.tmcurator.shared.LoginException;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  *
- * @author jweile
+ * @author Jochen Weile <jochenweile@gmail.com>
  */
-@RemoteServiceRelativePath("login")
-public interface LoginService extends RemoteService {
+public class Config implements IsSerializable {
     
-    boolean addUser(String user, String pwd) throws LoginException;
+    private int quota;
     
-    boolean deleteUser(String user, String pwd) throws LoginException;
+    private int offset;
     
-    boolean login(String user, String pwd) throws LoginException;
+    private boolean approvalEnabled;
+
+    public int getQuota() {
+        return quota;
+    }
+
+    public void setQuota(int quota) {
+        this.quota = quota;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public boolean isApprovalEnabled() {
+        return approvalEnabled;
+    }
+
+    public void setApprovalEnabled(boolean approvalEnabled) {
+        this.approvalEnabled = approvalEnabled;
+    }
     
-    Config getConfig() throws Exception;
     
-    void setConfig(Config config) throws Exception;
     
 }

@@ -16,6 +16,7 @@
  */
 package ca.on.mshri.tmcurator.client;
 
+import ca.on.mshri.tmcurator.shared.Config;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -131,6 +132,7 @@ public class LoginDialog extends Dialog {
                 }
             }
 
+
         });
     }
     
@@ -142,4 +144,6 @@ public class LoginDialog extends Dialog {
                 + message
                 + "</p>");
     }
+    
+    
 }

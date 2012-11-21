@@ -67,7 +67,7 @@ public class DBInit {
                     + "updown INTEGER, g1type TEXT, g2type TEXT, negative INTEGER, "
                     + "comment TEXT, user TEXT, timestamp DATETIME);");
             statement.executeUpdate("CREATE TABLE config (offset INTEGER, "
-                    + "last_offset INTEGER, quota INTEGER);");
+                    + "last_offset INTEGER, quota INTEGER, approvalEnabled BOOLEAN);");
             
             db.commit();
             
@@ -83,18 +83,18 @@ public class DBInit {
         try {
             Statement s = db.createStatement();
             
-            s.executeUpdate("INSERT INTO config VALUES (100, -99, 300);");
+            s.executeUpdate("INSERT INTO config VALUES (150, -149, 300, 0);");
             db.commit();
         } catch (SQLException ex) {
             throw new RuntimeException("Unable to set up configuration parameters", ex);
         }
     }
     
-    public void createTestUser(Connection db) {
+    public void createAdminUser(Connection db) {
         try {
             Statement s = db.createStatement();
             
-            s.executeUpdate("INSERT INTO users VALUES ('user', '', 201, 'foo', '201');");
+            s.executeUpdate("INSERT INTO users VALUES ('admin', '', 1, 'lamarama', '1');");
             db.commit();
         } catch (SQLException ex) {
             throw new RuntimeException("Unable to create test user", ex);

@@ -17,6 +17,7 @@
 package ca.on.mshri.tmcurator.server;
 
 import ca.on.mshri.tmcurator.client.LoginService;
+import ca.on.mshri.tmcurator.shared.Config;
 import ca.on.mshri.tmcurator.shared.LoginException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.sql.Connection;
@@ -160,6 +161,82 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             //TODO: Also delete all of users verdicts?
             sql.close();
             return true;
+        } catch (SQLException ex) {
+            throw new RuntimeException("DB Query failed.");
+        }
+    }
+
+    @Override
+    public Config getConfig() throws Exception {
+        return new DBAccess<Void, Config>() {
+
+            @Override
+            public Config transaction(Connection db, String user, Void v) {
+                return _getConfig(db);
+            }
+
+        }.run(null,null);
+    }
+    
+    
+    private Config _getConfig(Connection db) {
+        try {
+            Config config = new Config();
+            Statement sql = db.createStatement();
+            ResultSet result = sql.executeQuery("SELECT * FROM config;");
+            result.next();
+            
+            config.setQuota(result.getInt("quota"));
+            config.setOffset(result.getInt("offset"));
+            config.setApprovalEnabled(result.getBoolean("approvalEnabled"));
+            
+            sql.close();
+            return config;
+        } catch (SQLException ex) {
+            throw new RuntimeException("DB Query failed.");
+        }
+    }
+
+    @Override
+    public void setConfig(Config config) throws Exception {
+        
+        new DBAccess<Config,Void>() {
+
+            @Override
+            public Void transaction(Connection db, String user, Config in) {
+                _setConfig(db, in);
+                return null;
+            }
+            
+        }.run(null,config);
+    }
+    
+
+    private void _setConfig(Connection db, Config config) {
+        try {
+            Statement sql = db.createStatement();
+            
+            ResultSet result = sql.executeQuery("SELECT * FROM config;");
+            result.next();
+            
+            if (result.getInt("last_offset") < 1) {
+                
+                sql.executeUpdate(String.format(
+                    "UPDATE config SET quota='%s', offset='%s', approvalEnabled='%s', last_offset='%s');",
+                    config.getQuota(),
+                    config.getOffset(),
+                    config.isApprovalEnabled(),
+                    1-config.getOffset()));
+                
+            } else {
+            
+                sql.executeUpdate(String.format(
+                        "UPDATE config SET quota='%s', offset='%s', approvalEnabled='%s');",
+                        config.getQuota(),
+                        config.getOffset(),
+                        config.isApprovalEnabled()));
+            }
+            sql.close();
         } catch (SQLException ex) {
             throw new RuntimeException("DB Query failed.");
         }
