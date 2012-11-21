@@ -134,11 +134,21 @@ public class Populator {
             
             dbinit.readActionTypes(db);
             
+            String verdictFile = null;
+            
             List<File> dirs = new ArrayList<File>();
             for (String filename : args) {
-                dirs.add(new File(filename));
+                if (filename.startsWith("-v")) {
+                    verdictFile = filename.substring(2);
+                } else {
+                    dirs.add(new File(filename));
+                }
             }
             dbinit.readSentences(db, dirs);
+            
+            if (verdictFile != null) {
+                dbinit.readVerdicts(db, verdictFile);
+            }
             
             dbinit.createIndices(db);
             

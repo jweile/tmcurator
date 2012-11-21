@@ -10,5 +10,6 @@ nbactions.xml
 \.db$
 \.bak$
 ^results/
+^input/
 \.DS_Store
 

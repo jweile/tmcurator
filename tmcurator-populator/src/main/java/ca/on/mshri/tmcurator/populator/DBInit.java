@@ -202,5 +202,27 @@ public class DBInit {
             throw new RuntimeException("Unable to write to database", ex);
         }
     }
+
+    public void readVerdicts(Connection db, String verdictFile) {
+        
+        LOG.info("Reading verdicts.");
+        
+        VerdictParser p = new VerdictParser();
+        
+        List<String> updates = p.parse(verdictFile);
+        
+        LOG.info("Writing to database.");
+        
+        try {
+            Statement statement = db.createStatement();
+            for (String update : updates) {
+                statement.executeUpdate(update);
+            }
+            db.commit();
+            
+        } catch (SQLException ex) {
+            throw new RuntimeException("Unable to write to database", ex);
+        }
+    }
     
 }
