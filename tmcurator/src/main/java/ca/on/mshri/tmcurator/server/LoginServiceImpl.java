@@ -155,7 +155,7 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
         try {
             Statement sql = db.createStatement();
             sql.executeUpdate(String.format(
-                    "DELETE FROM users WHERE name='%s' AND password='%s');",
+                    "DELETE FROM users WHERE name='%s' AND password='%s';",
                     user,
                     pwd));
             //TODO: Also delete all of users verdicts?
@@ -222,19 +222,21 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             if (result.getInt("last_offset") < 1) {
                 
                 sql.executeUpdate(String.format(
-                    "UPDATE config SET quota='%s', offset='%s', approvalEnabled='%s', last_offset='%s');",
+                    "UPDATE config SET quota='%s', offset='%s', approvalEnabled='%s', last_offset='%s';",
                     config.getQuota(),
                     config.getOffset(),
                     config.isApprovalEnabled(),
-                    1-config.getOffset()));
+                    1-config.getOffset()
+                ));
                 
             } else {
             
                 sql.executeUpdate(String.format(
-                        "UPDATE config SET quota='%s', offset='%s', approvalEnabled='%s');",
+                        "UPDATE config SET quota='%s', offset='%s', approvalEnabled='%s';",
                         config.getQuota(),
                         config.getOffset(),
-                        config.isApprovalEnabled()));
+                        config.isApprovalEnabled()
+                ));
             }
             sql.close();
         } catch (SQLException ex) {

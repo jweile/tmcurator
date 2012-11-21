@@ -49,6 +49,7 @@ public class SettingsDialog extends Dialog {
         setHeadingText("Settings");
         
         setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
+        setHideOnButtonClick(true);
         
         getButtonById(PredefinedButton.OK.name())
                 .addSelectHandler(new SelectEvent.SelectHandler() {
@@ -79,7 +80,6 @@ public class SettingsDialog extends Dialog {
                     }
                 });
                 
-                SettingsDialog.this.hide();
             }
         });
         

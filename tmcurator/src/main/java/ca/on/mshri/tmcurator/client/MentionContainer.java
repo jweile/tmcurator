@@ -106,12 +106,14 @@ public class MentionContainer extends ContentPanel {
         westContainer.add(pmButton, BoxConfig.MARGIN);
         
         approvalBox = new CheckBox();
-        approvalBox.setBoxLabel("Approve");
-        String hasVerdict = mention.get("hasVerdict");
-        approvalBox.setValue(hasVerdict != null && hasVerdict.equals("1"));
-        BoxLayoutData flex = new BoxLayoutData(new Margins(5,5,5,5));
-        flex.setFlex(1);
-        westContainer.add(approvalBox, flex);
+        if (TmCurator.getInstance().getConfig().isApprovalEnabled()) {
+            approvalBox.setBoxLabel("Approve");
+            String hasVerdict = mention.get("hasVerdict");
+            approvalBox.setValue(hasVerdict != null && hasVerdict.equals("1"));
+            BoxLayoutData flex = new BoxLayoutData(new Margins(5,5,5,5));
+            flex.setFlex(1);
+            westContainer.add(approvalBox, flex);
+        }
 
         borderLayout.setWestWidget(westContainer);
 

@@ -193,12 +193,13 @@ public class CurationPanel extends BorderLayoutContainer {
         for (IsWidget w : interpretationPanel) {
             if (w instanceof MentionContainer) {
                 MentionContainer mention = (MentionContainer)w;
-                if (mention.isApproved()) {
+                if (mention.isApproved() || !TmCurator.getInstance().getConfig().isApprovalEnabled()) {
                     MentionVerdict verdict = mention.extractData();
                     verdicts.add(verdict);
                 }
             }
         }
+        
 //        Verdict finalVerdict = new Verdict(pairId, 
 //                verdictControls.getAction().getName(), 
 //                verdictControls.getOrder().mod(), 
