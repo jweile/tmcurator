@@ -35,6 +35,13 @@ public class DatabaseTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         Populator.setupLogging();
+        
+        File dbFile = new File("tmcurator.db");
+        if (dbFile.exists()) {
+            Logger.getLogger(DatabaseTest.class.getName())
+                    .log(Level.WARNING, "Overwriting existing database!");
+            dbFile.delete();
+        }
     }
     
     public void testCreateTables() {
