@@ -121,6 +121,13 @@ public class Populator {
             throw new RuntimeException("Cannot load SQLite JDBC driver.",ex);
         }
         
+        File dbFile = new File("tmcurator.db");
+        if (dbFile.exists()) {
+            Logger.getLogger(Populator.class.getName())
+                    .log(Level.WARNING, "Overwriting existing DB file!");
+            dbFile.delete();
+        }
+        
         Connection db = null;
         
         try {
@@ -149,6 +156,9 @@ public class Populator {
             if (verdictFile != null) {
                 dbinit.readVerdicts(db, verdictFile);
             }
+            
+            PairScrambler scrambler = new PairScrambler();
+            scrambler.scramble(db);
             
             dbinit.createIndices(db);
             
