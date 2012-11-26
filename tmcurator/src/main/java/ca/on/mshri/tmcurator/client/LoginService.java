@@ -38,4 +38,6 @@ public interface LoginService extends RemoteService {
     
     void setConfig(Config config) throws Exception;
     
+    int assignNewContingent(String user) throws Exception;
+    
 }

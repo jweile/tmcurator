@@ -23,10 +23,13 @@ import ca.on.mshri.tmcurator.shared.VerdictSheet;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
@@ -186,6 +189,10 @@ public class CurationPanel extends BorderLayoutContainer {
         
         forceLayout();
         scrollPanel.scrollToTop();
+        
+        
+        //check if quota is fulfilled
+        checkQuota();
     }
 
     private VerdictSheet extractData() {
@@ -421,6 +428,92 @@ public class CurationPanel extends BorderLayoutContainer {
         return container;
         
     }
+
+    private void checkQuota() {
+        DataProviderServiceAsync dataService = DataProviderServiceAsync.Util.getInstance();
+        
+        dataService.currProgress(TmCurator.getInstance().getUser(), new AsyncCallback<int[]>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                TmCurator.LOAD_DIALOG.hide();
+                displayError(caught);
+            }
+
+            @Override
+            public void onSuccess(int[] result) {
+                TmCurator.LOAD_DIALOG.hide();
+                
+                int curr = result[0],//current pair for user
+                    total = result[1],//total number pairs in dataset
+                    filled = result[2],//user's quota fulfilment
+                    quota = result[3];//user's total quota
+                                
+                if (filled >= quota) {
+                    showCongrats();
+                }
+
+            }
+
+            
+
+        });
+    }
     
+    /**
+     * Show dialog on fulfilled quota.
+     */
+    private void showCongrats() {
+        
+        Dialog congrats = new Dialog();
+        congrats.setHeadingText("Congratulations!");
+        congrats.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO);
+        congrats.add(new Label(
+                "You have fulfilled your quota!\n"
+                + "Would you like to be assigned a new contingent?"));
+        congrats.setHideOnButtonClick(true);
+        congrats.setWidth(300);
+        
+        congrats.getButtonById(PredefinedButton.YES.name()).addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                TmCurator.LOAD_DIALOG.show();
+                
+                //update contingent in user table
+                LoginServiceAsync.Util.getInstance().assignNewContingent(TmCurator.getInstance().getUser(), new AsyncCallback<Integer>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        TmCurator.LOAD_DIALOG.hide();
+                        displayError(caught);
+                    }
+
+                    @Override
+                    public void onSuccess(Integer location) {
+                        //jump to new location
+                        DataProviderServiceAsync.Util.getInstance().gotoPairSheet(TmCurator.getInstance().getUser(), location, new AsyncCallback<PairDataSheet>() {
+
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                TmCurator.LOAD_DIALOG.hide();
+                                displayError(caught);
+                            }
+
+                            @Override
+                            public void onSuccess(PairDataSheet result) {
+                                TmCurator.LOAD_DIALOG.hide();
+                                updatePairData(result);
+                            }
+                        });
+                    }
+                });
+                
+                
+            }
+        });
+        
+        congrats.show();
+    }
     
 }

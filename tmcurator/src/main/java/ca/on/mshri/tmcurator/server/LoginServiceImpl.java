@@ -24,6 +24,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -241,6 +243,46 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             sql.close();
         } catch (SQLException ex) {
             throw new RuntimeException("DB Query failed.");
+        }
+    }
+    
+    @Override
+    public int assignNewContingent(String user) throws Exception {
+        return new DBAccess<Void,Integer>() {
+
+            @Override
+            public Integer transaction(Connection db, String user, Void in) {
+                return _assignNewContingent(db,user);
+            }
+
+            
+        }.run(user,null);
+    }
+    
+    
+    private int _assignNewContingent(Connection db, String user) {
+        Statement sql = null;
+        try {
+            sql = db.createStatement();
+            
+            sql.executeUpdate(String.format(
+                    "UPDATE users SET (start=(SELECT last_offset+offset FROM config),) WHERE name='%s';",
+                    user));
+            
+            ResultSet r = sql.executeQuery(String.format(
+                    "SELECT start FROM users WHERE name='%s';",user));
+            r.next();
+            return r.getInt(1);
+            
+        } catch (SQLException e) {
+            throw new RuntimeException("DB query failed",e);
+        } finally {
+            try {
+                sql.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(LoginServiceImpl.class.getName())
+                        .log(Level.WARNING, "Unable to close DB statement", ex);
+            }
         }
     }
 }

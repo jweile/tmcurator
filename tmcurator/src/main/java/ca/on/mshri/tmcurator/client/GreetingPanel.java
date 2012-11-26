@@ -33,7 +33,7 @@ public class GreetingPanel extends VBoxLayoutContainer {
 
     private static GreetingPanel instance = null;
     
-    private int pairNum, totalPairNum;
+    private int pairNum, totalPairNum, filled;
     
     private HTML greeting;
 
@@ -95,15 +95,22 @@ public class GreetingPanel extends VBoxLayoutContainer {
         
         this.pairNum = curr;
         this.totalPairNum = total;
+        this.filled = filled;
         
-        double share = (double) filled / (double) quota;
+        updateGreeting();
         
-        progressbar.updateProgress(share, "Contingent fulfilment: "+filled+" of "+quota);
+//        double share = (double) filled / (double) quota;
+//        
+//        progressbar.updateProgress(share, "Contingent fulfilment: "+filled+" of "+quota);
     }
     
     
     public void updateGreeting() {
         greeting.setHTML("Hello "+TmCurator.getInstance().getUser()+"!");
+        
+        int quota = TmCurator.getInstance().getConfig().getQuota();
+        double share = (double) filled / (double) quota;
+        progressbar.updateProgress(share, "Contingent fulfilment: "+filled+" of "+quota);
     }
     
 }
