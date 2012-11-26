@@ -163,6 +163,7 @@ public class TmCurator implements EntryPoint {
                     quota = result[3];//user's total quota
                                 
                 GreetingPanel gp = GreetingPanel.getInstance();
+                gp.updateGreeting();
                 gp.setProgress(curr, total, filled, quota);
 
                 mainPanel.clear();

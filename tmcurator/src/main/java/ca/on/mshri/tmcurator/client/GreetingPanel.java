@@ -34,6 +34,8 @@ public class GreetingPanel extends VBoxLayoutContainer {
     private static GreetingPanel instance = null;
     
     private int pairNum, totalPairNum;
+    
+    private HTML greeting;
 
     private ProgressBar progressbar;
     /**
@@ -56,7 +58,8 @@ public class GreetingPanel extends VBoxLayoutContainer {
         
         BoxLayoutData layout = new BoxLayoutData(new Margins(0,0,10,0));
         
-        add(new HTML("Hello "+TmCurator.getInstance().getUser()+"!"),layout);
+        greeting = new HTML("Hello "+TmCurator.getInstance().getUser()+"!");
+        add(greeting,layout);
         
         progressbar = new ProgressBar();
         progressbar.updateProgress(0.0, "Curation progress: 0%");
@@ -99,5 +102,8 @@ public class GreetingPanel extends VBoxLayoutContainer {
     }
     
     
+    public void updateGreeting() {
+        greeting.setHTML("Hello "+TmCurator.getInstance().getUser()+"!");
+    }
     
 }

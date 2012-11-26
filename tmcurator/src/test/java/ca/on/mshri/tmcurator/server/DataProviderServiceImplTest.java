@@ -41,7 +41,7 @@ public class DataProviderServiceImplTest extends TestCase {
     @Test
     public void testNextPairSheet() {
         System.out.println("nextPairSheet");
-        String user = "user";
+        String user = "admin";
         DataProviderServiceImpl instance = new DataProviderServiceImpl();
         PairDataSheet result = instance.nextPairSheet(user);
         
