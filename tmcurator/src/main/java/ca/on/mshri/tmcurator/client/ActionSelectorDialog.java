@@ -101,8 +101,7 @@ public class ActionSelectorDialog extends Dialog {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
-                b.show();
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -397,8 +396,7 @@ public class ActionSelectorDialog extends Dialog {
 
             @Override
             public void onFailure(Throwable caught) {
-                AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
-                b.show();
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override

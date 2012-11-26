@@ -69,9 +69,8 @@ public class SettingsDialog extends Dialog {
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        new AlertMessageBox("Error","Unable to save settings.\nCause: "+
-                                caught.getMessage())
-                                .show();
+                        ErrorDialog.getInstance().showError(
+                                new RuntimeException("Unable to save settings!",caught));
                     }
 
                     @Override

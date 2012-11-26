@@ -193,7 +193,7 @@ public class JumpToPairDialog extends Dialog {
             @Override
             public void onFailure(Throwable caught) {
                 resultContainer.clear();
-                resultContainer.add(new HTML(caught.getMessage()));
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -326,7 +326,7 @@ public class JumpToPairDialog extends Dialog {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                main.displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override

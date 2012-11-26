@@ -268,7 +268,7 @@ public class CurationPanel extends BorderLayoutContainer {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -278,7 +278,7 @@ public class CurationPanel extends BorderLayoutContainer {
                     @Override
                     public void onFailure(Throwable caught) {
                         TmCurator.LOAD_DIALOG.hide();
-                        displayError(caught);
+                        ErrorDialog.getInstance().showError(caught);
                     }
 
                     @Override
@@ -307,7 +307,7 @@ public class CurationPanel extends BorderLayoutContainer {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -318,7 +318,7 @@ public class CurationPanel extends BorderLayoutContainer {
                     @Override
                     public void onFailure(Throwable caught) {
                         TmCurator.LOAD_DIALOG.hide();
-                        displayError(caught);
+                        ErrorDialog.getInstance().showError(caught);
                     }
 
                     @Override
@@ -347,7 +347,7 @@ public class CurationPanel extends BorderLayoutContainer {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -359,12 +359,12 @@ public class CurationPanel extends BorderLayoutContainer {
     }
     
     
-    private void displayError(Throwable caught) {
-        
-        AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
-        RootPanel.get().add(b);
-        b.show();
-    }
+//    private void displayError(Throwable caught) {
+//        
+//        AlertMessageBox b = new AlertMessageBox("Error",caught.getMessage());
+//        RootPanel.get().add(b);
+//        b.show();
+//    }
 
     void addSentence(String sentence, String pmid) {
         
@@ -383,7 +383,7 @@ public class CurationPanel extends BorderLayoutContainer {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -394,7 +394,7 @@ public class CurationPanel extends BorderLayoutContainer {
                     @Override
                     public void onFailure(Throwable caught) {
                         TmCurator.LOAD_DIALOG.hide();
-                        displayError(caught);
+                        ErrorDialog.getInstance().showError(caught);
                     }
 
                     @Override
@@ -437,7 +437,7 @@ public class CurationPanel extends BorderLayoutContainer {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -486,7 +486,7 @@ public class CurationPanel extends BorderLayoutContainer {
                     @Override
                     public void onFailure(Throwable caught) {
                         TmCurator.LOAD_DIALOG.hide();
-                        displayError(caught);
+                        ErrorDialog.getInstance().showError(caught);
                     }
 
                     @Override
@@ -497,7 +497,7 @@ public class CurationPanel extends BorderLayoutContainer {
                             @Override
                             public void onFailure(Throwable caught) {
                                 TmCurator.LOAD_DIALOG.hide();
-                                displayError(caught);
+                                ErrorDialog.getInstance().showError(caught);
                             }
 
                             @Override

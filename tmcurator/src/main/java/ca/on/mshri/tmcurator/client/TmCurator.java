@@ -150,7 +150,7 @@ public class TmCurator implements EntryPoint {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -188,7 +188,7 @@ public class TmCurator implements EntryPoint {
             @Override
             public void onFailure(Throwable caught) {
                 TmCurator.LOAD_DIALOG.hide();
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override
@@ -224,9 +224,9 @@ public class TmCurator implements EntryPoint {
     }
     
     
-    public void displayError(Throwable caught) {
-        new AlertMessageBox("Error",caught.getMessage()).show();
-    }
+//    public void displayError(Throwable caught) {
+//        new AlertMessageBox("Error",caught.getMessage()).show();
+//    }
 
     public Config getConfig() {
         return config;
@@ -245,7 +245,7 @@ public class TmCurator implements EntryPoint {
 
             @Override
             public void onFailure(Throwable caught) {
-                displayError(caught);
+                ErrorDialog.getInstance().showError(caught);
             }
 
             @Override

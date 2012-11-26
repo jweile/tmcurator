@@ -266,7 +266,7 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             sql = db.createStatement();
             
             sql.executeUpdate(String.format(
-                    "UPDATE users SET (start=(SELECT last_offset+offset FROM config),) WHERE name='%s';",
+                    "UPDATE users SET start=(SELECT last_offset+offset FROM config) WHERE name='%s';",
                     user));
             
             ResultSet r = sql.executeQuery(String.format(
