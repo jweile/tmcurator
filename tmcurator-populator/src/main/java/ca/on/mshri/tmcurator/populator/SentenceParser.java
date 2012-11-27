@@ -35,6 +35,8 @@ public class SentenceParser {
     
 //    private final Logger log = Logger.getLogger(Parser.class.getName());
     private HashSet<String> sgdSet;
+    
+    public static final double SCORE_CUTOFF = -.5;
 
     public SentenceParser() {
         sgdSet = new SGDRefReader().read();
@@ -91,26 +93,31 @@ public class SentenceParser {
                 
                 Map<String,String> actionAs = attributes(actionTag);
                 
-                Element sTag = actionTag.getChild("S");
-                String sentence = "";
-                if (sTag != null) {
-                    Element sentenceTag = sTag.getChild("MARKEDUP_TEXT");
-                    sentence = processSentence(sentenceTag, pairAs.get("g1Sym"), pairAs.get("g2Sym"));
-                }
+                double score = Double.parseDouble(actionAs.get("score"));
+                if (score > SCORE_CUTOFF) {
+                
+                    Element sTag = actionTag.getChild("S");
+                    String sentence = "";
+                    if (sTag != null) {
+                        Element sentenceTag = sTag.getChild("MARKEDUP_TEXT");
+                        sentence = processSentence(sentenceTag, pairAs.get("g1Sym"), pairAs.get("g2Sym"));
+                    }
 
-                qry = String.format("INSERT INTO mentions VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');",
-                        actionAs.get("amid"),
-                        pairId,
-                        articleAs.get("arid"),
-                        actionAs.get("actionType"),
-                        actionAs.get("upstreamTermMentionStr"),
-                        actionAs.get("downstreamTermMentionStr"),
-                        actionAs.get("typeFirst"),
-                        actionAs.get("typeSecond"),
-                        sentence,
-                        actionAs.get("negative").equalsIgnoreCase("true") ? 1 : 0,
-                        actionAs.get("score"));
-                updates.addMention(actionAs.get("amid"), qry);
+                    qry = String.format("INSERT INTO mentions VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s');",
+                            actionAs.get("amid"),
+                            pairId,
+                            articleAs.get("arid"),
+                            actionAs.get("actionType"),
+                            actionAs.get("upstreamTermMentionStr"),
+                            actionAs.get("downstreamTermMentionStr"),
+                            actionAs.get("typeFirst"),
+                            actionAs.get("typeSecond"),
+                            sentence,
+                            actionAs.get("negative").equalsIgnoreCase("true") ? 1 : 0,
+                            actionAs.get("score"));
+                    updates.addMention(actionAs.get("amid"), qry);
+                    
+                }
                     
             }
             
