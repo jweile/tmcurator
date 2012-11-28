@@ -105,8 +105,8 @@ public class CreateUserDialog extends Dialog {
         username.setText("");
         password.setText("");
         label.setHTML("");
-        setPixelSize(300, 200);
         super.show();
+        setPixelSize(300, 200);
     }
 
     public static CreateUserDialog getInstance() {

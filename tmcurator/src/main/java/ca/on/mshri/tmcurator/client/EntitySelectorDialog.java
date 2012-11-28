@@ -43,7 +43,7 @@ public class EntitySelectorDialog extends Dialog {
 
     private EntitySelectorDialog() {
         setHeadingText("Select entity types");
-        setSize("280px", "200px");
+        setSize("280px", "150px");
         
         //OK button action
         getButtonById(PredefinedButton.OK.name())
@@ -109,8 +109,8 @@ public class EntitySelectorDialog extends Dialog {
         combo1.setValue(verdictControls.getG1Type());
         combo2.select(verdictControls.getG2Type());
         combo2.setValue(verdictControls.getG2Type());
-        setSize("280px", "200px");
         show();
+        setSize("280px", "150px");
     }
 
     private ListStore<EntityType> makeStore() {

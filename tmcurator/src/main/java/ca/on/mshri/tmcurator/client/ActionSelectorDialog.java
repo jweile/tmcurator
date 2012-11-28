@@ -241,8 +241,8 @@ public class ActionSelectorDialog extends Dialog {
         if (mainPanel != null) {
             mainPanel.collapse(LayoutRegion.SOUTH);
         }
-        setSize("400px","500px");
         show();
+        setSize("400px","500px");
     }
     
     private void select(Action a) {

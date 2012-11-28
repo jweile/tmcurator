@@ -123,6 +123,7 @@ public class JumpToPairDialog extends Dialog {
         this.pair = pair;
         resetFields();
         super.show();
+        setSize("300px","300px");
     }
     
     

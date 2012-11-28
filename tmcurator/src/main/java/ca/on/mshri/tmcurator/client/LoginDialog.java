@@ -98,8 +98,8 @@ public class LoginDialog extends Dialog {
         username.setText("");
         password.setText("");
         label.setHTML("");
-        setPixelSize(300, 150);
         super.show();
+        setPixelSize(300, 150);
     }
     
     
