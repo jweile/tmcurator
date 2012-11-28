@@ -21,6 +21,8 @@ import ca.on.mshri.tmcurator.shared.Effect;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -144,6 +146,29 @@ public class VerdictControls extends BorderLayoutContainer{
         } else {
             imageBoxCenter.add(new HTML("Browser does not support HTML5 Canvas!"));
         }
+        
+        //add mouseclick listener to canvas
+        canvas.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                if (event.getY() < 30) {
+                    if (event.getX() < 40) {
+                        //left entity
+                        g1Type = g1Type.cycle();
+                    } else if (event.getX() > 110) {
+                        //right entity
+                        g2Type = g2Type.cycle();
+                    } else {
+                        //arrow
+                        order = order.flip();
+                    }
+                    repaint();
+                } else {
+                    ActionSelectorDialog.getInstance().show(VerdictControls.this);
+                }
+            }
+        });
                 
         imageBox.add(imageBoxCenter);
         BorderLayoutData centerLayout = new BorderLayoutData();

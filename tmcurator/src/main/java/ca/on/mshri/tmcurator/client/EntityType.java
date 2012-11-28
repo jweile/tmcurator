@@ -48,4 +48,19 @@ import com.google.gwt.resources.client.ImageResource;
         return r;
     }
     
+    public EntityType cycle() {
+        switch (this) {
+            case GENE:
+                return TRANSCRIPT;
+            case TRANSCRIPT:
+                return PROTEIN;
+            case PROTEIN:
+                return UNKNOWN;
+            case UNKNOWN:
+                return GENE;
+            default:
+                return UNKNOWN;
+        }
+    }
+    
 }
