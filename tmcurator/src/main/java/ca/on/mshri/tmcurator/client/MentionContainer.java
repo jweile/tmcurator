@@ -63,11 +63,13 @@ public class MentionContainer extends ContentPanel {
         StringBuilder b = new StringBuilder()
                 .append("<span style=\"font-size:10px\">")
                 .append("Sentence ID: ")
-                .append(mention.get("mentionId"))
-                .append(", PMID: ")
-                .append(mention.get("pmid"));
+                .append(mention.get("mentionId"));
         
-        if (mention.get("non_sgd").equals("1")) {
+        if (mention.get("pmid") != null) {
+            b.append(", PMID: ").append(mention.get("pmid"));
+        }
+        
+        if (mention.get("non_sgd") != null && mention.get("non_sgd").equals("1")) {
             b.append("<span style=\"color:red\">")
                     .append(" -- Warning: Not an approved SGD publication!")
                     .append("</span>");
@@ -95,11 +97,14 @@ public class MentionContainer extends ContentPanel {
                 Window.open(url, "_blank", "");
             }
         });
+        pmButton.setEnabled(mention.get("pmid") != null);
         
-        ToolTipConfig tt = new ToolTipConfig("Citation", mention.get("citation"));
-        tt.setCloseable(true);
-        tt.setAnchor(Side.LEFT);
-        pmButton.setToolTipConfig(tt);
+        if (mention.get("pmid") != null) {
+            ToolTipConfig tt = new ToolTipConfig("Citation", mention.get("citation"));
+            tt.setCloseable(true);
+            tt.setAnchor(Side.LEFT);
+            pmButton.setToolTipConfig(tt);
+        }
 
         VBoxLayoutContainer westContainer = new VBoxLayoutContainer();
         westContainer.setVBoxLayoutAlign(VBoxLayoutContainer.VBoxLayoutAlign.STRETCH);

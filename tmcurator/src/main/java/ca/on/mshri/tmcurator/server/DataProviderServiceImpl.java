@@ -127,11 +127,13 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
     private int getFulfilment(Connection db, String user) {
         try {
             Statement s = db.createStatement();
-            //get all pairs from interval [start,start+quota] for which user has submitted verdicts.
-            ResultSet r = s.executeQuery(String.format("SELECT COUNT(*) FROM pairs WHERE (pairs.ROWID "
-                    + "BETWEEN (SELECT start FROM users WHERE name='%s') AND (SELECT start "
-                    + "FROM users WHERE name='%s') + (SELECT quota FROM config ))  "
-                    + "AND pairs.ROWID IN (SELECT DISTINCT pairId FROM verdicts WHERE user='%s');",
+            //get all pairs from interval [start,start+quota] for which user has submitted verdicts or that have no sentences.
+            ResultSet r = s.executeQuery(String.format("SELECT COUNT(*)  FROM pairs  WHERE "
+                    + "(pairs.ROWID BETWEEN (SELECT start FROM users WHERE name='%s') "
+                    + "AND (SELECT start FROM users WHERE name='%s') + (SELECT quota FROM config)) "
+                    + "AND (pairs.ROWID IN (SELECT DISTINCT pairId FROM verdicts WHERE user='%s') "
+                    + "OR pairs.ROWID IN (SELECT ROWID FROM pairs "
+                    + "WHERE id NOT IN(SELECT DISTINCT pair_id FROM mentions))); ",
                     user,user,user));
             r.next();
             return r.getInt(1);
@@ -323,6 +325,14 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             .append("AND mentions.article_id=articles.id ")
             .append("AND pairs.ROWID='%s';")
             .toString();
+    private static final String mentionAltQuery = new StringBuilder()
+            .append("SELECT mentions.ROWID AS mentionId, sentence, type1, type2, upstream, ")
+            .append("downstream, actionType, updown, effect, close_connection, negative ")
+            .append("FROM pairs,mentions,actiontypes ")
+            .append("WHERE mentions.pair_id=pairs.id ")
+            .append("AND mentions.actionType=actiontypes.name ")
+            .append("AND pairs.ROWID='%s';")
+            .toString();
     
     private List<Map<String, String>> obtainMentions(int pairId, Connection db, String user) {
         List<Map<String,String>> list = new ArrayList<Map<String, String>>();
@@ -344,6 +354,27 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 updateMentionWithUserChanges(db, map, user, pairId, mentionId);
                 
                 list.add(map);
+            }
+            
+            //if there is no article id... :/
+            if (list.isEmpty()) {
+                result = qry.executeQuery(String.format(mentionAltQuery,pairId));
+            
+                rsmd = result.getMetaData();
+
+                while (result.next()) {
+                    Map<String,String> map = new HashMap<String, String>();
+
+                    for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                        String cname = rsmd.getColumnName(i);
+                        map.put(cname, result.getString(cname));
+                    }
+
+                    int mentionId = Integer.parseInt(map.get("mentionId"));
+                    updateMentionWithUserChanges(db, map, user, pairId, mentionId);
+
+                    list.add(map);
+                }
             }
             
             qry.close();
