@@ -136,6 +136,14 @@ public class SettingsDialog extends Dialog {
         
         
     }
+
+    @Override
+    public void show() {
+        setSize("400px","500px");
+        super.show();
+    }
+    
+    
         
     public static SettingsDialog getInstance() {
         if (instance == null) {

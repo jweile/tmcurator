@@ -79,6 +79,8 @@ public class ErrorDialog extends Dialog {
         
         message.setText(b.toString());
         
+        setSize("300px","200px");
+        
         show();
     }
     

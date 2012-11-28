@@ -109,6 +109,7 @@ public class EntitySelectorDialog extends Dialog {
         combo1.setValue(verdictControls.getG1Type());
         combo2.select(verdictControls.getG2Type());
         combo2.setValue(verdictControls.getG2Type());
+        setSize("280px", "200px");
         show();
     }
 

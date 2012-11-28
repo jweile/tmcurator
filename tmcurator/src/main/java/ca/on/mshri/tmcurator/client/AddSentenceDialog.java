@@ -83,6 +83,7 @@ public class AddSentenceDialog extends Dialog {
     public void show() {
         sentenceField.setValue("");
         pmidField.setValue("");
+        setSize("400px", "250px");
         super.show();
     }
     
