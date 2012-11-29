@@ -34,6 +34,7 @@ import com.sencha.gxt.widget.core.client.container.HBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VBoxLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import java.util.Map;
 
@@ -62,6 +63,8 @@ public class VerdictControls extends BorderLayoutContainer{
     
     private boolean invalid = false;
     
+    private CheckBox approvalBox;
+    
     public VerdictControls() {
                 
         Margins margins = new Margins(5,5,5,5);
@@ -74,6 +77,7 @@ public class VerdictControls extends BorderLayoutContainer{
             @Override
             public void onSelect(SelectEvent event) {
                 order = order.flip();
+                approvalBox.setValue(true);
                 repaint();
             }
         });
@@ -85,6 +89,7 @@ public class VerdictControls extends BorderLayoutContainer{
 
             @Override
             public void onSelect(SelectEvent event) {
+                approvalBox.setValue(true);
                 EntitySelectorDialog.getInstance().show(VerdictControls.this);
             }
             
@@ -97,6 +102,7 @@ public class VerdictControls extends BorderLayoutContainer{
 
             @Override
             public void onSelect(SelectEvent event) {
+                approvalBox.setValue(true);
                 ActionSelectorDialog.getInstance().show(VerdictControls.this);
             }
             
@@ -110,6 +116,7 @@ public class VerdictControls extends BorderLayoutContainer{
             @Override
             public void onSelect(SelectEvent event) {
                 negative = !negative;
+                approvalBox.setValue(true);
                 repaint();
             }
             
@@ -123,6 +130,7 @@ public class VerdictControls extends BorderLayoutContainer{
             @Override
             public void onSelect(SelectEvent event) {
                 invalid = !invalid;
+                approvalBox.setValue(true);
                 repaint();
             }
             
@@ -167,6 +175,7 @@ public class VerdictControls extends BorderLayoutContainer{
                 } else {
                     ActionSelectorDialog.getInstance().show(VerdictControls.this);
                 }
+                approvalBox.setValue(true);
             }
         });
                 
@@ -393,6 +402,10 @@ public class VerdictControls extends BorderLayoutContainer{
         } else {
             return sym.toUpperCase();
         }
+    }
+
+    void linkApprovalBox(CheckBox approvalBox) {
+        this.approvalBox = approvalBox;
     }
     
     

@@ -138,6 +138,7 @@ public class MentionContainer extends ContentPanel {
 
         verdictControls = new VerdictControls();
         verdictControls.configure(mention,g1sym,g2sym);
+        verdictControls.linkApprovalBox(approvalBox);
 
         sentenceAndVerdictContainer.add(verdictControls, BoxConfig.FLEX_MARGIN);
 
