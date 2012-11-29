@@ -67,9 +67,7 @@ public class TmCurator implements EntryPoint {
         this.user = user;
         login.setText(user);
         
-        if (user.equals("admin")) {
-            settingsItem.setEnabled(true);
-        }
+        settingsItem.setEnabled(user.equals("admin"));
     }
     
     public static TmCurator getInstance() {
