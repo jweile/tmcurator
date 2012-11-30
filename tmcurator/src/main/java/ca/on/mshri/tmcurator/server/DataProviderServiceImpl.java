@@ -44,6 +44,9 @@ import java.util.logging.Logger;
 public class DataProviderServiceImpl extends RemoteServiceServlet 
                                         implements DataProviderService {
 
+    private static final Logger LOG = Logger.getLogger(DataProviderServiceImpl.class.getName());
+    private static final String QRY_FAIL_MSG = "DB Query failed!";
+    
     @Override
     public PairDataSheet nextPairSheet(String user) {
         return queryPairData(user,Inc.NEXT);
@@ -105,7 +108,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 qry.close();
                 return totalPairNum;
             } catch (SQLException e) {
-                throw new RuntimeException("Unable to query database!",e);
+                LOG.log(Level.SEVERE, QRY_FAIL_MSG,e);
+                throw new RuntimeException(QRY_FAIL_MSG,e);
             }
         } else {
             return totalPairNum;
@@ -120,7 +124,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             r.next();
             return r.getInt(1);
         } catch (SQLException ex) {
-            throw new RuntimeException("Unable to query database!",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -138,7 +143,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             r.next();
             return r.getInt(1);
         } catch (SQLException ex) {
-            throw new RuntimeException("Unable to query database!",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -149,7 +155,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             r.next();
             return r.getInt(1);
         } catch (SQLException ex) {
-            throw new RuntimeException("Unable to query database!",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -162,7 +169,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 try {
                     _saveVerdicts(db, user, in);
                 } catch (SQLException ex) {
-                    throw new RuntimeException("Unable to query database!", ex);
+                    LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+                    throw new RuntimeException(QRY_FAIL_MSG,ex);
                 }
                 return null;
             }
@@ -296,7 +304,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             s.executeUpdate("UPDATE users SET current='"+currPairId+"' WHERE name='"+user+"';");
             s.close();
         } catch (SQLException ex) {
-            throw new RuntimeException("Cannot query database.",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
 
@@ -312,7 +321,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             qry.close();
             
         } catch (SQLException ex) {
-            throw new RuntimeException("Cannot query database.",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
 
@@ -390,7 +400,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             return list;
             
         } catch (SQLException ex) {
-            throw new RuntimeException("Cannot query database.",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -410,7 +421,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             verdict.put("close_connection",result.getString("close_connection"));
             
         } catch (SQLException ex) {
-            throw new RuntimeException("Query failed!",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
         
     }
@@ -452,7 +464,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             sql.close();
             
         } catch (SQLException ex) {
-            throw new RuntimeException("Query failed!",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
         
     }
@@ -466,7 +479,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             r.next();
             return r.getInt(1);
         } catch (SQLException ex) {
-            throw new RuntimeException("Query failed!",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
 
@@ -492,7 +506,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             return current;
             
         } catch (SQLException ex) {
-            throw new RuntimeException("Cannot query database.",ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
 
@@ -533,7 +548,8 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             return list;
             
         } catch (SQLException ex) {
-            throw new RuntimeException("Database query failed.", ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
         
     }
@@ -576,14 +592,15 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             }
             
         } catch (SQLException ex) {
-            throw new RuntimeException("Database query failed.", ex);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         } finally {
             if (qry != null) {
                 try {
                     qry.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(DataProviderServiceImpl.class.getName())
-                            .log(Level.SEVERE, "Failed to close statement.", ex);
+                            .log(Level.WARNING, "Failed to close statement.", ex);
                 }
             }
         }
@@ -618,8 +635,9 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                 list.add(p);
             }
             
-        } catch (SQLException e) {
-            throw new RuntimeException("DB query failed!");
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
         return list;
     }
@@ -667,14 +685,13 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
         Statement s = null;
         try {
             
-            System.out.println(q);
             s = db.createStatement();
-            int changes = s.executeUpdate(q);
-            System.out.println("Changed rows: "+changes);
+            s.executeUpdate(q);
             
-        } catch (SQLException sqle) {
+        } catch (SQLException ex) {
             
-            throw new RuntimeException("Database update failed!", sqle);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
             
         } finally {
             
@@ -683,7 +700,7 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
                     s.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(DataProviderServiceImpl.class.getName())
-                            .log(Level.SEVERE, "Unable to close connection", ex);
+                            .log(Level.WARNING, "Unable to close connection", ex);
                 }
             }
         }
@@ -727,15 +744,16 @@ public class DataProviderServiceImpl extends RemoteServiceServlet
             } else {
                 return null;
             }
-        } catch (SQLException sqle) {
-            throw new RuntimeException("Query failed!",sqle);
+        } catch (SQLException ex) {
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         } finally {
             if (s != null) {
                 try {
                     s.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(DataProviderServiceImpl.class.getName())
-                            .log(Level.SEVERE, "Unable to close connection!", ex);
+                            .log(Level.WARNING, "Unable to close connection!", ex);
                 }
             }
         }

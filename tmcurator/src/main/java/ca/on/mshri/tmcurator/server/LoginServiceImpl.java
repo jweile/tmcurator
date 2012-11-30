@@ -33,6 +33,10 @@ import java.util.logging.Logger;
  */
 public class LoginServiceImpl extends RemoteServiceServlet implements LoginService {
 
+    private static final Logger LOG = Logger.getLogger(LoginServiceImpl.class.getName());
+    
+    private static final String QRY_FAIL_MSG = "DB Query failed!";
+    
     @Override
     public boolean addUser(String user, String pwd) throws LoginException {
         user = escapeString(user);
@@ -43,8 +47,10 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             @Override
             public Boolean transaction(Connection db, String user, String pwd) {
                 if (hasUser(db,user)) {
+                    LOG.warning("Attempted to duplicate user "+user);
                     throw new LoginException("User already exists!");
                 }
+                LOG.fine("Adding user "+user);
                 return _addUser(db, user, pwd);
             }
 
@@ -61,9 +67,11 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             @Override
             public Boolean transaction(Connection db, String user, String pwd) {
                 if (!hasUser(db,user)) {
+                    LOG.warning("Attempted to login with unknown username "+user);
                     throw new LoginException("Unknown username!");
                 }
                 if (!verifyUser(db, user, pwd)) {
+                    LOG.warning("Wrong password entered for user "+user);
                     throw new LoginException("Wrong password!");
                 }
                 return _deleteUser(db, user, pwd);
@@ -80,9 +88,14 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             @Override
             public Boolean transaction(Connection db, String user, String pwd) {
                 if (!hasUser(db,user)) {
+                    LOG.warning("Attempted to login with unknown username "+user);
                     throw new LoginException("Unknown username!");
                 }
-                return verifyUser(db, user, pwd);
+                boolean success = verifyUser(db, user, pwd);
+                if (!success) {
+                    LOG.warning("Wrong password entered for user "+user);
+                }
+                return success;
             }
 
         }.run(user, pwd);
@@ -115,7 +128,8 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             sql.close();
             return hasUser;
         } catch (SQLException ex) {
-            throw new RuntimeException("DB Query failed.");
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -131,7 +145,8 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             sql.close();
             return true;
         } catch (SQLException ex) {
-            throw new RuntimeException("DB Query failed.");
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -148,7 +163,8 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             sql.close();
             return verified;
         } catch (SQLException ex) {
-            throw new RuntimeException("DB Query failed.");
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -164,7 +180,8 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             sql.close();
             return true;
         } catch (SQLException ex) {
-            throw new RuntimeException("DB Query failed.");
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
 
@@ -195,7 +212,8 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             sql.close();
             return config;
         } catch (SQLException ex) {
-            throw new RuntimeException("DB Query failed.");
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
 
@@ -242,7 +260,8 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             }
             sql.close();
         } catch (SQLException ex) {
-            throw new RuntimeException("DB Query failed.");
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,ex);
+            throw new RuntimeException(QRY_FAIL_MSG,ex);
         }
     }
     
@@ -280,13 +299,13 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             return r.getInt(1);
             
         } catch (SQLException e) {
-            throw new RuntimeException("DB query failed",e);
+            LOG.log(Level.SEVERE, QRY_FAIL_MSG,e);
+            throw new RuntimeException(QRY_FAIL_MSG,e);
         } finally {
             try {
                 sql.close();
             } catch (SQLException ex) {
-                Logger.getLogger(LoginServiceImpl.class.getName())
-                        .log(Level.WARNING, "Unable to close DB statement", ex);
+                LOG.log(Level.WARNING, "Unable to close DB statement", ex);
             }
         }
     }
