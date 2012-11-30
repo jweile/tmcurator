@@ -190,7 +190,7 @@ public class LoginServiceImpl extends RemoteServiceServlet implements LoginServi
             
             config.setQuota(result.getInt("quota"));
             config.setOffset(result.getInt("offset"));
-            config.setApprovalEnabled(result.getBoolean("approvalEnabled"));
+            config.setApprovalEnabled(result.getString("approvalEnabled").equalsIgnoreCase("true"));
             
             sql.close();
             return config;
